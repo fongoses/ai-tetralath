@@ -7,7 +7,7 @@
 class tabuleiroTetralath{
 	public:
 		//dados
-
+		static const int NUMERO_CASAS = 61;
 		
 		//métodos
 		/*
@@ -37,17 +37,24 @@ class tabuleiroTetralath{
 		*/
 		bool jogar(int nomeCasa_param, int corPecas_param);
 		/*
-		* Indica se o tabuleiro está em tal estado que o jogador atual ganhou.
-		* @return Booleano indicando se o jogador ganhou.
-		* 	Atenção: false como retorno indica apenas que este jogador não ganhou, nada diz sobre empates ou perdedores.
+		* Indica se as brancas ganharam, isto acontece em dois casos:
+		*	(1) Se elas formaram uma linha de 4 peças consecutivas.
+		*	(2) Se as pretas formaram uma linha de 3 peças consecutivas.
+		* @param nomeCasaReferencia_param Um nome de casa a ser tomada como central, para referência. Tipicamente, esta será a última jogada feita.
+		*	Este parâmetro existe por motivos de desempenho.
+		* @return Booleano indicando se as brancas ganharam.
+		* 	Atenção: false como retorno indica apenas que as brancas não ganharam, nada diz sobre empates ou perdedores.
 		*/
-		bool ganhou(void);
+		bool brancasGanharam(int nomeCasaReferencia_param);
 		/*
-		* Indica se o tabuleiro está em tal estado que o jogador atual perdeu.
-		* @return Booleano indicando se o jogador perdeu.
-		* 	Atenção: false como retorno indica apenas que este jogador não perdeu, nada diz sobre ganhadores ou empates.
+		* Indica se as brancas perderam, isto acontece em dois casos:
+		*	(1) Brancas formaram uma linha de 3 peças consecutivas.
+		*	(2) Pretas formaram uma linha de 4 peças consecutivas.
+		* @param nomeCasaReferencia_param Um nome de casa a ser tomada como central, para referência. Tipicamente, esta será a última jogada feita.
+		*	Este parâmetro existe por motivos de desempenho.		* @return Booleano indicando se o jogador perdeu.
+		* 	Atenção: false como retorno indica apenas que as brancas não perderam, nada diz sobre ganhadores ou empates.
 		*/
-		bool perdeu(void);
+		bool brancasPerderam(int nomeCasaReferencia_param);
 		/*
 		* Indica se o tabuleiro está em estado de empate.
 		* @return Booleano indicando se houve empate.
@@ -60,7 +67,7 @@ class tabuleiroTetralath{
 		/*
 		* Array construído no momento da criação com os dados de todas as casas deste tabuleiro.
 		*/
-		casaTabuleiroTetralath[] tabuleiro;
+		casaTabuleiroTetralath[NUMERO_CASAS] tabuleiro;
 		
 		//métodos
 	

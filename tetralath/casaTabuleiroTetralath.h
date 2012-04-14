@@ -42,6 +42,12 @@ class casaTabuleiroTetralath{
 		*/
 		bool estahOcupadaPorPecaBranca(void);
 		/*
+		* Determina se esta casa está ocupada por peça da cor preta. Duplicou-se a função por motivo de desempenho.
+		* @return Booleano indicando se a casa está ocupada por alguma peça preta.
+		*	Atenção: Se a casa não estiver ocupada ou se estiver ocupada por peça branca, retornará false.
+		*/
+		bool estahOcupadaPorPecaPreta(void);
+		/*
 		* Ocupa esta casa com uma peça da cor passada.
 		* @param corPeca_param A cor da peça que ocupará a casa. Deve ser tabuleiroTetralath.PECAS_BRANCAS ou tabuleiroTetralath.PECAS_PRETAS.
 		* @return Booleano indicando se foi possível ocupar a casa (se ela estiver ocupada, não será possível).
