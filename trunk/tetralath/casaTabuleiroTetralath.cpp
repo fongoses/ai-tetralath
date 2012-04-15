@@ -68,6 +68,7 @@ bool casaTabuleiroTetralath::ocuparCom(int corPeca_param){
 				or corPeca_param == PECAS_PRETAS)){
 		ocupada = true;
 		conteudo = corPeca_param;
+		return true;
 	} else {
 		return false;
 	}
@@ -115,6 +116,50 @@ bool casaTabuleiroTetralath::criarVizinhanca(casaTabuleiroTetralath* casaVizinha
 	}
 }
 
+/*
+* Procura por uma casa que, em linha reta (horizontal, diagonal decrescente ou diagonal crescente) está a uma distância dada desta.
+* @param distancia_param A distância desta casa em que está a casa procurada.
+* 			Distâncias negativas são interpretadas como casas à esquerda ou acima da casa de referência.
+*			Distâncias positivas são interpretadas como casas à direita ou abaixo da casa de referência.
+* @param linha_param A linha (LINHA_HORIZONTAL, LINHA_DIAGONAL_CRESCENTE ou LINHA_DIAGONAL_DECRESCENTE) em que se deseja efetuar a busca.
+* @return A casa com distância distancia_param da casa cujo nome é passado como parâmetro. Se não houver, retorna VIZINHO_INEXISTENTE.
+*/
+casaTabuleiroTetralath* casaTabuleiroTetralath::getCasaDistanciaDesta(int distancia_param, int linha_param){
+	casaTabuleiroTetralath* vizinhoEncontrado = this;
+
+	if(distancia_param == 0){ //Condição de parada da recursão.
+		vizinhoEncontrado = this;
+	} else{
+		if(distancia_param < 0){ //Vizinho está à esquerda ou acima da casa de referência
+			switch(linha_param){
+				case LINHA_HORIZONTAL: vizinhoEncontrado = getVizinhoC();
+					break;
+				case LINHA_DIAGONAL_CRESCENTE: vizinhoEncontrado = getVizinhoE();
+					break;
+				case LINHA_DIAGONAL_DECRESCENTE: vizinhoEncontrado = getVizinhoA();
+					break;
+				default: vizinhoEncontrado = VIZINHO_INEXISTENTE;
+			}
+		} else { //Vizinho está à direita ou abaixo da casa de referência
+			switch(linha_param){
+				case LINHA_HORIZONTAL: vizinhoEncontrado = getVizinhoD();
+					break;
+				case LINHA_DIAGONAL_CRESCENTE: vizinhoEncontrado = getVizinhoB();
+					break;
+				case LINHA_DIAGONAL_DECRESCENTE: vizinhoEncontrado = getVizinhoF();
+					break;
+				default: vizinhoEncontrado = VIZINHO_INEXISTENTE;
+			}
+		}
+
+		if(vizinhoEncontrado != VIZINHO_INEXISTENTE){
+			int sinalDistancia = fabs(distancia_param)/distancia_param;
+			vizinhoEncontrado = getCasaDistanciaDesta((fabs(distancia_param)-1)*sinalDistancia,linha_param);
+		}
+	}
+
+	return vizinhoEncontrado;
+}
 
 
 

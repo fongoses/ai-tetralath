@@ -1,5 +1,11 @@
 #include <iostream>
+#include <math.h>
 using namespace std;
+
+#define VIZINHO_INEXISTENTE NULL
+#define LINHA_HORIZONTAL 1
+#define LINHA_DIAGONAL_DECRESCENTE 2
+#define LINHA_DIAGONAL_CRESCENTE 3
 
 /*
 * Classe que implementa uma casa do tabuleiro do jogo Tetralath.
@@ -81,6 +87,16 @@ class casaTabuleiroTetralath{
 				     casaTabuleiroTetralath* casaVizinhaE,
 				     casaTabuleiroTetralath* casaVizinhaF);
 
+		/*
+		* Procura por uma casa que, em linha reta (horizontal, diagonal decrescente ou diagonal crescente) está a uma distância dada desta.
+		* @param distancia_param A distância desta casa em que está a casa procurada.
+		* 			Distâncias negativas são interpretadas como casas à esquerda ou acima da casa de referência.
+		*			Distâncias positivas são interpretadas como casas à direita ou abaixo da casa de referência.
+		* @param linha_param A linha (LINHA_HORIZONTAL, LINHA_DIAGONAL_CRESCENTE ou LINHA_DIAGONAL_DECRESCENTE) em que se deseja efetuar a busca.
+		* @return A casa com distância distancia_param da casa cujo nome é passado como parâmetro. Se não houver, retorna VIZINHO_INEXISTENTE.
+		*/
+		casaTabuleiroTetralath* getCasaDistanciaDesta(int distancia_param, int linha_param);
+
 	private:
 		//dados
 		/*
@@ -102,6 +118,11 @@ class casaTabuleiroTetralath{
 				       *F;
 
 		//métodos
+		
+
+
+
+
 
 
 };
