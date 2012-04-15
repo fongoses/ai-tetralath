@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdlib.h>
 #include "casaTabuleiroTetralath.h"
 
 /*
@@ -13,9 +14,8 @@ class tabuleiroTetralath{
 		/*
 		* Construtor da classe.
 		* Inicializa todas as casas com seus vizinhos.
-		* @param corPecasJogador_param casaTabuleiroTetralath.PECAS_BRANCAS ou casaTabuleiroTetralath.PECAS_PRETAS. É a cor do jogador, a AI.
 		*/
-		tabuleiroTetralath(int corPecasJogador_param);
+		tabuleiroTetralath();
 		/*
 		* Determina se a casa de nome passado como parâmetro está ocupada por alguma peça.
 		* @param nomeCasa_param O nome da casa a ser verificada. Nomes de casas são constantes definidas no início deste arquivo.
@@ -37,24 +37,23 @@ class tabuleiroTetralath{
 		*/
 		bool jogar(int nomeCasa_param, int corPecas_param);
 		/*
-		* Indica se as brancas ganharam, isto acontece em dois casos:
+		* Indica se as peças da cor da peça parâmetro ganharam, isto acontece em um caso:
 		*	(1) Se elas formaram uma linha de 4 peças consecutivas.
-		*	(2) Se as pretas formaram uma linha de 3 peças consecutivas.
 		* @param nomeCasaReferencia_param Um nome de casa a ser tomada como central, para referência. Tipicamente, esta será a última jogada feita.
 		*	Este parâmetro existe por motivos de desempenho.
-		* @return Booleano indicando se as brancas ganharam.
-		* 	Atenção: false como retorno indica apenas que as brancas não ganharam, nada diz sobre empates ou perdedores.
+		* @return Booleano indicando se as peças da cor da peça parâmetro ganharam.
+		* 	Atenção: false como retorno indica apenas que as peças parâmetro não ganharam, nada diz sobre empates ou perdedores.
 		*/
-		bool brancasGanharam(int nomeCasaReferencia_param);
+		bool pecasDaMesmaCorGanharam(int nomeCasaReferencia_param);
 		/*
-		* Indica se as brancas perderam, isto acontece em dois casos:
-		*	(1) Brancas formaram uma linha de 3 peças consecutivas.
-		*	(2) Pretas formaram uma linha de 4 peças consecutivas.
+		* Indica se as peças da cor da peça parâmetro perderam, isto acontece em um caso:
+		*	(1) Estas peças formaram uma linha de 3 peças consecutivas.
 		* @param nomeCasaReferencia_param Um nome de casa a ser tomada como central, para referência. Tipicamente, esta será a última jogada feita.
-		*	Este parâmetro existe por motivos de desempenho.		* @return Booleano indicando se o jogador perdeu.
-		* 	Atenção: false como retorno indica apenas que as brancas não perderam, nada diz sobre ganhadores ou empates.
+		*	Este parâmetro existe por motivos de desempenho.
+		* @return Booleano indicando se as peças da cor da peça parâmetro perderam.
+		* 	Atenção: false como retorno indica apenas que as peças parâmetro não perderam, nada diz sobre ganhadores ou empates.
 		*/
-		bool brancasPerderam(int nomeCasaReferencia_param);
+		bool pecasDaMesmaCorPerderam(int nomeCasaReferencia_param);
 		/*
 		* Indica se o tabuleiro está em estado de empate.
 		* @return Booleano indicando se houve empate.
@@ -67,11 +66,24 @@ class tabuleiroTetralath{
 		/*
 		* Array construído no momento da criação com os dados de todas as casas deste tabuleiro.
 		*/
-		casaTabuleiroTetralath[NUMERO_CASAS] tabuleiro;
+		casaTabuleiroTetralath **tabuleiro;
 		
 		//métodos
-	
-
+		/*
+		* Procura por uma seqüência de um número de casas ocupadas por peças da mesma cor.
+		* A cor testada é a mesma da peça da casa considerada central.
+		* Esta função verificará as três linhas possíveis ao redor da casa central:
+		*	(1) Horizontal
+		*	(2) Diagonal Decrescente
+		*	(3) Diagonal Crescente
+		* Somente serão verificadas casas nestas linhas e a uma distância de adjacência de (tamanhoSequencia_param - 1) casas.
+		* Desta forma, para a linha horizontal e tamanhoSequencia_param = 4, teríamos:
+		*	casa_não_testada,casa_testada,casa_testada,casa_testada,casa_central,casa_testada,casa_testada,casa_testada,casa_não_testada
+		* @param nomeCasa_param Um índice (em tabuleiro) da casa que fica no centro da linha testada.
+		* @param tamanhoSequencia_param O tamanho que a seqüência de casas da mesma cor precisa ter para ser considerada válida.
+		* @return Booleano indicando se há alguma seqüência (com o número especificado) de casas adjacentes com peças da mesma cor.
+		*/
+		bool haSequenciaCasasMesmaCor(int nomeCasa_param, int tamanhoSequencia_param);
 
 
 
