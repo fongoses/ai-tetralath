@@ -154,7 +154,7 @@ casaTabuleiroTetralath* casaTabuleiroTetralath::getCasaDistanciaDesta(int distan
 
 		if(vizinhoEncontrado != VIZINHO_INEXISTENTE){
 			int sinalDistancia = fabs(distancia_param)/distancia_param;
-			vizinhoEncontrado = getCasaDistanciaDesta((fabs(distancia_param)-1)*sinalDistancia,linha_param);
+			vizinhoEncontrado = vizinhoEncontrado->getCasaDistanciaDesta((fabs(distancia_param)-1)*sinalDistancia,linha_param);
 		}
 	}
 

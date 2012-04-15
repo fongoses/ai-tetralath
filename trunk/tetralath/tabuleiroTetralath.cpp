@@ -167,7 +167,7 @@ bool tabuleiroTetralath::haSequenciaCasasMesmaCor(int nomeCasa_param, int tamanh
 	unsigned short linhaHorizontal = 0x0000;
 	unsigned short linhaDiagonalDecrescente = 0x0000;
 	unsigned short linhaDiagonalCrescente = 0x0000;
-	
+
 	if(tamanhoSequencia_param == 3 and casaReferencia.estahOcupadaPorPecaBranca()){
 		/***************************************
 		* Montagem da linha horizontal

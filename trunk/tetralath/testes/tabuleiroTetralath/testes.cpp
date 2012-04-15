@@ -32,17 +32,18 @@ int main(){
 	* Teste das funções jogar e brancasGanharam.
 	*/
 	cout << "jogar e pecasDaMesmaCorGanharam.\n";
-	tabuleiroTetralath tabuleiro2 = *(new tabuleiroTetralath());
+	tabuleiroTetralath tabuleiro2;
 
+	tabuleiro2 = *(new tabuleiroTetralath());
 	if(tabuleiro2.jogar(20, casaTabuleiroTetralath::PECAS_PRETAS)
 	   and tabuleiro2.jogar(29, casaTabuleiroTetralath::PECAS_PRETAS)
-	   and tabuleiro2.jogar(38, casaTabuleiroTetralath::PECAS_PRETAS)
-	   and tabuleiro2.jogar(46, casaTabuleiroTetralath::PECAS_PRETAS)
-	   and not tabuleiro2.pecasDaMesmaCorPerderam(29)){
-		cout << "\tpecasDaMesmaCorPerderam está OK (1 de 5).\n";
+	   and tabuleiro2.pecasDaMesmaCorGanharam(29)){
+		cout << "\tpecasDaMesmaCorGanharam está NOT_OK (1 de 5).\n";
 	} else {
-		cout << "\tpecasDaMesmaCorPerderam está NOT_OK (1 de 5).\n";
+		cout << "\tpecasDaMesmaCorGanharam está OK (1 de 5).\n";
 	}
+
+	tabuleiro2 = *(new tabuleiroTetralath());
 	if(tabuleiro2.jogar(19, casaTabuleiroTetralath::PECAS_BRANCAS)
 	   and tabuleiro2.jogar(20, casaTabuleiroTetralath::PECAS_BRANCAS)
 	   and tabuleiro2.jogar(21, casaTabuleiroTetralath::PECAS_BRANCAS)
@@ -52,6 +53,8 @@ int main(){
 	} else {
 		cout << "\tpecasDaMesmaCorGanharam está NOT_OK (2 de 5).\n";
 	}
+
+	tabuleiro2 = *(new tabuleiroTetralath());
 	if(tabuleiro2.jogar(29, casaTabuleiroTetralath::PECAS_BRANCAS)
 	   and tabuleiro2.jogar(21, casaTabuleiroTetralath::PECAS_BRANCAS)
 	   and tabuleiro2.jogar(14, casaTabuleiroTetralath::PECAS_BRANCAS)
@@ -61,6 +64,8 @@ int main(){
 	} else {
 		cout << "\tpecasDaMesmaCorGanharam está NOT_OK (3 de 5).\n";
 	}
+
+	tabuleiro2 = *(new tabuleiroTetralath());
 	if(tabuleiro2.jogar(13, casaTabuleiroTetralath::PECAS_BRANCAS)
 	   and tabuleiro2.jogar(21, casaTabuleiroTetralath::PECAS_BRANCAS)
 	   and tabuleiro2.jogar(30, casaTabuleiroTetralath::PECAS_BRANCAS)
@@ -70,13 +75,15 @@ int main(){
 	} else {
 		cout << "\tpecasDaMesmaCorGanharam está NOT_OK (4 de 5).\n";
 	}
+
+	tabuleiro2 = *(new tabuleiroTetralath());
 	if(tabuleiro2.jogar(44, casaTabuleiroTetralath::PECAS_PRETAS)
 	   and tabuleiro2.jogar(51, casaTabuleiroTetralath::PECAS_PRETAS)
 	   and tabuleiro2.jogar(57, casaTabuleiroTetralath::PECAS_PRETAS)
 	   and tabuleiro2.pecasDaMesmaCorGanharam(57)){
-		cout << "\tpecasDaMesmaCorGanharam está OK (5 de 5).\n";
-	} else {
 		cout << "\tpecasDaMesmaCorGanharam está NOT_OK (5 de 5).\n";
+	} else {
+		cout << "\tpecasDaMesmaCorGanharam está OK (5 de 5).\n";
 	}
 
 	/*
@@ -93,6 +100,8 @@ int main(){
 	} else {
 		cout << "\tpecasDaMesmaCorPerderam está NOT_OK (1 de 4).\n";
 	}
+
+	tabuleiro3 = *(new tabuleiroTetralath());
 	if(tabuleiro3.jogar(0, casaTabuleiroTetralath::PECAS_PRETAS)
 	   and tabuleiro3.jogar(6, casaTabuleiroTetralath::PECAS_PRETAS)
 	   and tabuleiro3.jogar(13, casaTabuleiroTetralath::PECAS_PRETAS)
@@ -101,6 +110,8 @@ int main(){
 	} else {
 		cout << "\tpecasDaMesmaCorPerderam está NOT_OK (2 de 4).\n";
 	}
+
+	tabuleiro3 = *(new tabuleiroTetralath());
 	if(tabuleiro3.jogar(10, casaTabuleiroTetralath::PECAS_PRETAS)
 	   and tabuleiro3.jogar(16, casaTabuleiroTetralath::PECAS_PRETAS)
 	   and tabuleiro3.jogar(23, casaTabuleiroTetralath::PECAS_PRETAS)
@@ -109,6 +120,8 @@ int main(){
 	} else {
 		cout << "\tpecasDaMesmaCorPerderam está NOT_OK (3 de 4).\n";
 	}
+
+	tabuleiro3 = *(new tabuleiroTetralath());
 	if(tabuleiro3.jogar(58, casaTabuleiroTetralath::PECAS_BRANCAS)
 	   and tabuleiro3.jogar(59, casaTabuleiroTetralath::PECAS_BRANCAS)
 	   and tabuleiro3.jogar(60, casaTabuleiroTetralath::PECAS_BRANCAS)
