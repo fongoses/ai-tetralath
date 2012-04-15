@@ -46,21 +46,27 @@ int main(){
 	casaTabuleiroTetralath casaPreta = *(new casaTabuleiroTetralath());
 	if(casaBranca.ocuparCom(casaTabuleiroTetralath::PECAS_BRANCAS)
 	   and casaPreta.ocuparCom(casaTabuleiroTetralath::PECAS_PRETAS)){
-		cout << "\tocuparCom está OK (1 de 3).\n";
+		cout << "\tocuparCom está OK (1 de 4).\n";
 	} else {
-		cout << "\tocuparCom está NOT_OK (1 de 3).\n";
+		cout << "\tocuparCom está NOT_OK (1 de 4).\n";
 	}
 	if(casaBranca.estahOcupada() == true
 	   and casaPreta.estahOcupada() == true){
-		cout << "\tConstrutor está OK (2 de 3).\n";
+		cout << "\tocuparCom está OK (2 de 4).\n";
 	} else {
-		cout << "\tConstrutor está NOT_OK (2 de 3).\n";
+		cout << "\tocuparCom está NOT_OK (2 de 4).\n";
 	}
 	if(casaBranca.estahOcupadaPorPecaBranca() == true
 	   and casaPreta.estahOcupadaPorPecaBranca() == false){
-		cout << "\tConstrutor está OK (3 de 3).\n";
+		cout << "\tocuparCom está OK (3 de 4).\n";
 	} else {
-		cout << "\tConstrutor está NOT_OK (3 de 3).\n";
+		cout << "\tocuparCom está NOT_OK (3 de 4).\n";
+	}
+	if(casaBranca.estahOcupadaPorPecaPreta() == false
+	   and casaPreta.estahOcupadaPorPecaPreta() == true){
+		cout << "\tocuparCom está OK (4 de 4).\n";
+	} else {
+		cout << "\tocuparCom está NOT_OK (4 de 4).\n";
 	}
 
 	/*
@@ -88,7 +94,51 @@ int main(){
 		cout << "\tcriarVizinhança está OK (2 de 2).\n";
 	} else {
 		cout << "\tcriarVizinhança está NOT_OK (2 de 2).\n";
-	}	
+	}
+
+	/*
+	* Teste da função getCasaDistanciaDesta.
+	*/
+	cout << "getCasaDistanciaDesta.\n";
+	casaTabuleiroTetralath* X1 = (new casaTabuleiroTetralath());
+	casaTabuleiroTetralath* horizontalMenos1 = (new casaTabuleiroTetralath());
+	X1->criarVizinhanca(VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE,horizontalMenos1,VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE);
+	if(X1->getCasaDistanciaDesta(-1, LINHA_HORIZONTAL) == horizontalMenos1){
+		cout << "\tgetCasaDistanciaDesta está OK (1 de 3)\n";
+	} else {
+		cout << "\tgetCasaDistanciaDesta está NOT_OK (1 de 3).\n";
+	}
+
+	casaTabuleiroTetralath* X2 = (new casaTabuleiroTetralath());
+	casaTabuleiroTetralath* horizontalMais1 = (new casaTabuleiroTetralath());
+	casaTabuleiroTetralath* horizontalMais2 = (new casaTabuleiroTetralath());
+	X2->criarVizinhanca(VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE,horizontalMais1,VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE);
+	horizontalMais1->criarVizinhanca(VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE,horizontalMais2,VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE);
+	if(X2->getCasaDistanciaDesta(1, LINHA_HORIZONTAL) == horizontalMais1
+	   and X2->getCasaDistanciaDesta(2, LINHA_HORIZONTAL) == horizontalMais2
+	   and horizontalMais1->getCasaDistanciaDesta(1, LINHA_HORIZONTAL) == horizontalMais2){
+		cout << "\tgetCasaDistanciaDesta está OK (2 de 3).\n";
+	} else {
+		cout << "\tgetCasaDistanciaDesta está NOT_OK (2 de 3).\n";
+	}
+
+	casaTabuleiroTetralath* X3 = (new casaTabuleiroTetralath());
+	casaTabuleiroTetralath* diagonalCrescenteMenos1 = (new casaTabuleiroTetralath());
+	casaTabuleiroTetralath* diagonalCrescenteMenos2 = (new casaTabuleiroTetralath());
+	casaTabuleiroTetralath* diagonalCrescenteMenos3 = (new casaTabuleiroTetralath());
+	X3->criarVizinhanca(VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE,diagonalCrescenteMenos1,VIZINHO_INEXISTENTE);
+	diagonalCrescenteMenos1->criarVizinhanca(VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE,diagonalCrescenteMenos2,VIZINHO_INEXISTENTE);
+	diagonalCrescenteMenos2->criarVizinhanca(VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE,diagonalCrescenteMenos3,VIZINHO_INEXISTENTE);
+	if(X3->getCasaDistanciaDesta(-1, LINHA_DIAGONAL_CRESCENTE) == diagonalCrescenteMenos1
+	   and X3->getCasaDistanciaDesta(-2, LINHA_DIAGONAL_CRESCENTE) == diagonalCrescenteMenos2
+	   and X3->getCasaDistanciaDesta(-3, LINHA_DIAGONAL_CRESCENTE) == diagonalCrescenteMenos3
+	   and diagonalCrescenteMenos1->getCasaDistanciaDesta(-1, LINHA_DIAGONAL_CRESCENTE) == diagonalCrescenteMenos2
+	   and diagonalCrescenteMenos1->getCasaDistanciaDesta(-2, LINHA_DIAGONAL_CRESCENTE) == diagonalCrescenteMenos3
+	   and diagonalCrescenteMenos2->getCasaDistanciaDesta(-1, LINHA_DIAGONAL_CRESCENTE) == diagonalCrescenteMenos3){
+		cout << "\tgetCasaDistanciaDesta está OK (3 de 3).\n";
+	} else {
+		cout << "\tgetCasaDistanciaDesta está NOT_OK (3 de 3).\n";
+	}
 
 	/*
 	* Testes de desempenho.
