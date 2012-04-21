@@ -8,8 +8,23 @@
 class tabuleiroTetralath{
 	public:
 		//dados
+		/*
+		* O número total de casas do tabuleiro.
+		*/
 		static const int NUMERO_CASAS = 61;
 		
+		/*
+		* Indicam valores extremos e neutro de aplicações da função de avaliação.
+		*/
+		static float PERDA = -1.0;
+		static float EMPATE = 0.0;
+		static float VITORIA = 1.0;
+		
+		/*
+		* Indica que não há estado atingível. É necessário no minimax.
+		*/
+		static const int NAO_HA_ESTADO_ATINGIVEL = 0;
+
 		//métodos
 		/*
 		* Construtor da classe.
@@ -60,13 +75,68 @@ class tabuleiroTetralath{
 		* 	Atenção: false como retorno indica apenas que não houve empate, nada diz sobre ganhadores ou perdedores.
 		*/
 		bool houveEmpate(void);
-
+		/*
+		* @return Ponteiro cópia do objeto em que for invocada. A cópia possui exatamente o mesmo conteúdo,
+		* 		  mas é armazenada em outra posição de memória.
+		*/
+		tabuleiroTetralath* clonar(void);
+		/*
+		* Torna o objeto no qual é invocado uma cópia do objeto que é passado como parâmetro. As cópias ocupam posições diferentes de memória.
+		* @param modelo_param Tabuleiro que será copiado.
+		*/
+		void copiarDe(tabuleiroTetralath modelo_param);
+		/*
+		* Avalia a utilidade deste tabuleiro para as peças de parâmetro, isto é, o quão favorável o tabuleiro está.
+		* @param pecas_avaliacao_param A cor das peças que será usada para avaliar o tabuleiro (PECAS_BRANCAS ou PECAS_PRETAS).
+		* @return Um valor float entre -1 e 1. A interpretação é de -1 (PERDA) para perda, 0 (EMPATE) para 
+		* 		  empate e 1 (VITORIA) para vitória. Número decimais são permitidos.
+		*/
+		float avaliarParaPecasDaCor(int pecas_avaliacao_param);
+		/*
+		* Procura, em uma ordenação interna dos estados, algum que esteja na posição fornecida.
+		* @param posicao_param A posição, na ordenação encapsulada desta classe, do estado.
+		* @return Ponteiro para outro estado (atingível à partir do estado dado) ou NAO_HA_ESTADO_ATINGIVEL (definido nesta classe).
+		* Exemplo: Se de um estado 3 outros forem atingíveis, a chamada a esta função com 1 retorna o primeiro, 2 retorna o
+		* segundo e 3 retorna o terceiro. Qualquer número maior retorna NAO_HA_ESTADO_ATINGIVEL. Para números menores que 1,
+		* deve retornar NAO_HA_ESTADO_ATINGIVEL também.
+		*/
+		tabuleiroTetralath* procurarEstadoAtingivelNaPosicao(int posicao_param);
+		/*
+		* @return O nome da casa na qual foi feita a última jogada.
+		*/
+		int recuperarNomeCasaUltimaJogada(void);
+		/*
+		* @return A cor (PECAS_PRETAS ou PECAS_BRANCAS) das peças que jogaram na última jogada.
+		*/
+		int recuperarCorPecasUltimaJogada(void);
+		/*
+		* @return O número de tabuleiros diferentes que podem ser criados inserindo uma peça neste.
+		*		  Considera-se apenas movimentos legais.
+		*/
+		int calcularNumeroMovimentosLegais(void);
+		
 	private:
 		//dados
 		/*
 		* Array construído no momento da criação com os dados de todas as casas deste tabuleiro.
 		*/
 		casaTabuleiroTetralath **tabuleiro;
+		
+		/*
+		* Nome da casa (entre INDICE_PRIMEIRA_CASA e INDICE_ULTIMA_CASA) na qual foi feita a última jogada.
+		*/
+		int casaUltimaJogada;
+		
+		/*
+		* A cor (PECAS_PRETAS ou PECAS_BRANCAS) das peças que jogaram na última jogada.
+		*/
+		int corUltimaJogada;
+		
+		/*
+		* Índices de casas no array que representa o tabuleiro.
+		*/
+		static const int INDICE_PRIMEIRA_CASA = 0;
+		static const int INDICE_ULTIMA_CASA = 60;
 		
 		//métodos
 		/*
