@@ -3,6 +3,11 @@
 /*
 * Classe que implementa um tabuleiro do jogo Tetralath.
 */
+
+/*************************************************************************************
+* ATENÇÃO: À partir daqui, todos métodos são públicos
+*************************************************************************************/
+
 /*
 * Construtor da classe.
 * Inicializa todas as casas com seus vizinhos.
@@ -103,6 +108,8 @@ bool tabuleiroTetralath::casaOcupadaPorPecaBranca(int nomeCasa_param){
 * @return Booleano indicando se foi possível realizar a jogada.
 */
 bool tabuleiroTetralath::jogar(int nomeCasa_param, int corPecas_param){
+	casaUltimaJogada = nomeCasa_param;
+	corUltimaJogada = corPecas_param;
 	return tabuleiro[nomeCasa_param]->ocuparCom(corPecas_param);
 }
 
@@ -143,6 +150,123 @@ bool tabuleiroTetralath::houveEmpate(void){
 	}
 	return !encontrouCasaDesocupada;
 }
+
+/*
+* @return O nome da casa na qual foi feita a última jogada.
+*/
+int tabuleiroTetralath::recuperarNomeCasaUltimaJogada(void){
+	return casaUltimaJogada;
+}
+
+/*
+* @return Ponteiro cópia do objeto em que for invocada. A cópia possui exatamente o mesmo conteúdo,
+* 		  mas é armazenada em outra posição de memória.
+*/
+tabuleiroTetralath* clonar(void){
+	tabuleiroTetralath tabuleiroClone = new tabuleiroTetralath();
+	tabuleiroClone.copiarDe(this);
+	return tabuleiroClone;
+}
+
+/*
+* Torna o objeto no qual é invocado uma cópia do objeto que é passado como parâmetro. As cópias ocupam posições diferentes de memória.
+* @param modelo_param Tabuleiro que será copiado.
+*/
+void copiarDe(tabuleiroTetralath modelo_param){
+	for(int nomeCasa=INDICE_PRIMEIRA_CASA; nomeCasa<NUMERO_CASAS; nomeCasa++){
+		if(modelo_param.casaOcupada(nomeCasa)){
+			if(modelo_param.casaOcupadaPorPecaBranca(nomeCasa)){
+				jogar(nomeCasa, casaTabuleiroTetralath::PECAS_BRANCAS);
+			} else {
+				jogar(nomeCasa, casaTabuleiroTetralath::PECAS_PRETAS);
+			}
+		}
+	}
+	casaUltimaJogada = modelo_param.recuperarNomeCasaUltimaJogada();
+	corUltimaJogada = modelo_param.recuperarCorPecasUltimaJogada();
+}
+
+/*
+* Avalia a utilidade deste tabuleiro para as peças de parâmetro, isto é, o quão favorável o tabuleiro está.
+* @param pecas_avaliacao_param A cor das peças que será usada para avaliar o tabuleiro (PECAS_BRANCAS ou PECAS_PRETAS).
+* @return Um valor float entre -1 e 1. A interpretação é de -1 (PERDA) para perda, 0 (EMPATE) para 
+* 		  empate e 1 (VITORIA) para vitória. Número decimais são permitidos.
+*/
+float avaliarParaPecasDaCor(int pecas_avaliacao_param){
+	return VITORIA;
+}
+
+/*
+* Procura, em uma ordenação interna dos estados, algum que esteja na posição fornecida.
+* @param posicao_param A posição, na ordenação encapsulada desta classe, do estado.
+* @return Ponteiro para outro estado (atingível à partir do estado dado) ou NAO_HA_ESTADO_ATINGIVEL (definido nesta classe).
+* Exemplo: Se de um estado 3 outros forem atingíveis, a chamada a esta função com 1 retorna o primeiro, 2 retorna o
+* segundo e 3 retorna o terceiro. Qualquer número maior retorna NAO_HA_ESTADO_ATINGIVEL. Para números menores que 1,
+* deve retornar NAO_HA_ESTADO_ATINGIVEL também.
+*/
+tabuleiroTetralath* procurarEstadoAtingivelNaPosicao(int posicao_param){
+	int numeroMovimentosLegais = calcularNumeroMovimentosLegais();
+	int estadosQueAindaDevemSerIgnorados = posicao_param - 1;
+	int corJogar = (corUltimaJogada == casaTabuleiroTetralath::PECAS_BRANCAS? casaTabuleiroTetralath::PECAS_PRETAS : casaTabuleiroTetralath::PECAS_BRANCAS);
+	int nomeCasaJogar;
+	int nomeCasa;
+
+	if(posicao_param < 1 or numeroMovimentosLegais < posicao_param){
+		return NAO_HA_ESTADO_ATINGIVEL;
+	}
+
+	tabuleiroTetralath* estadoAtingivelNaPosicao;
+	*estadoAtingivelNaPosicao = new tabuleiroTetralath();
+	estadoAtingivelNaPosicao.copiarDe(this);
+
+	nomeCasa = INDICE_PRIMEIRA_CASA;
+	while(0 < estadosQueAindaDevemSerIgnorados){
+		if(casaOcupada(nomeCasa)){
+			estadosQueAindaDevemSerIgnorados--;
+		}
+		nomeCasa++;
+	}
+
+	while(casaOcupada(nomeCasa)){
+		nomeCasa++;
+	}
+
+	nomeCasaJogar = nomeCasa;
+	estadoAtingivelNaPosicao.jogar(nomeCasaJogar, corJogar);
+	return estadoAtingivelNaPosicao;
+}
+
+/*
+* @return O nome da casa na qual foi feita a última jogada.
+*/
+int recuperarNomeCasaUltimaJogada(void){
+	return casaUltimaJogada;
+}
+
+/*
+* @return A cor (PECAS_PRETAS ou PECAS_BRANCAS) das peças que jogaram na última jogada.
+*/
+int recuperarCorPecasUltimaJogada(void){
+	return corUltimaJogada;
+}
+
+/*
+* @return O número de tabuleiros diferentes que podem ser criados inserindo uma peça neste.
+*		  Considera-se apenas movimentos legais.
+*/
+int calcularNumeroMovimentosLegais(void){
+	int numeroMovimentosLegais = 0;
+	for(int nomeCasa=INDICE_PRIMEIRA_CASA; nomeCasa<NUMERO_CASAS; nomeCasa++){
+		if(!casaOcupada(nomeCasa)){
+			numeroMovimentosLegais++;
+		}
+	}
+	return numeroMovimentosLegais;
+}
+
+/*************************************************************************************
+* ATENÇÃO: À partir daqui, todos métodos são privados
+*************************************************************************************/
 
 /*
 * Procura por uma seqüência de um número de casas ocupadas por peças da mesma cor.
