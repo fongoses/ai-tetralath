@@ -130,7 +130,8 @@ static tabuleiroTetralath ia::minimax(tabuleiroTetralath estado_inicial_param,
 			filhoAtual++;
 			estadoFilho = estado_inicial_param.procurarEstadoAtingivelNaPosicao(filhoAtual);
 		}
-		indiceMelhorValorEncontradoNaSubarvore = procurarMelhor(valoresEncontradosNaSubarvore, numeroDeFilhos, tipo_jogada_param);
+		//Usa-se filhoAtual-1 ao invés de numeroDeFilhos, pois numeroDeFilhos causaria invasão de memória se deve_parar_param tivesse sido acionado.
+		indiceMelhorValorEncontradoNaSubarvore = procurarMelhor(valoresEncontradosNaSubarvore, filhoAtual-1, tipo_jogada_param);
 		melhorEstadoEncontrado = &(resultadosParciaisFilhos[indiceMelhorValorEncontradoNaSubarvore]);
 		resultado_parcial_param->copiarDe(*melhorEstadoEncontrado);
 		melhorValorEncontradoNaSubarvore = melhorEstadoEncontrado.avaliarParaPecasDaCor(cor_pecas_avaliacao_param);
