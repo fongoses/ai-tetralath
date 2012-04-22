@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <windows.h>
 #include "tabuleiroTetralath.h"
 
 #define COR_VERDE_LINUX \033[22;32m
@@ -6,13 +7,6 @@
 #define COR_PRETA_LINUX \033[22;30m
 #define COR_BRANCA_LINUX \033[01;37m
 #define COR_CINZA_LINUX \033[22;37m
-
-#define COR_VERDE_WINDOWS \033[22;32m
-#define COR_VERMELHA_WINDOWS \033[22;31m
-#define COR_PRETA_WINDOWS \033[22;30m
-#define COR_BRANCA_WINDOWS \033[01;37m
-#define COR_CINZA_WINDOWS \033[22;37m
-
 
 /*
 * Classe que implementa um tabuleiro do jogo Tetralath.
@@ -302,37 +296,48 @@ void tabuleiroTetralath::imprimirCasa(int indice_casa_pintar_param, int casa_sel
 		if(casaOcupada(indice_casa_pintar_param)){ //Pintar P ou B com vermelho e piscando ou não.
 			if(casaOcupadaPorPecaBranca(indice_casa_pintar_param)){ //Pintar B com vermelho e piscando ou não.
 				if(recuperarNomeCasaUltimaJogada() == indice_casa_pintar_param){ //Pintar B com vermelho e piscando.
-					printf("X");																		
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_RED | FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY | BACKGROUND_INTENSITY);
+					printf("B");																		
 				} else { //Pintar B com vermelho e não piscando.
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_RED | FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
 					printf("B");																						
 				}
 			} else { //Pintar P com vermelho e piscando ou não.
 				if(recuperarNomeCasaUltimaJogada() == indice_casa_pintar_param){ //Pintar P com vermelho e piscando.
-					printf("X");																						
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY | BACKGROUND_INTENSITY);
+					printf("P");																						
 				} else { //Pintar P com vermelho e não piscando.
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
 					printf("P");																						
 				}
 			}
 		} else { //Pintar N com verde.
-			printf("X");																								
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_GREEN | FOREGROUND_GREEN | FOREGROUND_RED);
+			printf("N");																								
 		}
 	} else { //Pintar P, B ou N com cor branca, preta ou cinza piscando ou não.
 		if(casaOcupadaPorPecaBranca(indice_casa_pintar_param)){ //Pintar B com cor branca piscando ou não.
 			if(recuperarNomeCasaUltimaJogada() == indice_casa_pintar_param){ //Pintar B com cor branca piscando.
-				printf("X");																							
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY | BACKGROUND_INTENSITY);
+				printf("B");																							
 			} else { //Pintar B com cor branca não piscando.
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN);
 				printf("B");																							
 			}
 		} else if(casaOcupada(indice_casa_pintar_param)){ //Pintar P com cor preta piscando ou não.
 			if(recuperarNomeCasaUltimaJogada() == indice_casa_pintar_param){ //Pintar P com cor preta piscando.
-				printf("X");																							
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY | BACKGROUND_INTENSITY);
+				printf("P");																							
 			} else { //Pintar P com cor preta não piscando.
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | FOREGROUND_GREEN);
 				printf("P");																							
 			}
 		} else { //Pintar N com cor cinza não piscando.
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN | FOREGROUND_RED);
 			printf("N");																								
 		}
 	}
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 }
 
 /*
@@ -354,77 +359,75 @@ void tabuleiroTetralath::imprimirDeCasaAtehCasa(int casa_inicial_param, int casa
 * Imprime este tabuleiro na tela, considerando interface do terminal.
 * Colocará B em posições ocupadas por peças brancas, P em posições ocupadas por peças pretas
 * e N em posição não ocupadas. Exemplos de tabuleiros impressos assim estão abaixo:
-+-----------------------+------------------------+------------------------+------------------------+
-|X 1 2 3 4 5 6 7 8 9  X | X 1 2 3 4 5 6 7 8 9  X | X 1 2 3 4 5 6 7 8 9  X | X 1 2 3 4 5 6 7 8 9  X |
-|1     N N N N N      1 | 1     N N N N N      1 | 1     N N N N N      1 | 1     B B P B B      1 |
-|2    N N N N N N     2 | 2    N N N N N N     2 | 2    N N N N N N     2 | 2    B P B B P B     2 |
-|3   N N N N N N N    3 | 3   N N B N N N N    3 | 3   N N N N B N N    3 | 3   P B B P N N N    3 |
-|4  N N N N N N N N   4 | 4  N N N B P N N N   4 | 4  N N N P P B P N   4 | 4  N N N N N N N N   4 |
-|5 N N N N N N N N N  5 | 5 N N N P B P N N N  5 | 5 N N N N N N B N N  5 | 5 N N N N N N N N N  5 |
-|6  N N N N N N N N   6 | 6  N N N N B N N N   6 | 6  N N N N N N N N   6 | 6  N N N N N N N N   6 |
-|7   N N N N N N N    7 | 7   N N N N N N N    7 | 7   N N N N N N N    7 | 7   N N N N N N N    7 |
-|8    N N N N N N     8 | 8    N N N N N N     8 | 8    N N N N N N     8 | 8    N N N N N N     8 |
-|9     N N N N N      9 | 9     N N N N N      9 | 9     N N N N N      9 | 9     N N N N N      9 |
-|X 1 2 3 4 5 6 7 8 9  X | X 1 2 3 4 5 6 7 8 9  X | X 1 2 3 4 5 6 7 8 9  X | X 1 2 3 4 5 6 7 8 9  X |
-+-----------------------+------------------------+------------------------+------------------------+
++------------------------+------------------------+------------------------+------------------------+
+| X 1 2 3 4 5 6 7 8 9  X | X 1 2 3 4 5 6 7 8 9  X | X 1 2 3 4 5 6 7 8 9  X | X 1 2 3 4 5 6 7 8 9  X |
+| 1     N N N N N      1 | 1     N N N N N      1 | 1     N N N N N      1 | 1     B B P B B      1 |
+| 2    N N N N N N     2 | 2    N N N N N N     2 | 2    N N N N N N     2 | 2    B P B B P B     2 |
+| 3   N N N N N N N    3 | 3   N N B N N N N    3 | 3   N N N N B N N    3 | 3   P B B P N N N    3 |
+| 4  N N N N N N N N   4 | 4  N N N B P N N N   4 | 4  N N N P P B P N   4 | 4  N N N N N N N N   4 |
+| 5 N N N N N N N N N  5 | 5 N N N P B P N N N  5 | 5 N N N N N N B N N  5 | 5 N N N N N N N N N  5 |
+| 6  N N N N N N N N   6 | 6  N N N N B N N N   6 | 6  N N N N N N N N   6 | 6  N N N N N N N N   6 |
+| 7   N N N N N N N    7 | 7   N N N N N N N    7 | 7   N N N N N N N    7 | 7   N N N N N N N    7 |
+| 8    N N N N N N     8 | 8    N N N N N N     8 | 8    N N N N N N     8 | 8    N N N N N N     8 |
+| 9     N N N N N      9 | 9     N N N N N      9 | 9     N N N N N      9 | 9     N N N N N      9 |
+| X 1 2 3 4 5 6 7 8 9  X | X 1 2 3 4 5 6 7 8 9  X | X 1 2 3 4 5 6 7 8 9  X | X 1 2 3 4 5 6 7 8 9  X |
++------------------------+------------------------+------------------------+------------------------+
 * Adicionalmente, toda letra P possui a cor preta, B possui a cor branca e N possui a cor cinza.
 * A casa em que foi feita a última jogada ficará piscando.
 * @param casa_selecionada_param Permite pintar uma casa com uma cor. As casas são identificadas por seus índices (entre INDICE_PRIMEIRA_CASA e INDICE_ULTIMA_CASA).
 *		 A cor será verde se a casa puder ser ocupada e vermelha se não puder. Esta cor têm preferência sobre todas as outras.
 */
 void tabuleiroTetralath::imprimir(int casa_selecionada_param){
-	printf("\t\t\t\n\n\n\n\n\n\n\n");
-	printf("\t\t\t+-----------------------+\n");
-	printf("\t\t\t|X 1 2 3 4 5 6 7 8 9  X |\n");
+	printf("\t\t\t+------------------------+\n");
+	printf("\t\t\t| X 1 2 3 4 5 6 7 8 9  X |\n");
 	
 	//linha 1
-	printf("\t\t\t|1     ");
+	printf("\t\t\t| 1     ");
 	imprimirDeCasaAtehCasa(INDICE_PRIMEIRA_CASA, 4, casa_selecionada_param);
 	printf("     1 |\n");
 	
 	//linha 2
-	printf("\t\t\t|2    ");
+	printf("\t\t\t| 2    ");
 	imprimirDeCasaAtehCasa(5, 10, casa_selecionada_param);
 	printf("    2 |\n");
 	
 	//linha 3
-	printf("\t\t\t|3   ");
+	printf("\t\t\t| 3   ");
 	imprimirDeCasaAtehCasa(11, 17, casa_selecionada_param);
 	printf("   3 |\n");
 	
 	//linha 4
-	printf("\t\t\t|4  ");
+	printf("\t\t\t| 4  ");
 	imprimirDeCasaAtehCasa(18, 25, casa_selecionada_param);
 	printf("  4 |\n");
 	
 	//linha 5
-	printf("\t\t\t|5 ");
+	printf("\t\t\t| 5 ");
 	imprimirDeCasaAtehCasa(26, 34, casa_selecionada_param);
 	printf(" 5 |\n");
 	
 	//linha 6
-	printf("\t\t\t|6  ");
+	printf("\t\t\t| 6  ");
 	imprimirDeCasaAtehCasa(35, 42, casa_selecionada_param);
 	printf("  6 |\n");
 	
 	//linha 7
-	printf("\t\t\t|7   ");
+	printf("\t\t\t| 7   ");
 	imprimirDeCasaAtehCasa(43, 49, casa_selecionada_param);
 	printf("   7 |\n");
 	
 	//linha 8
-	printf("\t\t\t|8    ");
+	printf("\t\t\t| 8    ");
 	imprimirDeCasaAtehCasa(50, 55, casa_selecionada_param);
 	printf("    8 |\n");
 	
 	//linha 9
-	printf("\t\t\t|9     ");
+	printf("\t\t\t| 9     ");
 	imprimirDeCasaAtehCasa(56, 60, casa_selecionada_param);
 	printf("     9 |\n");
 	
-	printf("\t\t\t|X 1 2 3 4 5 6 7 8 9  X |\n");
-	printf("\t\t\t+-----------------------+\n");
-	printf("\t\t\t\n");
+	printf("\t\t\t| X 1 2 3 4 5 6 7 8 9  X |\n");
+	printf("\t\t\t+------------------------+\n");
 }
 
 /*************************************************************************************
