@@ -312,7 +312,7 @@ void tabuleiroTetralath::imprimirCasa(int indice_casa_pintar_param, int casa_sel
 				}
 			}
 		} else { //Pintar N com verde.
-			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY);
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY | BACKGROUND_INTENSITY);
 			printf("N");																								
 		}
 	} else { //Pintar P, B ou N com cor branca, preta ou cinza piscando ou não.

@@ -42,7 +42,7 @@ using namespace std;
 
 void imprimirCoresWindows(void);
 void imprimirTelaTabuleiro(int casaAtual_param, int pecasDaVez_param, tabuleiroTetralath *tabuleiro_param);
-void imprimirTelaResultado(int cor_pecas_ganhadoras_param);
+void imprimirTelaResultado(int cor_pecas_ganhadoras_param, int casaAtual_param, tabuleiroTetralath *tabuleiro_param);
 int getIndiceCasaMovimento(int movimento_param, int casa_partida_param);
 bool fazerJogada(tabuleiroTetralath *tabuleiro_param, int casaAtual_param, int pecasDaVez_param);
 
@@ -96,17 +96,19 @@ bool fazerJogada(tabuleiroTetralath *tabuleiro_param, int casaAtual_param, int p
 	bool conseguiuJogar;
 	bool jogoAcabou = false;
 
+	int CASA_INEXISTENTE = -1;
+
 	conseguiuJogar = tabuleiro_param->jogar(casaAtual_param, pecasDaVez_param);
 	if(conseguiuJogar){
 		(pecasDaVez_param == casaTabuleiroTetralath::PECAS_BRANCAS) ? 
 			pecasDaVez = casaTabuleiroTetralath::PECAS_PRETAS : pecasDaVez = casaTabuleiroTetralath::PECAS_BRANCAS;
 		if(tabuleiro_param->pecasDaMesmaCorGanharam(tabuleiro_param->recuperarNomeCasaUltimaJogada())){
 			jogoAcabou = true;
-			imprimirTelaResultado(tabuleiro_param->recuperarCorPecasUltimaJogada());
+			imprimirTelaResultado(tabuleiro_param->recuperarCorPecasUltimaJogada(), CASA_INEXISTENTE, tabuleiro_param);
 		} else if(tabuleiro_param->pecasDaMesmaCorPerderam(tabuleiro_param->recuperarNomeCasaUltimaJogada())){
 			jogoAcabou = true;
 			tabuleiro_param->recuperarCorPecasUltimaJogada() == casaTabuleiroTetralath::PECAS_BRANCAS?
-				imprimirTelaResultado(casaTabuleiroTetralath::PECAS_PRETAS) : imprimirTelaResultado(casaTabuleiroTetralath::PECAS_BRANCAS);
+				imprimirTelaResultado(casaTabuleiroTetralath::PECAS_PRETAS, CASA_INEXISTENTE, tabuleiro_param) : imprimirTelaResultado(casaTabuleiroTetralath::PECAS_BRANCAS, CASA_INEXISTENTE, tabuleiro_param);
 		}
 	}
 
@@ -191,7 +193,8 @@ int getIndiceCasaMovimento(int movimento_param, int casa_partida_param){
 */
 void imprimirTelaTabuleiro(int casaAtual_param, int pecasDaVez_param, tabuleiroTetralath *tabuleiro_param){
 	system("cls");
-	printf("\t\t\t\t TETRALATH");
+	printf("\t\t\t\t TEXTLATH\n\n");
+	printf("\t\t\t O tetralath em modo texto!\n");
 
 	if(pecasDaVez_param == casaTabuleiroTetralath::PECAS_BRANCAS){
 		printf("\n\n\t\t\tEh a vez das pecas BRANCAS");
@@ -204,7 +207,8 @@ void imprimirTelaTabuleiro(int casaAtual_param, int pecasDaVez_param, tabuleiroT
 	printf("\n\n\n\n");
 
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
-	printf("[W] CIMA [A] ESQUERDA [S] BAIXO [D] DIREITA\n");
+	printf("[W] DIAGONAL ESQUERDA SUPERIOR (CIMA) [S] DIAGONAL DIREITA INFEROR (BAIXO)\n");
+	printf("[A] ESQUERDA [D] DIREITA\n");
 	printf("[J] JOGAR\n");
 	printf("[Q] SAIR\n");
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
@@ -213,14 +217,20 @@ void imprimirTelaTabuleiro(int casaAtual_param, int pecasDaVez_param, tabuleiroT
 /*
 * Imprime a tela do resultado de um jogo.
 * @param cor_pecas_ganhadoras_param A cor das peças que ganharam o jogo.
+* @param casaAtual_param A casa em que está o cursor.
+* @param tabuleiro_param O tabuleiro que será impresso.
 */
-void imprimirTelaResultado(int cor_pecas_ganhadoras_param){
+void imprimirTelaResultado(int cor_pecas_ganhadoras_param, int casaAtual_param, tabuleiroTetralath *tabuleiro_param){
 	system("cls");
-	printf("\t\t\t\t TETRALATH");
+	printf("\t\t\t\t TEXTLATH\n\n");
+	printf("\t\t\t O tetralath em modo texto!\n");
 
 	printf("\n\n\t\t\t\tFim do jogo!");
 
 	printf("\n\n\n\n");
+	tabuleiro_param->imprimir(casaAtual_param);
+	printf("\n\n\n\n");
+
 	if(cor_pecas_ganhadoras_param == casaTabuleiroTetralath::PECAS_BRANCAS){
 		printf("\t\t\tAs pecas BRANCAS ganharam!");
 	} else {
