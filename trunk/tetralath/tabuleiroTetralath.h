@@ -114,6 +114,29 @@ class tabuleiroTetralath{
 		*		  Considera-se apenas movimentos legais.
 		*/
 		int calcularNumeroMovimentosLegais(void);
+		/*
+		* Imprime este tabuleiro na tela, considerando interface do terminal.
+		* Colocará B em posições ocupadas por peças brancas, P em posições ocupadas por peças pretas
+		* e N em posição não ocupadas. Exemplos de tabuleiros impressos assim estão abaixo:
+		+-----------------------+------------------------+------------------------+------------------------+
+		|X 1 2 3 4 5 6 7 8 9  X | X 1 2 3 4 5 6 7 8 9  X | X 1 2 3 4 5 6 7 8 9  X | X 1 2 3 4 5 6 7 8 9  X |
+		|1     N N N N N      1 | 1     N N N N N      1 | 1     N N N N N      1 | 1     B B P B B      1 |
+		|2    N N N N N N     2 | 2    N N N N N N     2 | 2    N N N N N N     2 | 2    B P B B P B     2 |
+		|3   N N N N N N N    3 | 3   N N B N N N N    3 | 3   N N N N B N N    3 | 3   P B B P N N N    3 |
+		|4  N N N N N N N N   4 | 4  N N N B P N N N   4 | 4  N N N P P B P N   4 | 4  N N N N N N N N   4 |
+		|5 N N N N N N N N N  5 | 5 N N N P B P N N N  5 | 5 N N N N N N B N N  5 | 5 N N N N N N N N N  5 |
+		|6  N N N N N N N N   6 | 6  N N N N B N N N   6 | 6  N N N N N N N N   6 | 6  N N N N N N N N   6 |
+		|7   N N N N N N N    7 | 7   N N N N N N N    7 | 7   N N N N N N N    7 | 7   N N N N N N N    7 |
+		|8    N N N N N N     8 | 8    N N N N N N     8 | 8    N N N N N N     8 | 8    N N N N N N     8 |
+		|9     N N N N N      9 | 9     N N N N N      9 | 9     N N N N N      9 | 9     N N N N N      9 |
+		|X 1 2 3 4 5 6 7 8 9  X | X 1 2 3 4 5 6 7 8 9  X | X 1 2 3 4 5 6 7 8 9  X | X 1 2 3 4 5 6 7 8 9  X |
+		+-----------------------+------------------------+------------------------+------------------------+
+		* Adicionalmente, toda letra P possui a cor preta, B possui a cor branca e N possui a cor cinza.
+		* A casa em que foi feita a última jogada ficará piscando.
+		* @param casa_selecionada_param Permite pintar uma casa com uma cor. As casas são identificadas por seus índices (entre INDICE_PRIMEIRA_CASA e INDICE_ULTIMA_CASA).
+		*		 A cor será verde se a casa puder ser ocupada e vermelha se não puder. Esta cor têm preferência sobre todas as outras.
+		*/
+		void imprimir(int casa_selecionada_param);
 		
 	private:
 		//dados
