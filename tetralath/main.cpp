@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "ia.h"
-
+using namespace std;
 
 
 /*
@@ -13,7 +13,7 @@
 
 
 int main(){
-	tabuleiroTetralth tabuleiro = *(new tabuleiroTetralth());
+	tabuleiroTetralath tabuleiro = *(new tabuleiroTetralath());
 	tabuleiro.imprimir(0);
 	
 	

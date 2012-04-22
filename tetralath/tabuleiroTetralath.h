@@ -16,9 +16,9 @@ class tabuleiroTetralath{
 		/*
 		* Indicam valores extremos e neutro de aplicações da função de avaliação.
 		*/
-		static float PERDA = -1.0;
-		static float EMPATE = 0.0;
-		static float VITORIA = 1.0;
+		static const float PERDA = -1.0;
+		static const float EMPATE = 0.0;
+		static const float VITORIA = 1.0;
 		
 		/*
 		* Indica que não há estado atingível. É necessário no minimax.
@@ -76,15 +76,15 @@ class tabuleiroTetralath{
 		*/
 		bool houveEmpate(void);
 		/*
+		* Torna o objeto no qual é invocado uma cópia do objeto que é passado como parâmetro. As cópias ocupam posições diferentes de memória.
+		* @param modelo_param Tabuleiro que será copiado.
+		*/
+		void copiarDe(tabuleiroTetralath *modelo_param);
+		/*
 		* @return Ponteiro cópia do objeto em que for invocada. A cópia possui exatamente o mesmo conteúdo,
 		* 		  mas é armazenada em outra posição de memória.
 		*/
 		tabuleiroTetralath* clonar(void);
-		/*
-		* Torna o objeto no qual é invocado uma cópia do objeto que é passado como parâmetro. As cópias ocupam posições diferentes de memória.
-		* @param modelo_param Tabuleiro que será copiado.
-		*/
-		void copiarDe(tabuleiroTetralath modelo_param);
 		/*
 		* Avalia a utilidade deste tabuleiro para as peças de parâmetro, isto é, o quão favorável o tabuleiro está.
 		* @param pecas_avaliacao_param A cor das peças que será usada para avaliar o tabuleiro (PECAS_BRANCAS ou PECAS_PRETAS).
@@ -114,6 +114,28 @@ class tabuleiroTetralath{
 		*		  Considera-se apenas movimentos legais.
 		*/
 		int calcularNumeroMovimentosLegais(void);
+		/*
+		* Função auxiliar de imprimir.
+		* Imprime um único caractere (uma única casa do tabuleiro).
+		* É capaz de decidir que cor a casa deve ter, com base nos seguintes critérios:
+		* Colocará B em posições ocupadas por peças brancas, P em posições ocupadas por peças pretas
+		* e N em posição não ocupadas.
+		* Adicionalmente, toda letra P possui a cor preta, B possui a cor branca e N possui a cor cinza.
+		* A casa em que foi feita a última jogada ficará piscando.
+		* @param indice_casa_pintar_param O índice (entre INDICE_PRIMEIRA_CASA e INDICE_ULTIMA_CASA) da casa que será pintada.
+		* @param casa_selecionada_param Permite pintar uma casa com uma cor. As casas são identificadas por seus índices (entre INDICE_PRIMEIRA_CASA e INDICE_ULTIMA_CASA).
+		*		 A cor será verde se a casa puder ser ocupada e vermelha se não puder. Esta cor têm preferência sobre todas as outras.
+		*/
+		void imprimirCasa(int indice_casa_pintar_param, int casa_selecionada_param);
+		/*
+		* Imprime casas separadas por espaços. A primeira impressão é de casa. A última, de espaço.
+		* As casas variam entre os índices dados.
+		* @param casa_inicial_param Nome da primeira casa a ser impressa.
+		* @param casa_final_param Nome da última casa a ser impressa.
+		* @param casa_selecionada_param Permite pintar uma casa com uma cor. As casas são identificadas por seus índices (entre INDICE_PRIMEIRA_CASA e INDICE_ULTIMA_CASA).
+		*		 A cor será verde se a casa puder ser ocupada e vermelha se não puder. Esta cor têm preferência sobre todas as outras.
+		*/
+		void imprimirDeCasaAtehCasa(int casa_inicial_param, int casa_final_param, int casa_selecionada_param);
 		/*
 		* Imprime este tabuleiro na tela, considerando interface do terminal.
 		* Colocará B em posições ocupadas por peças brancas, P em posições ocupadas por peças pretas
