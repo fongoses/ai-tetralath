@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "tabuleiroTetralath.h"
 
 /*
@@ -160,40 +161,35 @@ bool tabuleiroTetralath::houveEmpate(void){
 	return !encontrouCasaDesocupada;
 }
 
+
 /*
-* @return O nome da casa na qual foi feita a última jogada.
+* Torna o objeto no qual é invocado uma cópia do objeto que é passado como parâmetro. As cópias ocupam posições diferentes de memória.
+* @param modelo_param Tabuleiro que será copiado.
 */
-int tabuleiroTetralath::recuperarNomeCasaUltimaJogada(void){
-	return casaUltimaJogada;
+void tabuleiroTetralath::copiarDe(tabuleiroTetralath *modelo_param){
+	for(int nomeCasa=INDICE_PRIMEIRA_CASA; nomeCasa<NUMERO_CASAS; nomeCasa++){
+		if(modelo_param->casaOcupada(nomeCasa)){
+			if(modelo_param->casaOcupadaPorPecaBranca(nomeCasa)){
+				jogar(nomeCasa, (int) casaTabuleiroTetralath::PECAS_BRANCAS);
+			} else {
+				jogar(nomeCasa, (int) casaTabuleiroTetralath::PECAS_PRETAS);
+			}
+		}
+	}
+	casaUltimaJogada = modelo_param->recuperarNomeCasaUltimaJogada();
+	corUltimaJogada = modelo_param->recuperarCorPecasUltimaJogada();
 }
 
 /*
 * @return Ponteiro cópia do objeto em que for invocada. A cópia possui exatamente o mesmo conteúdo,
 * 		  mas é armazenada em outra posição de memória.
 */
-tabuleiroTetralath* clonar(void){
-	tabuleiroTetralath tabuleiroClone = new tabuleiroTetralath();
+tabuleiroTetralath* tabuleiroTetralath::clonar(void){
+	tabuleiroTetralath tabuleiroClone = *(new tabuleiroTetralath());
 	tabuleiroClone.copiarDe(this);
-	return tabuleiroClone;
+	return &tabuleiroClone;
 }
 
-/*
-* Torna o objeto no qual é invocado uma cópia do objeto que é passado como parâmetro. As cópias ocupam posições diferentes de memória.
-* @param modelo_param Tabuleiro que será copiado.
-*/
-void copiarDe(tabuleiroTetralath modelo_param){
-	for(int nomeCasa=INDICE_PRIMEIRA_CASA; nomeCasa<NUMERO_CASAS; nomeCasa++){
-		if(modelo_param.casaOcupada(nomeCasa)){
-			if(modelo_param.casaOcupadaPorPecaBranca(nomeCasa)){
-				jogar(nomeCasa, casaTabuleiroTetralath::PECAS_BRANCAS);
-			} else {
-				jogar(nomeCasa, casaTabuleiroTetralath::PECAS_PRETAS);
-			}
-		}
-	}
-	casaUltimaJogada = modelo_param.recuperarNomeCasaUltimaJogada();
-	corUltimaJogada = modelo_param.recuperarCorPecasUltimaJogada();
-}
 
 /*
 * Avalia a utilidade deste tabuleiro para as peças de parâmetro, isto é, o quão favorável o tabuleiro está.
@@ -201,7 +197,7 @@ void copiarDe(tabuleiroTetralath modelo_param){
 * @return Um valor float entre -1 e 1. A interpretação é de -1 (PERDA) para perda, 0 (EMPATE) para 
 * 		  empate e 1 (VITORIA) para vitória. Número decimais são permitidos.
 */
-float avaliarParaPecasDaCor(int pecas_avaliacao_param){
+float tabuleiroTetralath::avaliarParaPecasDaCor(int pecas_avaliacao_param){
 	return VITORIA;
 }
 
@@ -213,10 +209,10 @@ float avaliarParaPecasDaCor(int pecas_avaliacao_param){
 * segundo e 3 retorna o terceiro. Qualquer número maior retorna NAO_HA_ESTADO_ATINGIVEL. Para números menores que 1,
 * deve retornar NAO_HA_ESTADO_ATINGIVEL também.
 */
-tabuleiroTetralath* procurarEstadoAtingivelNaPosicao(int posicao_param){
+tabuleiroTetralath* tabuleiroTetralath::procurarEstadoAtingivelNaPosicao(int posicao_param){
 	int numeroMovimentosLegais = calcularNumeroMovimentosLegais();
 	int estadosQueAindaDevemSerIgnorados = posicao_param - 1;
-	int corJogar = (corUltimaJogada == casaTabuleiroTetralath::PECAS_BRANCAS? casaTabuleiroTetralath::PECAS_PRETAS : casaTabuleiroTetralath::PECAS_BRANCAS);
+	int corJogar = (corUltimaJogada == (int) casaTabuleiroTetralath::PECAS_BRANCAS? (int) casaTabuleiroTetralath::PECAS_PRETAS : (int) casaTabuleiroTetralath::PECAS_BRANCAS);
 	int nomeCasaJogar;
 	int nomeCasa;
 
@@ -225,8 +221,8 @@ tabuleiroTetralath* procurarEstadoAtingivelNaPosicao(int posicao_param){
 	}
 
 	tabuleiroTetralath* estadoAtingivelNaPosicao;
-	*estadoAtingivelNaPosicao = new tabuleiroTetralath();
-	estadoAtingivelNaPosicao.copiarDe(this);
+	estadoAtingivelNaPosicao = new tabuleiroTetralath();
+	estadoAtingivelNaPosicao->copiarDe(this);
 
 	nomeCasa = INDICE_PRIMEIRA_CASA;
 	while(0 < estadosQueAindaDevemSerIgnorados){
@@ -241,21 +237,21 @@ tabuleiroTetralath* procurarEstadoAtingivelNaPosicao(int posicao_param){
 	}
 
 	nomeCasaJogar = nomeCasa;
-	estadoAtingivelNaPosicao.jogar(nomeCasaJogar, corJogar);
+	estadoAtingivelNaPosicao->jogar(nomeCasaJogar, corJogar);
 	return estadoAtingivelNaPosicao;
 }
 
 /*
 * @return O nome da casa na qual foi feita a última jogada.
 */
-int recuperarNomeCasaUltimaJogada(void){
+int tabuleiroTetralath::recuperarNomeCasaUltimaJogada(void){
 	return casaUltimaJogada;
 }
 
 /*
 * @return A cor (PECAS_PRETAS ou PECAS_BRANCAS) das peças que jogaram na última jogada.
 */
-int recuperarCorPecasUltimaJogada(void){
+int tabuleiroTetralath::recuperarCorPecasUltimaJogada(void){
 	return corUltimaJogada;
 }
 
@@ -265,11 +261,11 @@ int recuperarCorPecasUltimaJogada(void){
 * ANTENCAO: Retornará 0 caso o jogo tenha acabado, mesmo que hajam casas livres. No entanto, 
 * ela só conseguirá percebe-lo caso o fim do jogo tenha acontecido na última jogada feita.
 */
-int calcularNumeroMovimentosLegais(void){
+int tabuleiroTetralath::calcularNumeroMovimentosLegais(void){
 	int numeroMovimentosLegais = 0;
 	
-	if(pecasDaMesmaCorGanharam(casaTabuleiroTetralath::PECAS_BRANCAS)
-	   or pecasDaMesmaCorGanharam(casaTabuleiroTetralath::PECAS_BRANCAS)){
+	if(pecasDaMesmaCorGanharam((int) casaTabuleiroTetralath::PECAS_BRANCAS)
+	   or pecasDaMesmaCorPerderam((int) casaTabuleiroTetralath::PECAS_BRANCAS)){
 		numeroMovimentosLegais = 0;
 	} else {
 		for(int nomeCasa=INDICE_PRIMEIRA_CASA; nomeCasa<NUMERO_CASAS; nomeCasa++){
@@ -280,6 +276,71 @@ int calcularNumeroMovimentosLegais(void){
 	}
 	
 	return numeroMovimentosLegais;
+}
+
+/*
+* Função auxiliar de imprimir.
+* Imprime um único caractere (uma única casa do tabuleiro).
+* É capaz de decidir que cor a casa deve ter, com base nos seguintes critérios:
+* Colocará B em posições ocupadas por peças brancas, P em posições ocupadas por peças pretas
+* e N em posição não ocupadas.
+* Adicionalmente, toda letra P possui a cor preta, B possui a cor branca e N possui a cor cinza.
+* A casa em que foi feita a última jogada ficará piscando.
+* @param indice_casa_pintar_param O índice (entre INDICE_PRIMEIRA_CASA e INDICE_ULTIMA_CASA) da casa que será pintada.
+* @param casa_selecionada_param Permite pintar uma casa com uma cor. As casas são identificadas por seus índices (entre INDICE_PRIMEIRA_CASA e INDICE_ULTIMA_CASA).
+*		 A cor será verde se a casa puder ser ocupada e vermelha se não puder. Esta cor têm preferência sobre todas as outras.
+*/
+void tabuleiroTetralath::imprimirCasa(int indice_casa_pintar_param, int casa_selecionada_param){
+	if(indice_casa_pintar_param == casa_selecionada_param){ //Pintar P, B ou N com vermelho ou verde e piscando ou não.
+		if(casaOcupada(indice_casa_pintar_param)){ //Pintar P ou B com vermelho e piscando ou não.
+			if(casaOcupadaPorPecaBranca(indice_casa_pintar_param)){ //Pintar B com vermelho e piscando ou não.
+				if(recuperarNomeCasaUltimaJogada() == indice_casa_pintar_param){ //Pintar B com vermelho e piscando.
+					printf("B");																		
+				} else { //Pintar B com vermelho e não piscando.
+					printf("B");																						
+				}
+			} else { //Pintar P com vermelho e piscando ou não.
+				if(recuperarNomeCasaUltimaJogada() == indice_casa_pintar_param){ //Pintar P com vermelho e piscando.
+					printf("P");																						
+				} else { //Pintar P com vermelho e não piscando.
+					printf("P");																						
+				}
+			}
+		} else { //Pintar N com verde.
+			printf("N");																								
+		}
+	} else { //Pintar P, B ou N com cor branca, preta ou cinza piscando ou não.
+		if(casaOcupadaPorPecaBranca(indice_casa_pintar_param)){ //Pintar B com cor branca piscando ou não.
+			if(recuperarNomeCasaUltimaJogada() == indice_casa_pintar_param){ //Pintar B com cor branca piscando.
+				printf("B");																							
+			} else { //Pintar B com cor branca não piscando.
+				printf("B");																							
+			}
+		} else if(casaOcupada(indice_casa_pintar_param)){ //Pintar P com cor preta piscando ou não.
+			if(recuperarNomeCasaUltimaJogada() == indice_casa_pintar_param){ //Pintar P com cor preta piscando.
+				printf("P");																							
+			} else { //Pintar P com cor preta não piscando.
+				printf("P");																							
+			}
+		} else { //Pintar N com cor cinza não piscando.
+			printf("N");																								
+		}
+	}
+}
+
+/*
+* Imprime casas separadas por espaços. A primeira impressão é de casa. A última, de espaço.
+* As casas variam entre os índices dados.
+* @param casa_inicial_param Nome da primeira casa a ser impressa.
+* @param casa_final_param Nome da última casa a ser impressa.
+* @param casa_selecionada_param Permite pintar uma casa com uma cor. As casas são identificadas por seus índices (entre INDICE_PRIMEIRA_CASA e INDICE_ULTIMA_CASA).
+*		 A cor será verde se a casa puder ser ocupada e vermelha se não puder. Esta cor têm preferência sobre todas as outras.
+*/
+void tabuleiroTetralath::imprimirDeCasaAtehCasa(int casa_inicial_param, int casa_final_param, int casa_selecionada_param){
+	for(int nomeCasa=casa_inicial_param; nomeCasa<=casa_final_param; nomeCasa++){
+		imprimirCasa(nomeCasa, casa_selecionada_param);
+		printf(" ");
+	}
 }
 
 /*
@@ -303,9 +364,8 @@ int calcularNumeroMovimentosLegais(void){
 * A casa em que foi feita a última jogada ficará piscando.
 * @param casa_selecionada_param Permite pintar uma casa com uma cor. As casas são identificadas por seus índices (entre INDICE_PRIMEIRA_CASA e INDICE_ULTIMA_CASA).
 *		 A cor será verde se a casa puder ser ocupada e vermelha se não puder. Esta cor têm preferência sobre todas as outras.
-* ATENCAO: As duas funções auxiliares estão definidas logo abaixo desta.
 */
-void imprimir(int casa_selecionada_param){
+void tabuleiroTetralath::imprimir(int casa_selecionada_param){
 	printf("\n");
 	printf("+-----------------------+\n");
 	printf("|X 1 2 3 4 5 6 7 8 9  X |\n");
@@ -359,75 +419,6 @@ void imprimir(int casa_selecionada_param){
 	printf("+-----------------------+\n");
 	printf("\n");
 }
-
-/*
-* Função auxiliar de imprimir.
-* Imprime um único caractere (uma única casa do tabuleiro).
-* É capaz de decidir que cor a casa deve ter, com base nos seguintes critérios:
-* Colocará B em posições ocupadas por peças brancas, P em posições ocupadas por peças pretas
-* e N em posição não ocupadas.
-* Adicionalmente, toda letra P possui a cor preta, B possui a cor branca e N possui a cor cinza.
-* A casa em que foi feita a última jogada ficará piscando.
-* @param indice_casa_pintar_param O índice (entre INDICE_PRIMEIRA_CASA e INDICE_ULTIMA_CASA) da casa que será pintada.
-* @param casa_selecionada_param Permite pintar uma casa com uma cor. As casas são identificadas por seus índices (entre INDICE_PRIMEIRA_CASA e INDICE_ULTIMA_CASA).
-*		 A cor será verde se a casa puder ser ocupada e vermelha se não puder. Esta cor têm preferência sobre todas as outras.
-*/
-void imprimirCasa(int indice_casa_pintar_param, int casa_selecionada_param){
-	if(indice_casa_pintar_param == casa_selecionada_param){ //Pintar P, B ou N com vermelho ou verde e piscando ou não.
-		if(casaOcupada(indice_casa_pintar_param)){ //Pintar P ou B com vermelho e piscando ou não.
-			if(casaOcupadaPorPecaBranca(indice_casa_pintar_param)){ //Pintar B com vermelho e piscando ou não.
-				if(recuperarNomeCasaUltimaJogada() == indice_casa_pintar_param){ //Pintar B com vermelho e piscando.
-					printf(COR_VERMELHA+"B");																		
-				} else { //Pintar B com vermelho e não piscando.
-					printf(COR_VERMELHA+"B");																						
-				}
-			} else { //Pintar P com vermelho e piscando ou não.
-				if(recuperarNomeCasaUltimaJogada() == indice_casa_pintar_param){ //Pintar P com vermelho e piscando.
-					printf(COR_VERMELHA+"P");																						
-				} else { //Pintar P com vermelho e não piscando.
-					printf(COR_VERMELHA+"P");																						
-				}
-			}
-		} else { //Pintar N com verde.
-			printf(COR_VERDE+"N");																								
-		}
-	} else { //Pintar P, B ou N com cor branca, preta ou cinza piscando ou não.
-		if(casaOcupadaPorPecaBranca(indice_casa_pintar_param)){ //Pintar B com cor branca piscando ou não.
-			if(recuperarNomeCasaUltimaJogada() == indice_casa_pintar_param){ //Pintar B com cor branca piscando.
-				printf(COR_BRANCA+"B");																							
-			} else { //Pintar B com cor branca não piscando.
-				printf(COR_BRANCA+"B");																							
-			}
-		} else if(casaOcupada(indice_casa_pintar_param)){ //Pintar P com cor preta piscando ou não.
-			if(recuperarNomeCasaUltimaJogada() == indice_casa_pintar_param){ //Pintar P com cor preta piscando.
-				printf(COR_PRETA+"P");																							
-			} else { //Pintar P com cor preta não piscando.
-				printf(COR_PRETA+"P");																							
-			}
-		} else { //Pintar N com cor cinza não piscando.
-			printf(COR_CINZA+"N");																								
-		}
-	}
-}
-
-/*
-* Imprime casas separadas por espaços. A primeira impressão é de casa. A última, de espaço.
-* As casas variam entre os índices dados.
-* @param casa_inicial_param Nome da primeira casa a ser impressa.
-* @param casa_final_param Nome da última casa a ser impressa.
-* @param casa_selecionada_param Permite pintar uma casa com uma cor. As casas são identificadas por seus índices (entre INDICE_PRIMEIRA_CASA e INDICE_ULTIMA_CASA).
-*		 A cor será verde se a casa puder ser ocupada e vermelha se não puder. Esta cor têm preferência sobre todas as outras.
-*/
-void imprimirDeCasaAtehCasa(int casa_inicial_param, int casa_final_param, int casa_selecionada_param){
-	for(int nomeCasa=casa_inicial_param; nomeCasa<=casa_final_param; nomeCasa++){
-		imprimirCasa(nomeCasa, casa_selecionada_param);
-		printf(" ");
-	}
-}
-
-/*
-* Auxilia a função de impressão, 
-*/
 
 /*************************************************************************************
 * ATENÇÃO: À partir daqui, todos métodos são privados

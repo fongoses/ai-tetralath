@@ -107,6 +107,6 @@ class ia{
 	*						por aquele que tenha o menor valor (JOGADA_MIN).
 	* @return O objeto que mais se pareça com o objetivo.
 	*/
-	static int ia::procurarMelhor(tabuleiroTetralath array_param[], int tamanho_array_param, int objetivo_param);
+	static int procurarMelhor(tabuleiroTetralath array_param[], int tamanho_array_param, int objetivo_param);
 
-}
+};
