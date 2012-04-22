@@ -1,6 +1,15 @@
 #include "tabuleiroTetralath.h"
 
 /*
+* Atenção! Só funcionarão no linux!
+*/
+#define COR_VERDE \033[22;32m
+#define COR_VERMELHA \033[22;31m
+#define COR_PRETA \033[22;30m
+#define COR_BRANCA \033[01;37m
+#define COR_CINZA \033[22;37m
+
+/*
 * Classe que implementa um tabuleiro do jogo Tetralath.
 */
 
@@ -253,16 +262,172 @@ int recuperarCorPecasUltimaJogada(void){
 /*
 * @return O número de tabuleiros diferentes que podem ser criados inserindo uma peça neste.
 *		  Considera-se apenas movimentos legais.
+* ANTENCAO: Retornará 0 caso o jogo tenha acabado, mesmo que hajam casas livres. No entanto, 
+* ela só conseguirá percebe-lo caso o fim do jogo tenha acontecido na última jogada feita.
 */
 int calcularNumeroMovimentosLegais(void){
 	int numeroMovimentosLegais = 0;
-	for(int nomeCasa=INDICE_PRIMEIRA_CASA; nomeCasa<NUMERO_CASAS; nomeCasa++){
-		if(!casaOcupada(nomeCasa)){
-			numeroMovimentosLegais++;
+	
+	if(pecasDaMesmaCorGanharam(casaTabuleiroTetralath::PECAS_BRANCAS)
+	   or pecasDaMesmaCorGanharam(casaTabuleiroTetralath::PECAS_BRANCAS)){
+		numeroMovimentosLegais = 0;
+	} else {
+		for(int nomeCasa=INDICE_PRIMEIRA_CASA; nomeCasa<NUMERO_CASAS; nomeCasa++){
+			if(!casaOcupada(nomeCasa)){
+				numeroMovimentosLegais++;
+			}
 		}
 	}
+	
 	return numeroMovimentosLegais;
 }
+
+/*
+* Imprime este tabuleiro na tela, considerando interface do terminal.
+* Colocará B em posições ocupadas por peças brancas, P em posições ocupadas por peças pretas
+* e N em posição não ocupadas. Exemplos de tabuleiros impressos assim estão abaixo:
++-----------------------+------------------------+------------------------+------------------------+
+|X 1 2 3 4 5 6 7 8 9  X | X 1 2 3 4 5 6 7 8 9  X | X 1 2 3 4 5 6 7 8 9  X | X 1 2 3 4 5 6 7 8 9  X |
+|1     N N N N N      1 | 1     N N N N N      1 | 1     N N N N N      1 | 1     B B P B B      1 |
+|2    N N N N N N     2 | 2    N N N N N N     2 | 2    N N N N N N     2 | 2    B P B B P B     2 |
+|3   N N N N N N N    3 | 3   N N B N N N N    3 | 3   N N N N B N N    3 | 3   P B B P N N N    3 |
+|4  N N N N N N N N   4 | 4  N N N B P N N N   4 | 4  N N N P P B P N   4 | 4  N N N N N N N N   4 |
+|5 N N N N N N N N N  5 | 5 N N N P B P N N N  5 | 5 N N N N N N B N N  5 | 5 N N N N N N N N N  5 |
+|6  N N N N N N N N   6 | 6  N N N N B N N N   6 | 6  N N N N N N N N   6 | 6  N N N N N N N N   6 |
+|7   N N N N N N N    7 | 7   N N N N N N N    7 | 7   N N N N N N N    7 | 7   N N N N N N N    7 |
+|8    N N N N N N     8 | 8    N N N N N N     8 | 8    N N N N N N     8 | 8    N N N N N N     8 |
+|9     N N N N N      9 | 9     N N N N N      9 | 9     N N N N N      9 | 9     N N N N N      9 |
+|X 1 2 3 4 5 6 7 8 9  X | X 1 2 3 4 5 6 7 8 9  X | X 1 2 3 4 5 6 7 8 9  X | X 1 2 3 4 5 6 7 8 9  X |
++-----------------------+------------------------+------------------------+------------------------+
+* Adicionalmente, toda letra P possui a cor preta, B possui a cor branca e N possui a cor cinza.
+* A casa em que foi feita a última jogada ficará piscando.
+* @param casa_selecionada_param Permite pintar uma casa com uma cor. As casas são identificadas por seus índices (entre INDICE_PRIMEIRA_CASA e INDICE_ULTIMA_CASA).
+*		 A cor será verde se a casa puder ser ocupada e vermelha se não puder. Esta cor têm preferência sobre todas as outras.
+* ATENCAO: As duas funções auxiliares estão definidas logo abaixo desta.
+*/
+void imprimir(int casa_selecionada_param){
+	printf("\n");
+	printf("+-----------------------+\n");
+	printf("|X 1 2 3 4 5 6 7 8 9  X |\n");
+	
+	//linha 1
+	printf("|1     ");
+	imprimirDeCasaAtehCasa(INDICE_PRIMEIRA_CASA, 4, casa_selecionada_param);
+	printf("     1 |\n");
+	
+	//linha 2
+	printf("|2    ");
+	imprimirDeCasaAtehCasa(5, 10, casa_selecionada_param);
+	printf("    2 |\n");
+	
+	//linha 3
+	printf("|3   ");
+	imprimirDeCasaAtehCasa(11, 17, casa_selecionada_param);
+	printf("   3 |\n");
+	
+	//linha 4
+	printf("|4  ");
+	imprimirDeCasaAtehCasa(18, 25, casa_selecionada_param);
+	printf("  4 |\n");
+	
+	//linha 5
+	printf("|5 ");
+	imprimirDeCasaAtehCasa(26, 34, casa_selecionada_param);
+	printf(" 5 |\n");
+	
+	//linha 6
+	printf("|6  ");
+	imprimirDeCasaAtehCasa(35, 42, casa_selecionada_param);
+	printf("  6 |\n");
+	
+	//linha 7
+	printf("|7   ");
+	imprimirDeCasaAtehCasa(43, 49, casa_selecionada_param);
+	printf("   7 |\n");
+	
+	//linha 8
+	printf("|8    ");
+	imprimirDeCasaAtehCasa(50, 55, casa_selecionada_param);
+	printf("    8 |\n");
+	
+	//linha 9
+	printf("|9     ");
+	imprimirDeCasaAtehCasa(56, 60, casa_selecionada_param);
+	printf("     9 |\n");
+	
+	printf("|X 1 2 3 4 5 6 7 8 9  X |\n");
+	printf("+-----------------------+\n");
+	printf("\n");
+}
+
+/*
+* Função auxiliar de imprimir.
+* Imprime um único caractere (uma única casa do tabuleiro).
+* É capaz de decidir que cor a casa deve ter, com base nos seguintes critérios:
+* Colocará B em posições ocupadas por peças brancas, P em posições ocupadas por peças pretas
+* e N em posição não ocupadas.
+* Adicionalmente, toda letra P possui a cor preta, B possui a cor branca e N possui a cor cinza.
+* A casa em que foi feita a última jogada ficará piscando.
+* @param indice_casa_pintar_param O índice (entre INDICE_PRIMEIRA_CASA e INDICE_ULTIMA_CASA) da casa que será pintada.
+* @param casa_selecionada_param Permite pintar uma casa com uma cor. As casas são identificadas por seus índices (entre INDICE_PRIMEIRA_CASA e INDICE_ULTIMA_CASA).
+*		 A cor será verde se a casa puder ser ocupada e vermelha se não puder. Esta cor têm preferência sobre todas as outras.
+*/
+void imprimirCasa(int indice_casa_pintar_param, int casa_selecionada_param){
+	if(indice_casa_pintar_param == casa_selecionada_param){ //Pintar P, B ou N com vermelho ou verde e piscando ou não.
+		if(casaOcupada(indice_casa_pintar_param)){ //Pintar P ou B com vermelho e piscando ou não.
+			if(casaOcupadaPorPecaBranca(indice_casa_pintar_param)){ //Pintar B com vermelho e piscando ou não.
+				if(recuperarNomeCasaUltimaJogada() == indice_casa_pintar_param){ //Pintar B com vermelho e piscando.
+					printf(COR_VERMELHA+"B");																		
+				} else { //Pintar B com vermelho e não piscando.
+					printf(COR_VERMELHA+"B");																						
+				}
+			} else { //Pintar P com vermelho e piscando ou não.
+				if(recuperarNomeCasaUltimaJogada() == indice_casa_pintar_param){ //Pintar P com vermelho e piscando.
+					printf(COR_VERMELHA+"P");																						
+				} else { //Pintar P com vermelho e não piscando.
+					printf(COR_VERMELHA+"P");																						
+				}
+			}
+		} else { //Pintar N com verde.
+			printf(COR_VERDE+"N");																								
+		}
+	} else { //Pintar P, B ou N com cor branca, preta ou cinza piscando ou não.
+		if(casaOcupadaPorPecaBranca(indice_casa_pintar_param)){ //Pintar B com cor branca piscando ou não.
+			if(recuperarNomeCasaUltimaJogada() == indice_casa_pintar_param){ //Pintar B com cor branca piscando.
+				printf(COR_BRANCA+"B");																							
+			} else { //Pintar B com cor branca não piscando.
+				printf(COR_BRANCA+"B");																							
+			}
+		} else if(casaOcupada(indice_casa_pintar_param)){ //Pintar P com cor preta piscando ou não.
+			if(recuperarNomeCasaUltimaJogada() == indice_casa_pintar_param){ //Pintar P com cor preta piscando.
+				printf(COR_PRETA+"P");																							
+			} else { //Pintar P com cor preta não piscando.
+				printf(COR_PRETA+"P");																							
+			}
+		} else { //Pintar N com cor cinza não piscando.
+			printf(COR_CINZA+"N");																								
+		}
+	}
+}
+
+/*
+* Imprime casas separadas por espaços. A primeira impressão é de casa. A última, de espaço.
+* As casas variam entre os índices dados.
+* @param casa_inicial_param Nome da primeira casa a ser impressa.
+* @param casa_final_param Nome da última casa a ser impressa.
+* @param casa_selecionada_param Permite pintar uma casa com uma cor. As casas são identificadas por seus índices (entre INDICE_PRIMEIRA_CASA e INDICE_ULTIMA_CASA).
+*		 A cor será verde se a casa puder ser ocupada e vermelha se não puder. Esta cor têm preferência sobre todas as outras.
+*/
+void imprimirDeCasaAtehCasa(int casa_inicial_param, int casa_final_param, int casa_selecionada_param){
+	for(int nomeCasa=casa_inicial_param; nomeCasa<=casa_final_param; nomeCasa++){
+		imprimirCasa(nomeCasa, casa_selecionada_param);
+		printf(" ");
+	}
+}
+
+/*
+* Auxilia a função de impressão, 
+*/
 
 /*************************************************************************************
 * ATENÇÃO: À partir daqui, todos métodos são privados
