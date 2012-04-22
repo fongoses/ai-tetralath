@@ -1,7 +1,12 @@
+/*
+Para compilar no windows:
+	g++ main.cpp tabuleiroTetralath.cpp casaTabuleiroTetralath.cpp -o main
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
-#include "ia.h"
+#include "tabuleiroTetralath.h"
 using namespace std;
 
 
@@ -35,6 +40,7 @@ using namespace std;
 *
 */
 
+void imprimirCoresWindows(void);
 void imprimirTelaTabuleiro(int casaAtual_param, int pecasDaVez_param, tabuleiroTetralath *tabuleiro_param);
 void imprimirTelaResultado(int cor_pecas_ganhadoras_param);
 int getIndiceCasaMovimento(int movimento_param, int casa_partida_param);
@@ -55,6 +61,8 @@ int main(){
 
 	tabuleiroTetralath tabuleiro = *(new tabuleiroTetralath());
 
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
+
 	while(comandoUsuario != COMANDO_FECHAR and comandoUsuario != COMANDO_FECHAR_CAPS){
 		if(!jogoAcabou){
 			imprimirTelaTabuleiro(casaAtual, pecasDaVez, &tabuleiro);
@@ -72,6 +80,7 @@ int main(){
 	}
 
 	system("cls");
+	system("color 0f");
 
 	return 0;
 }
@@ -194,11 +203,11 @@ void imprimirTelaTabuleiro(int casaAtual_param, int pecasDaVez_param, tabuleiroT
 	tabuleiro_param->imprimir(casaAtual_param);
 	printf("\n\n\n\n");
 
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE);
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
 	printf("[W] CIMA [A] ESQUERDA [S] BAIXO [D] DIREITA\n");
 	printf("[J] JOGAR\n");
 	printf("[Q] SAIR\n");
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
 }
 
 /*
@@ -219,7 +228,73 @@ void imprimirTelaResultado(int cor_pecas_ganhadoras_param){
 	}
 	printf("\n\n\n\n");
 
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE);
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
 	printf("[Q] SAIR\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
+}
+
+
+/*
+* Imprime todas as cores possíveis no prompt no windows (Só funciona no windows!!!!!!).
+*/
+void imprimirCoresWindows(void){
+	system("cls");
+
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED);
+	printf("FOREGROUND_RED\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE);
+	printf("FOREGROUND_BLUE\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN);
+	printf("FOREGROUND_GREEN\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_BLUE);
+	printf("FOREGROUND_RED | FOREGROUND_BLUE\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN);
+	printf("FOREGROUND_RED | FOREGROUND_GREEN\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | FOREGROUND_GREEN);
+	printf("FOREGROUND_BLUE | FOREGROUND_GREEN\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
+	printf("FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_INTENSITY);
+	printf("FOREGROUND_RED | FOREGROUND_INTENSITY\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	printf("FOREGROUND_BLUE | FOREGROUND_INTENSITY\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+	printf("FOREGROUND_GREEN | FOREGROUND_INTENSITY\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	printf("FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+	printf("FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+	printf("FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+	printf("FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_RED);
+	printf("BACKGROUND_RED\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_BLUE);
+	printf("BACKGROUND_BLUE\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_GREEN);
+	printf("BACKGROUND_GREEN\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_RED | BACKGROUND_BLUE);
+	printf("BACKGROUND_RED | BACKGROUND_BLUE\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_RED | BACKGROUND_GREEN);
+	printf("BACKGROUND_RED | BACKGROUND_GREEN\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_BLUE | BACKGROUND_GREEN);
+	printf("BACKGROUND_BLUE | BACKGROUND_GREEN\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_RED | BACKGROUND_BLUE | BACKGROUND_GREEN);
+	printf("BACKGROUND_RED | BACKGROUND_BLUE | BACKGROUND_GREEN\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_RED | BACKGROUND_INTENSITY);
+	printf("BACKGROUND_RED | BACKGROUND_INTENSITY\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_BLUE | BACKGROUND_INTENSITY);
+	printf("BACKGROUND_BLUE | BACKGROUND_INTENSITY\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_GREEN | BACKGROUND_INTENSITY);
+	printf("BACKGROUND_GREEN | BACKGROUND_INTENSITY\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_RED | BACKGROUND_BLUE | BACKGROUND_INTENSITY);
+	printf("BACKGROUND_RED | BACKGROUND_BLUE | BACKGROUND_INTENSITY\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_INTENSITY);
+	printf("BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_INTENSITY\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_INTENSITY);
+	printf("BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_INTENSITY\n");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_RED | BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_INTENSITY);
+	printf("BACKGROUND_RED | BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_INTENSITY\n");
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 }

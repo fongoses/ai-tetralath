@@ -34,7 +34,7 @@ class ia{
 	* @param tipo_jogada_param O tipo de jogada (JOGADA_MAX ou JOGADA_MIN) que deve ser aplicado aos valores dos filhos de estado_inicial_param.
 	* @return O melhor estado encontrado para o qual estado_inicial_param pode ir.
 	*/
-	static tabuleiroTetralath comecar_minimax(tabuleiroTetralath estado_inicial_param, int *deve_parar_param, int tipo_jogada_param);
+	static tabuleiroTetralath comecar_minimax(tabuleiroTetralath estado_inicial_param, int *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param);
 	
 	/*
 	* Gerencia o uso do minimax com poda alfa beta até que a condição de parada seja satisfeita.
@@ -46,7 +46,7 @@ class ia{
 	* @param tipo_jogada_param O tipo de jogada (JOGADA_MAX ou JOGADA_MIN) que deve ser aplicado aos valores dos filhos de estado_inicial_param.
 	* @return O melhor estado encontrado para o qual estado_inicial_param pode ir.
 	*/
-	static tabuleiroTetralath comecar_minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param, int *deve_parar_param, int tipo_jogada_param);
+	static tabuleiroTetralath comecar_minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param, int *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param);
 	
 	
 	private:
