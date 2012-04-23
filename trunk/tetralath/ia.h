@@ -25,6 +25,12 @@ class ia{
 	
 	//métodos
 	/*
+	* Construtor. Não faz nada.
+	* Só existe porque deixar os métodos estáticos estava dando erros demais.
+	*/
+	ia();
+	
+	/*
 	* Gerencia o uso do minimax até que a condição de parada seja satisfeita.
 	* São feitas avaliações em grafos de profundidades crescentes.
 	* @param estado_inicial_param Estado à partir do qual o grafo será expandido.
@@ -34,7 +40,7 @@ class ia{
 	* @param tipo_jogada_param O tipo de jogada (JOGADA_MAX ou JOGADA_MIN) que deve ser aplicado aos valores dos filhos de estado_inicial_param.
 	* @return O melhor estado encontrado para o qual estado_inicial_param pode ir.
 	*/
-	static tabuleiroTetralath comecar_minimax(tabuleiroTetralath estado_inicial_param, int *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param);
+	 tabuleiroTetralath comecar_minimax(tabuleiroTetralath estado_inicial_param, int *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param);
 	
 	/*
 	* Gerencia o uso do minimax com poda alfa beta até que a condição de parada seja satisfeita.
@@ -46,7 +52,7 @@ class ia{
 	* @param tipo_jogada_param O tipo de jogada (JOGADA_MAX ou JOGADA_MIN) que deve ser aplicado aos valores dos filhos de estado_inicial_param.
 	* @return O melhor estado encontrado para o qual estado_inicial_param pode ir.
 	*/
-	static tabuleiroTetralath comecar_minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param, int *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param);
+	 tabuleiroTetralath comecar_minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param, int *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param);
 	
 	
 	private:
@@ -72,12 +78,8 @@ class ia{
 	*						   Logicamente, na primeira chamada à função, deve conter 0.
 	* @return O melhor estado para o qual estado_inicial_param pode ir.
 	*/
-	static tabuleiroTetralath minimax(tabuleiroTetralath estado_inicial_param,
-									  tabuleiroTetralath* resultado_parcial_param,
-									  int *deve_parar_param,
-									  int tipo_jogada_param,
-									  int nivel_maximo_param,
-									  int nivel_atual_param);
+	float minimax(tabuleiroTetralath estado_inicial_param, tabuleiroTetralath* resultado_parcial_param, int *deve_parar_param,
+				  int tipo_jogada_param, int nivel_maximo_param, int nivel_atual_param, int cor_pecas_avaliacao_param);
 
 	/*
 	* Executa o algoritmo minimax com poda alfa beta. O caminhamento utilizado é progressivo em profundidade.
@@ -93,11 +95,8 @@ class ia{
 	*						   Logicamente, na primeira chamada à função, deve conter 0.
 	* @return O melhor estado para o qual estado_inicial_param pode ir.
 	*/
-	static tabuleiroTetralath minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param,
-													 tabuleiroTetralath* resultado_parcial_param,
-													 int *deve_parar_param,
-													 int nivel_maximo_param,
-													 int nivel_atual_param);
+	float minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param, tabuleiroTetralath* resultado_parcial_param, int *deve_parar_param, 
+								 int tipo_jogada_param, int nivel_maximo_param, int nivel_atual_param, int cor_pecas_avaliacao_param);
 
 	/*
 	* Tenta encontrar em um array um valor (obtido com avaliação dos elementos) condizente com o objetivo parâmetro.
@@ -107,6 +106,6 @@ class ia{
 	*						por aquele que tenha o menor valor (JOGADA_MIN).
 	* @return O objeto que mais se pareça com o objetivo.
 	*/
-	static int procurarMelhor(tabuleiroTetralath array_param[], int tamanho_array_param, int objetivo_param);
+	 int procurarMelhor(float array_param[], int tamanho_array_param, int objetivo_param);
 
 };

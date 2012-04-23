@@ -380,56 +380,56 @@ void tabuleiroTetralath::imprimirDeCasaAtehCasa(int casa_inicial_param, int casa
 void tabuleiroTetralath::imprimir(int casa_selecionada_param){
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_BLUE | BACKGROUND_GREEN);
 
-	printf("\t\t\t+------------------------+\n");
-	printf("\t\t\t| X 1 2 3 4 5 6 7 8 9  X |\n");
+	printf("\t\t\t+-----------------------+\n");
+	printf("\t\t\t| X 12345 6 7 8 90123 X |\n");
 	
 	//linha 1
 	printf("\t\t\t| 1     ");
 	imprimirDeCasaAtehCasa(INDICE_PRIMEIRA_CASA, 4, casa_selecionada_param);
-	printf("     1 |\n");
+	printf("    1 |\n");
 	
 	//linha 2
 	printf("\t\t\t| 2    ");
 	imprimirDeCasaAtehCasa(5, 10, casa_selecionada_param);
-	printf("    2 |\n");
+	printf("   2 |\n");
 	
 	//linha 3
 	printf("\t\t\t| 3   ");
 	imprimirDeCasaAtehCasa(11, 17, casa_selecionada_param);
-	printf("   3 |\n");
+	printf("  3 |\n");
 	
 	//linha 4
 	printf("\t\t\t| 4  ");
 	imprimirDeCasaAtehCasa(18, 25, casa_selecionada_param);
-	printf("  4 |\n");
+	printf(" 4 |\n");
 	
 	//linha 5
 	printf("\t\t\t| 5 ");
 	imprimirDeCasaAtehCasa(26, 34, casa_selecionada_param);
-	printf(" 5 |\n");
+	printf("5 |\n");
 	
 	//linha 6
 	printf("\t\t\t| 6  ");
 	imprimirDeCasaAtehCasa(35, 42, casa_selecionada_param);
-	printf("  6 |\n");
+	printf(" 6 |\n");
 	
 	//linha 7
 	printf("\t\t\t| 7   ");
 	imprimirDeCasaAtehCasa(43, 49, casa_selecionada_param);
-	printf("   7 |\n");
+	printf("  7 |\n");
 	
 	//linha 8
 	printf("\t\t\t| 8    ");
 	imprimirDeCasaAtehCasa(50, 55, casa_selecionada_param);
-	printf("    8 |\n");
+	printf("   8 |\n");
 	
 	//linha 9
 	printf("\t\t\t| 9     ");
 	imprimirDeCasaAtehCasa(56, 60, casa_selecionada_param);
-	printf("     9 |\n");
+	printf("    9 |\n");
 	
-	printf("\t\t\t| X 1 2 3 4 5 6 7 8 9  X |\n");
-	printf("\t\t\t+------------------------+\n");
+	printf("\t\t\t| X 12345 6 7 8 90123 X |\n");
+	printf("\t\t\t+-----------------------+\n");
 }
 
 /*************************************************************************************

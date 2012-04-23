@@ -1,12 +1,13 @@
 /*
 Para compilar no windows:
-	g++ main.cpp tabuleiroTetralath.cpp casaTabuleiroTetralath.cpp -o main
+	g++ main.cpp ia.cpp tabuleiroTetralath.cpp casaTabuleiroTetralath.cpp -o main
 */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
-#include "tabuleiroTetralath.h"
+#include <process.h>
+#include "ia.h"
 using namespace std;
 
 
@@ -32,6 +33,7 @@ using namespace std;
 #define COMANDO_FECHAR_CAPS 'Q'
 #define COMANDO_JOGAR 'j' //Faz uma jogada na posição em que estiver, se possível.
 #define COMANDO_JOGAR_CAPS 'J'
+#define COMANDO_JOGAR_ALTERNATIVO ' '
 #define COMANDO_SEM_ACAO 'o' //Usado para inicialização. Não deve ter ação atribuída.
 
 
@@ -40,6 +42,8 @@ using namespace std;
 *
 */
 
+char esperarComandoUsuario(void);
+void avisarAoFimDeCincoSegundos(bool *variavel_aviso_param);
 void imprimirCoresWindows(void);
 void imprimirTelaTabuleiro(int casaAtual_param, int pecasDaVez_param, tabuleiroTetralath *tabuleiro_param);
 void imprimirTelaResultado(int cor_pecas_ganhadoras_param, int casaAtual_param, tabuleiroTetralath *tabuleiro_param);
@@ -50,51 +54,35 @@ bool fazerJogada(tabuleiroTetralath *tabuleiro_param, int casaAtual_param, int p
 * Função principal.
 *
 */
+
 int pecasDaVez = casaTabuleiroTetralath::PECAS_BRANCAS;
 int main(){
-	int casaAtual = 0;
+	int casaCursor = 0;
 
 	char comandoUsuario = COMANDO_SEM_ACAO;
 	char movimentoUsuario = COMANDO_SEM_ACAO;
 
 	bool jogoAcabou = false;
 
+	ia jogadorArtificial = *(new ia());
+
 	tabuleiroTetralath tabuleiro = *(new tabuleiroTetralath());
 
+	Sleep(500); //Para que não saia jogando logo no início.
+
 	while(comandoUsuario != COMANDO_FECHAR and comandoUsuario != COMANDO_FECHAR_CAPS){
-		Sleep(50);
+		Sleep(50); //Movimento não muito rápido, permitindo melhor controle.
 		if(!jogoAcabou){
-			imprimirTelaTabuleiro(casaAtual, pecasDaVez, &tabuleiro);
+			imprimirTelaTabuleiro(casaCursor, pecasDaVez, &tabuleiro);
+			comandoUsuario = esperarComandoUsuario();
 		}
 
-		comandoUsuario = COMANDO_SEM_ACAO;
-		while(comandoUsuario == COMANDO_SEM_ACAO){
-			if(GetAsyncKeyState(VK_LEFT) or GetAsyncKeyState(MOVIMENTO_ESQUERDA) or GetAsyncKeyState(MOVIMENTO_ESQUERDA_CAPS)){
-				comandoUsuario = MOVIMENTO_ESQUERDA;
-				movimentoUsuario = MOVIMENTO_ESQUERDA;
-			} else if(GetAsyncKeyState(VK_UP) or GetAsyncKeyState(MOVIMENTO_CIMA) or GetAsyncKeyState(MOVIMENTO_CIMA_CAPS)){
-				comandoUsuario = MOVIMENTO_CIMA;
-				movimentoUsuario = MOVIMENTO_CIMA;
-			} else if(GetAsyncKeyState(VK_RIGHT) or GetAsyncKeyState(MOVIMENTO_DIREITA) or GetAsyncKeyState(MOVIMENTO_DIREITA_CAPS)){
-				comandoUsuario = MOVIMENTO_DIREITA;
-				movimentoUsuario = MOVIMENTO_DIREITA;
-			} else if(GetAsyncKeyState(VK_DOWN) or GetAsyncKeyState(MOVIMENTO_BAIXO) or GetAsyncKeyState(MOVIMENTO_BAIXO_CAPS)){
-				comandoUsuario = MOVIMENTO_BAIXO;
-				movimentoUsuario = MOVIMENTO_BAIXO;
-			} else if(GetAsyncKeyState(COMANDO_JOGAR) or GetAsyncKeyState(COMANDO_JOGAR_CAPS)){
-				comandoUsuario = COMANDO_JOGAR;
-			} else if(GetAsyncKeyState(COMANDO_FECHAR) or GetAsyncKeyState(COMANDO_FECHAR_CAPS)){
-				comandoUsuario = COMANDO_FECHAR;
-			}
-		}
-
-		if(comandoUsuario == COMANDO_JOGAR or comandoUsuario == COMANDO_JOGAR_CAPS){
-			jogoAcabou = fazerJogada(&tabuleiro, casaAtual, pecasDaVez);
-		} else if(comandoUsuario == MOVIMENTO_CIMA or comandoUsuario == MOVIMENTO_BAIXO or comandoUsuario == MOVIMENTO_ESQUERDA or comandoUsuario == MOVIMENTO_DIREITA
-				  or comandoUsuario == MOVIMENTO_CIMA_CAPS or comandoUsuario == MOVIMENTO_BAIXO_CAPS or comandoUsuario == MOVIMENTO_ESQUERDA_CAPS 
-				  or comandoUsuario == MOVIMENTO_DIREITA_CAPS){
+		if(comandoUsuario == COMANDO_JOGAR and !jogoAcabou){
+			jogoAcabou = fazerJogada(&tabuleiro, casaCursor, pecasDaVez);
+		} else if((comandoUsuario == MOVIMENTO_CIMA or comandoUsuario == MOVIMENTO_BAIXO or comandoUsuario == MOVIMENTO_ESQUERDA or comandoUsuario == MOVIMENTO_DIREITA)
+				  and !jogoAcabou){
 			movimentoUsuario = comandoUsuario;
-			casaAtual = getIndiceCasaMovimento(movimentoUsuario, casaAtual);
+			casaCursor = getIndiceCasaMovimento(movimentoUsuario, casaCursor);
 		}
 	}
 
@@ -102,6 +90,68 @@ int main(){
 	system("color 0f");
 
 	return 0;
+}
+
+
+/*
+* A função executa em tempo muito menor ao pedido para o aviso.
+* Ela cria uma espera de 5 segundos e, ao final da espera, coloca TRUE em variavel_aviso_param.
+* @param variavel_aviso_param Ponteiro cujo conteúdo será asseguradamente TRUE após tempo_segundos_param.
+*/
+unsigned int __stdcall esperar(void *variavel_aviso_param){
+	Sleep(5000);
+	bool *enderecoVariavelAviso = (bool*) variavel_aviso_param;
+	*enderecoVariavelAviso = TRUE;
+	return 0;
+}
+void avisarAoFimDeCincoSegundos(bool *variavel_aviso_param){
+	_beginthreadex(0, 0, &esperar, (void *) variavel_aviso_param, 0, 0);
+}
+/*
+* Passou no teste se os tempos estiverem certos e (x) 1<=x<=6 não repetir.
+*/
+/*void testeEspera(){
+	bool avisoUm = FALSE;
+	bool avisoDois = FALSE;
+	bool avisoTres = FALSE;
+	
+	avisarAoFimDeCincoSegundos(&avisoUm);
+	printf("(1) avisoUm contém %d\n", avisoUm);
+	avisarAoFimDeCincoSegundos(&avisoDois);
+	printf("(2) avisoDois contém %d\n", avisoDois);
+	avisarAoFimDeCincoSegundos(&avisoTres);
+	printf("(3) avisoTres contém %d\n", avisoTres);
+	system("pause");
+	printf("(4) avisoUm contém %d\n", avisoUm);
+	printf("(5) avisoDois contém %d\n", avisoDois);
+	printf("(6) avisoTres contém %d\n", avisoTres);
+	system("pause");
+}*/
+
+/*
+* Espera por comando do usuário e o retorna, quando for feito.
+* @return O comando digitado pelo usuário. Não retorna comandos com CAPS, prefere sempre sua versão em lower case.
+*/
+char esperarComandoUsuario(void){
+	char comandoUsuario = COMANDO_SEM_ACAO;
+
+	while(comandoUsuario == COMANDO_SEM_ACAO){
+		if(GetAsyncKeyState(VK_LEFT) or GetAsyncKeyState(MOVIMENTO_ESQUERDA) or GetAsyncKeyState(MOVIMENTO_ESQUERDA_CAPS)){
+			comandoUsuario = MOVIMENTO_ESQUERDA;
+		} else if(GetAsyncKeyState(VK_UP) or GetAsyncKeyState(MOVIMENTO_CIMA) or GetAsyncKeyState(MOVIMENTO_CIMA_CAPS)){
+			comandoUsuario = MOVIMENTO_CIMA;
+		} else if(GetAsyncKeyState(VK_RIGHT) or GetAsyncKeyState(MOVIMENTO_DIREITA) or GetAsyncKeyState(MOVIMENTO_DIREITA_CAPS)){
+			comandoUsuario = MOVIMENTO_DIREITA;
+		} else if(GetAsyncKeyState(VK_DOWN) or GetAsyncKeyState(MOVIMENTO_BAIXO) or GetAsyncKeyState(MOVIMENTO_BAIXO_CAPS)){
+			comandoUsuario = MOVIMENTO_BAIXO;
+		} else if(GetAsyncKeyState(COMANDO_JOGAR) or GetAsyncKeyState(COMANDO_JOGAR_CAPS) or GetAsyncKeyState(COMANDO_JOGAR_ALTERNATIVO)){
+			comandoUsuario = COMANDO_JOGAR;
+		} else if(GetAsyncKeyState(COMANDO_FECHAR) or GetAsyncKeyState(COMANDO_FECHAR_CAPS)){
+			comandoUsuario = COMANDO_FECHAR;
+		}
+	}
+
+	return comandoUsuario;
 }
 
 /*
@@ -128,6 +178,8 @@ bool fazerJogada(tabuleiroTetralath *tabuleiro_param, int casaAtual_param, int p
 			jogoAcabou = true;
 			tabuleiro_param->recuperarCorPecasUltimaJogada() == casaTabuleiroTetralath::PECAS_BRANCAS?
 				imprimirTelaResultado(casaTabuleiroTetralath::PECAS_PRETAS, CASA_INEXISTENTE, tabuleiro_param) : imprimirTelaResultado(casaTabuleiroTetralath::PECAS_BRANCAS, CASA_INEXISTENTE, tabuleiro_param);
+		} else if(tabuleiro_param->houveEmpate()){
+			imprimirTelaResultado(casaTabuleiroTetralath::PECAS_PRETAS+casaTabuleiroTetralath::PECAS_BRANCAS+5, CASA_INEXISTENTE, tabuleiro_param);
 		}
 	}
 
@@ -227,16 +279,18 @@ SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGR
 	printf("\n\n\n\n");
 
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
-	printf("[W] DIAGONAL ESQUERDA SUPERIOR (CIMA) [S] DIAGONAL DIREITA INFEROR (BAIXO)\n");
-	printf("[A] ESQUERDA [D] DIREITA\n");
-	printf("[J] JOGAR\n");
+	printf("[W] ou [SETA CIMA] MOVER PARA CASA NA DIAGONAL ESQUERDA SUPERIOR (CIMA)\n");
+	printf("[S] ou [SETA BAIXO] MOVER PARA CASA NA DIAGONAL DIREITA INFEROR (BAIXO)\n");
+	printf("[A] ou [SETA ESQUERDA] MOVER PARA CASA A ESQUERDA\n");
+	printf("[D] ou [SETA DIREITA] MOVER PARA CASA A DIREITA\n");
+	printf("[J] ou [BARRA ESPACO] JOGAR\n");
 	printf("[Q] SAIR\n");
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
 }
 
 /*
 * Imprime a tela do resultado de um jogo.
-* @param cor_pecas_ganhadoras_param A cor das peças que ganharam o jogo.
+* @param cor_pecas_ganhadoras_param A cor das peças que ganharam o jogo. Qualquer valor diferente de PECAS_PRETAS e PECAS_BRANCAS é empate.
 * @param casaAtual_param A casa em que está o cursor.
 * @param tabuleiro_param O tabuleiro que será impresso.
 */
@@ -255,8 +309,10 @@ void imprimirTelaResultado(int cor_pecas_ganhadoras_param, int casaAtual_param, 
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
 	if(cor_pecas_ganhadoras_param == casaTabuleiroTetralath::PECAS_BRANCAS){
 		printf("\t\t\tAs pecas BRANCAS ganharam!");
-	} else {
+	} else if(cor_pecas_ganhadoras_param == casaTabuleiroTetralath::PECAS_PRETAS){
 		printf("\t\t\tAs pecas PRETAS ganharam!");
+	} else {
+		printf("\t\t\t   Houve empate!");
 	}
 	printf("\n\n\n\n");
 
