@@ -2,6 +2,23 @@
 #include <stdlib.h>
 #include "casaTabuleiroTetralath.h"
 
+#define COR_PRETA_LINUX "\033[22;30"
+#define COR_VERMELHA_LINUX "\033[22;31"
+#define COR_VERDE_LINUX "\033[22;32"
+#define COR_MARROM_LINUX "\033[22;33"
+#define COR_AZUL_LINUX "\033[22;34"
+#define COR_MAGENTA_LINUX "\033[22;35"
+#define COR_CIANO_LINUX "\033[22;36"
+#define COR_CINZA_LINUX "\033[22;37"
+#define COR_CINZA_FORTE_LINUX "\033[01;30"
+#define COR_VERMELHA_FRACA_LINUX "\033[01;31"
+#define COR_VERDE_FRACA_LINUX "\033[01;32"
+#define COR_AMARELA_LINUX "\033[01;33"
+#define COR_AZUL_FRACA_LINUX "\033[01;34"
+#define COR_MAGENTA_FRACA_LINUX "\033[01;35"
+#define COR_CIANO_FRACA_LINUX "\033[01;36"
+#define COR_BRANCA_LINUX "\033[01;37"
+
 /*
 * Classe que implementa um tabuleiro do jogo Tetralath.
 */

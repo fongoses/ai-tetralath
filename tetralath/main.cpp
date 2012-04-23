@@ -115,6 +115,16 @@ unsigned int __stdcall esperar(void *variavel_aviso_param){
 }
 void avisarAoFimDeCincoSegundos(bool *variavel_aviso_param){
 	_beginthreadex(0, 0, &esperar, (void *) variavel_aviso_param, 0, 0);
+	/*
+	pid_t pid;
+	pid_t pid_filho = 0;
+	pid = fork();
+	if(pid == pid_filho){
+		Sleep(5000);
+		*variavel_aviso_param = true;
+		exit(0);
+	}
+	*/
 }
 /*
 * Passou no teste se os tempos estiverem certos e (x) 1<=x<=6 não repetir.
@@ -193,6 +203,7 @@ bool fazerJogadaUsuario(tabuleiroTetralath *tabuleiro_param, int casaAtual_param
 				imprimirTelaResultado(casaTabuleiroTetralath::PECAS_PRETAS, CASA_INEXISTENTE, tabuleiro_param) : imprimirTelaResultado(casaTabuleiroTetralath::PECAS_BRANCAS, CASA_INEXISTENTE, tabuleiro_param);
 		} else if(tabuleiro_param->houveEmpate()){
 			imprimirTelaResultado(casaTabuleiroTetralath::PECAS_PRETAS+casaTabuleiroTetralath::PECAS_BRANCAS+5, CASA_INEXISTENTE, tabuleiro_param);
+
 		}
 	}
 
@@ -276,7 +287,8 @@ int getIndiceCasaMovimento(int movimento_param, int casa_partida_param){
 * @param tabuleiro_param O tabuleiro que será impresso.
 */
 void imprimirTelaTabuleiro(int casaAtual_param, int pecasDaVez_param, tabuleiroTetralath *tabuleiro_param){
-SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
+	//printf(COR_BRANCA_LINUX);	
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
 	system("cls");
 	printf("\t\t\t\t TEXTLATH\n\n");
 	printf("\t\t\t O tetralath em modo texto!\n");
@@ -291,6 +303,7 @@ SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGR
 	tabuleiro_param->imprimir(casaAtual_param);
 	printf("\n\n\n\n");
 
+	//printf(COR_AZUL_FRACA_LINUX);
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
 	printf("[W] ou [SETA CIMA] MOVER PARA CASA NA DIAGONAL ESQUERDA SUPERIOR (CIMA)\n");
 	printf("[S] ou [SETA BAIXO] MOVER PARA CASA NA DIAGONAL DIREITA INFEROR (BAIXO)\n");
@@ -298,6 +311,7 @@ SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGR
 	printf("[D] ou [SETA DIREITA] MOVER PARA CASA A DIREITA\n");
 	printf("[J] ou [BARRA ESPACO] JOGAR\n");
 	printf("[Q] SAIR\n");
+	//printf(COR_BRANCA_LINUX);
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
 }
 
@@ -309,6 +323,7 @@ SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGR
 */
 void imprimirTelaResultado(int cor_pecas_ganhadoras_param, int casaAtual_param, tabuleiroTetralath *tabuleiro_param){
 	system("cls");
+	//printf(COR_BRANCA_LINUX);
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
 	printf("\t\t\t\t TEXTLATH\n\n");
 	printf("\t\t\t O tetralath em modo texto!\n");
@@ -319,6 +334,7 @@ void imprimirTelaResultado(int cor_pecas_ganhadoras_param, int casaAtual_param, 
 	tabuleiro_param->imprimir(casaAtual_param);
 	printf("\n\n\n\n");
 
+	//printf(COR_BRANCA_LINUX);
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
 	if(cor_pecas_ganhadoras_param == casaTabuleiroTetralath::PECAS_BRANCAS){
 		printf("\t\t\tAs pecas BRANCAS ganharam!");
@@ -329,8 +345,10 @@ void imprimirTelaResultado(int cor_pecas_ganhadoras_param, int casaAtual_param, 
 	}
 	printf("\n\n\n\n");
 
+	//printf(COR_AZUL_FRACA_LINUX);
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
 	printf("[Q] SAIR\n");
+	//printf(COR_BRANCA_LINUX);
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
 }
 
