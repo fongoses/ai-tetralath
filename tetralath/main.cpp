@@ -61,14 +61,33 @@ int main(){
 
 	tabuleiroTetralath tabuleiro = *(new tabuleiroTetralath());
 
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
-
 	while(comandoUsuario != COMANDO_FECHAR and comandoUsuario != COMANDO_FECHAR_CAPS){
+		Sleep(50);
 		if(!jogoAcabou){
 			imprimirTelaTabuleiro(casaAtual, pecasDaVez, &tabuleiro);
 		}
 
-		comandoUsuario = getc(stdin);
+		comandoUsuario = COMANDO_SEM_ACAO;
+		while(comandoUsuario == COMANDO_SEM_ACAO){
+			if(GetAsyncKeyState(VK_LEFT) or GetAsyncKeyState(MOVIMENTO_ESQUERDA) or GetAsyncKeyState(MOVIMENTO_ESQUERDA_CAPS)){
+				comandoUsuario = MOVIMENTO_ESQUERDA;
+				movimentoUsuario = MOVIMENTO_ESQUERDA;
+			} else if(GetAsyncKeyState(VK_UP) or GetAsyncKeyState(MOVIMENTO_CIMA) or GetAsyncKeyState(MOVIMENTO_CIMA_CAPS)){
+				comandoUsuario = MOVIMENTO_CIMA;
+				movimentoUsuario = MOVIMENTO_CIMA;
+			} else if(GetAsyncKeyState(VK_RIGHT) or GetAsyncKeyState(MOVIMENTO_DIREITA) or GetAsyncKeyState(MOVIMENTO_DIREITA_CAPS)){
+				comandoUsuario = MOVIMENTO_DIREITA;
+				movimentoUsuario = MOVIMENTO_DIREITA;
+			} else if(GetAsyncKeyState(VK_DOWN) or GetAsyncKeyState(MOVIMENTO_BAIXO) or GetAsyncKeyState(MOVIMENTO_BAIXO_CAPS)){
+				comandoUsuario = MOVIMENTO_BAIXO;
+				movimentoUsuario = MOVIMENTO_BAIXO;
+			} else if(GetAsyncKeyState(COMANDO_JOGAR) or GetAsyncKeyState(COMANDO_JOGAR_CAPS)){
+				comandoUsuario = COMANDO_JOGAR;
+			} else if(GetAsyncKeyState(COMANDO_FECHAR) or GetAsyncKeyState(COMANDO_FECHAR_CAPS)){
+				comandoUsuario = COMANDO_FECHAR;
+			}
+		}
+
 		if(comandoUsuario == COMANDO_JOGAR or comandoUsuario == COMANDO_JOGAR_CAPS){
 			jogoAcabou = fazerJogada(&tabuleiro, casaAtual, pecasDaVez);
 		} else if(comandoUsuario == MOVIMENTO_CIMA or comandoUsuario == MOVIMENTO_BAIXO or comandoUsuario == MOVIMENTO_ESQUERDA or comandoUsuario == MOVIMENTO_DIREITA
@@ -192,6 +211,7 @@ int getIndiceCasaMovimento(int movimento_param, int casa_partida_param){
 * @param tabuleiro_param O tabuleiro que será impresso.
 */
 void imprimirTelaTabuleiro(int casaAtual_param, int pecasDaVez_param, tabuleiroTetralath *tabuleiro_param){
+SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
 	system("cls");
 	printf("\t\t\t\t TEXTLATH\n\n");
 	printf("\t\t\t O tetralath em modo texto!\n");
@@ -222,6 +242,7 @@ void imprimirTelaTabuleiro(int casaAtual_param, int pecasDaVez_param, tabuleiroT
 */
 void imprimirTelaResultado(int cor_pecas_ganhadoras_param, int casaAtual_param, tabuleiroTetralath *tabuleiro_param){
 	system("cls");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
 	printf("\t\t\t\t TEXTLATH\n\n");
 	printf("\t\t\t O tetralath em modo texto!\n");
 
@@ -231,6 +252,7 @@ void imprimirTelaResultado(int cor_pecas_ganhadoras_param, int casaAtual_param, 
 	tabuleiro_param->imprimir(casaAtual_param);
 	printf("\n\n\n\n");
 
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
 	if(cor_pecas_ganhadoras_param == casaTabuleiroTetralath::PECAS_BRANCAS){
 		printf("\t\t\tAs pecas BRANCAS ganharam!");
 	} else {
