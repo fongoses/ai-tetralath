@@ -2,12 +2,6 @@
 #include <windows.h>
 #include "tabuleiroTetralath.h"
 
-#define COR_VERDE_LINUX \033[22;32m
-#define COR_VERMELHA_LINUX \033[22;31m
-#define COR_PRETA_LINUX \033[22;30m
-#define COR_BRANCA_LINUX \033[01;37m
-#define COR_CINZA_LINUX \033[22;37m
-
 /*
 * Classe que implementa um tabuleiro do jogo Tetralath.
 */
@@ -296,43 +290,53 @@ void tabuleiroTetralath::imprimirCasa(int indice_casa_pintar_param, int casa_sel
 		if(casaOcupada(indice_casa_pintar_param)){ //Pintar P ou B com vermelho e piscando ou não.
 			if(casaOcupadaPorPecaBranca(indice_casa_pintar_param)){ //Pintar B com vermelho e piscando ou não.
 				if(recuperarNomeCasaUltimaJogada() == indice_casa_pintar_param){ //Pintar B com vermelho e piscando.
+					//printf(COR_VERMELHA_FRACA_LINUX);					
 					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | BACKGROUND_RED | FOREGROUND_INTENSITY | BACKGROUND_INTENSITY);
 					printf("B");																		
 				} else { //Pintar B com vermelho e não piscando.
+					//printf(COR_VERMELHA_LINUX);					
 					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | BACKGROUND_RED | FOREGROUND_INTENSITY);
 					printf("B");																						
 				}
 			} else { //Pintar P com vermelho e piscando ou não.
 				if(recuperarNomeCasaUltimaJogada() == indice_casa_pintar_param){ //Pintar P com vermelho e piscando.
+					//printf(COR_VERMELHA_FRACA_LINUX);					
 					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_RED | FOREGROUND_INTENSITY | BACKGROUND_INTENSITY);
 					printf("P");																						
 				} else { //Pintar P com vermelho e não piscando.
+					//printf(COR_VERMELHA_LINUX);
 					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_RED);
 					printf("P");																						
 				}
 			}
 		} else { //Pintar N com verde.
+			//printf(COR_VERDE_FRACA_LINUX);
 			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY | BACKGROUND_INTENSITY);
 			printf("N");																								
 		}
 	} else { //Pintar P, B ou N com cor branca, preta ou cinza piscando ou não.
 		if(casaOcupadaPorPecaBranca(indice_casa_pintar_param)){ //Pintar B com cor branca piscando ou não.
 			if(recuperarNomeCasaUltimaJogada() == indice_casa_pintar_param){ //Pintar B com cor branca piscando.
+				//printf(COR_AMARELA_LINUX);			
 				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_RED | FOREGROUND_GREEN| FOREGROUND_INTENSITY);
 				printf("B");																							
 			} else { //Pintar B com cor branca não piscando.
+				//printf(COR_CINZA_LINUX);							
 				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 				printf("B");																							
 			}
 		} else if(casaOcupada(indice_casa_pintar_param)){ //Pintar P com cor preta piscando ou não.
 			if(recuperarNomeCasaUltimaJogada() == indice_casa_pintar_param){ //Pintar P com cor preta piscando.
+				//printf(COR_AMARELA_LINUX);			
 				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 				printf("P");																							
 			} else { //Pintar P com cor preta não piscando.
+				//printf(COR_CINZA_FORTE_LINUX);			
 				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_BLUE | BACKGROUND_GREEN);
 				printf("P");																							
 			}
 		} else { //Pintar N com cor cinza não piscando.
+			//printf(COR_PRETA_LINUX);
 			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY);
 			printf("N");																								
 		}
@@ -378,6 +382,7 @@ void tabuleiroTetralath::imprimirDeCasaAtehCasa(int casa_inicial_param, int casa
 *		 A cor será verde se a casa puder ser ocupada e vermelha se não puder. Esta cor têm preferência sobre todas as outras.
 */
 void tabuleiroTetralath::imprimir(int casa_selecionada_param){
+	//printf(COR_BRANCA_LINUX);
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_BLUE | BACKGROUND_GREEN);
 
 	printf("\t\t\t+-----------------------+\n");
