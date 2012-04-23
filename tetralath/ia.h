@@ -14,8 +14,8 @@ class ia{
 	/*
 	* Usadas para definir se o minimax deve continuar ou ser interrompido.
 	*/
-	static const int CONTINUAR = 1;
-	static const int PARAR = 0;
+	static const bool CONTINUAR = false;
+	static const bool PARAR = true;
 	
 	/*
 	* Indicam tipos de movimentos de avaliação dos valores dos filhos.
@@ -40,7 +40,7 @@ class ia{
 	* @param tipo_jogada_param O tipo de jogada (JOGADA_MAX ou JOGADA_MIN) que deve ser aplicado aos valores dos filhos de estado_inicial_param.
 	* @return O melhor estado encontrado para o qual estado_inicial_param pode ir.
 	*/
-	 tabuleiroTetralath comecar_minimax(tabuleiroTetralath estado_inicial_param, int *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param);
+	tabuleiroTetralath comecar_minimax(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param);
 	
 	/*
 	* Gerencia o uso do minimax com poda alfa beta até que a condição de parada seja satisfeita.
@@ -52,7 +52,7 @@ class ia{
 	* @param tipo_jogada_param O tipo de jogada (JOGADA_MAX ou JOGADA_MIN) que deve ser aplicado aos valores dos filhos de estado_inicial_param.
 	* @return O melhor estado encontrado para o qual estado_inicial_param pode ir.
 	*/
-	 tabuleiroTetralath comecar_minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param, int *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param);
+	tabuleiroTetralath comecar_minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param);
 	
 	
 	private:
@@ -78,7 +78,7 @@ class ia{
 	*						   Logicamente, na primeira chamada à função, deve conter 0.
 	* @return O melhor estado para o qual estado_inicial_param pode ir.
 	*/
-	float minimax(tabuleiroTetralath estado_inicial_param, tabuleiroTetralath* resultado_parcial_param, int *deve_parar_param,
+	float minimax(tabuleiroTetralath estado_inicial_param, tabuleiroTetralath* resultado_parcial_param, bool *deve_parar_param,
 				  int tipo_jogada_param, int nivel_maximo_param, int nivel_atual_param, int cor_pecas_avaliacao_param);
 
 	/*
@@ -95,7 +95,7 @@ class ia{
 	*						   Logicamente, na primeira chamada à função, deve conter 0.
 	* @return O melhor estado para o qual estado_inicial_param pode ir.
 	*/
-	float minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param, tabuleiroTetralath* resultado_parcial_param, int *deve_parar_param, 
+	float minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param, tabuleiroTetralath* resultado_parcial_param, bool *deve_parar_param, 
 								 int tipo_jogada_param, int nivel_maximo_param, int nivel_atual_param, int cor_pecas_avaliacao_param);
 
 	/*
