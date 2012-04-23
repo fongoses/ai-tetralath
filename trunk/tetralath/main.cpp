@@ -10,7 +10,6 @@ Para compilar no windows:
 #include "ia.h"
 using namespace std;
 
-
 /*
 * Jogo tetralath com IA.
 */
@@ -48,7 +47,7 @@ void imprimirCoresWindows(void);
 void imprimirTelaTabuleiro(int casaAtual_param, int pecasDaVez_param, tabuleiroTetralath *tabuleiro_param);
 void imprimirTelaResultado(int cor_pecas_ganhadoras_param, int casaAtual_param, tabuleiroTetralath *tabuleiro_param);
 int getIndiceCasaMovimento(int movimento_param, int casa_partida_param);
-bool fazerJogada(tabuleiroTetralath *tabuleiro_param, int casaAtual_param, int pecasDaVez_param);
+bool fazerJogadaUsuario(tabuleiroTetralath *tabuleiro_param, int casaAtual_param, int pecasDaVez_param, bool *ehVezDoUsuario_param);
 
 /**************************************************
 * Função principal.
@@ -62,7 +61,9 @@ int main(){
 	char comandoUsuario = COMANDO_SEM_ACAO;
 	char movimentoUsuario = COMANDO_SEM_ACAO;
 
+	bool condicaoParadaMinimax = false;
 	bool jogoAcabou = false;
+	bool ehVezDoUsuario = true;
 
 	ia jogadorArtificial = *(new ia());
 
@@ -77,12 +78,20 @@ int main(){
 			comandoUsuario = esperarComandoUsuario();
 		}
 
-		if(comandoUsuario == COMANDO_JOGAR and !jogoAcabou){
-			jogoAcabou = fazerJogada(&tabuleiro, casaCursor, pecasDaVez);
+		if(comandoUsuario == COMANDO_JOGAR and !jogoAcabou and ehVezDoUsuario){
+			jogoAcabou = fazerJogadaUsuario(&tabuleiro, casaCursor, pecasDaVez, &ehVezDoUsuario);
 		} else if((comandoUsuario == MOVIMENTO_CIMA or comandoUsuario == MOVIMENTO_BAIXO or comandoUsuario == MOVIMENTO_ESQUERDA or comandoUsuario == MOVIMENTO_DIREITA)
-				  and !jogoAcabou){
+				  and !jogoAcabou and ehVezDoUsuario){
 			movimentoUsuario = comandoUsuario;
 			casaCursor = getIndiceCasaMovimento(movimentoUsuario, casaCursor);
+		}
+
+		if(!jogoAcabou and !ehVezDoUsuario){
+			imprimirTelaTabuleiro(casaCursor, pecasDaVez, &tabuleiro);
+			condicaoParadaMinimax = false;
+			avisarAoFimDeCincoSegundos(&condicaoParadaMinimax);
+			//tabuleiro = jogadorArtificial.comecar_minimax(tabuleiro, &condicaoParadaMinimax, ia::JOGADA_MAX, casaTabuleiroTetralath::PECAS_PRETAS);
+			ehVezDoUsuario = true;
 		}
 	}
 
@@ -96,7 +105,7 @@ int main(){
 /*
 * A função executa em tempo muito menor ao pedido para o aviso.
 * Ela cria uma espera de 5 segundos e, ao final da espera, coloca TRUE em variavel_aviso_param.
-* @param variavel_aviso_param Ponteiro cujo conteúdo será asseguradamente TRUE após tempo_segundos_param.
+* @param variavel_aviso_param Ponteiro cujo conteúdo será TRUE após tempo_segundos_param.
 */
 unsigned int __stdcall esperar(void *variavel_aviso_param){
 	Sleep(5000);
@@ -109,8 +118,10 @@ void avisarAoFimDeCincoSegundos(bool *variavel_aviso_param){
 }
 /*
 * Passou no teste se os tempos estiverem certos e (x) 1<=x<=6 não repetir.
+* Não pode repetir, pois apenas o pai pode sair de avisarAoFimDeCincoSegundos.
+* Os filhos devem ser terminados, de modo que não seja possível voltarem à main!
 */
-/*void testeEspera(){
+/*void testesAvisarAoFimDeCincoSegundos(){
 	bool avisoUm = FALSE;
 	bool avisoDois = FALSE;
 	bool avisoTres = FALSE;
@@ -159,9 +170,10 @@ char esperarComandoUsuario(void){
 * @param tabuleiro_param O tabuleiro no qual a jogada é feita.
 * @param casaAtual_param A casa do tabuleiro na qual a jogada é feita.
 * @param pecasDaVez_param A cor das peças que farão a jogada. Esta cor é trocada caso a jogada tenha sucesso.
+* @param ehVezDoUsuario_param Não é feita verificação desta variável. Ela apenas é setada como false, caso o usuário consiga jogar.
 * @return bool indicando se o jogo acabou.
 */
-bool fazerJogada(tabuleiroTetralath *tabuleiro_param, int casaAtual_param, int pecasDaVez_param){
+bool fazerJogadaUsuario(tabuleiroTetralath *tabuleiro_param, int casaAtual_param, int pecasDaVez_param, bool *ehVezDoUsuario_param){
 	bool conseguiuJogar;
 	bool jogoAcabou = false;
 
@@ -169,6 +181,7 @@ bool fazerJogada(tabuleiroTetralath *tabuleiro_param, int casaAtual_param, int p
 
 	conseguiuJogar = tabuleiro_param->jogar(casaAtual_param, pecasDaVez_param);
 	if(conseguiuJogar){
+		*ehVezDoUsuario_param = false;
 		(pecasDaVez_param == casaTabuleiroTetralath::PECAS_BRANCAS) ? 
 			pecasDaVez = casaTabuleiroTetralath::PECAS_PRETAS : pecasDaVez = casaTabuleiroTetralath::PECAS_BRANCAS;
 		if(tabuleiro_param->pecasDaMesmaCorGanharam(tabuleiro_param->recuperarNomeCasaUltimaJogada())){

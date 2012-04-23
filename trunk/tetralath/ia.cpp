@@ -23,7 +23,7 @@
 * @param cor_pecas_avaliacao_param Cor das peças para a qual as avaliações devem ser feitas.
 * @return O melhor estado encontrado para o qual estado_inicial_param pode ir.
 */
-tabuleiroTetralath ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, int *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param){
+tabuleiroTetralath ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param){
 	int MAXIMO_ITERACOES = tabuleiroTetralath::NUMERO_CASAS;
 	int nivelMaximoSendoAvaliado = 1;
 	int indiceMelhorJogadaEncontrada;
@@ -57,7 +57,7 @@ tabuleiroTetralath ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, 
 * @param cor_pecas_avaliacao_param Cor das peças para a qual as avaliações devem ser feitas.
 * @return O melhor estado encontrado para o qual estado_inicial_param pode ir.
 */
- tabuleiroTetralath ia::comecar_minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param, int *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param){
+ tabuleiroTetralath ia::comecar_minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param){
 	int MAXIMO_ITERACOES = tabuleiroTetralath::NUMERO_CASAS;
 	int nivelMaximoSendoAvaliado = 1;
 	int indiceMelhorJogadaEncontrada;
@@ -103,7 +103,7 @@ tabuleiroTetralath ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, 
 */
 float ia::minimax(tabuleiroTetralath estado_inicial_param,
 									  tabuleiroTetralath* resultado_parcial_param,
-									  int *deve_parar_param,
+									  bool *deve_parar_param,
 									  int tipo_jogada_param,
 									  int nivel_maximo_param,
 									  int nivel_atual_param, int cor_pecas_avaliacao_param)
@@ -166,7 +166,7 @@ float ia::minimax(tabuleiroTetralath estado_inicial_param,
 */
 float ia::minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param,
 													 tabuleiroTetralath* resultado_parcial_param,
-													 int *deve_parar_param,
+													 bool *deve_parar_param,
 													 int tipo_jogada_param,
 													 int nivel_maximo_param,
 													 int nivel_atual_param, int cor_pecas_avaliacao_param)
