@@ -3,6 +3,14 @@
 /*************************************************************************************
 * ATENÇÃO: À partir daqui, todos métodos são públicos
 *************************************************************************************/
+	/*
+	* Construtor. Não faz nada.
+	* Só existe porque deixar os métodos estáticos estava dando erros demais.
+	*/
+	ia::ia(){
+		
+	}
+
 
 /*
 * Gerencia o uso do minimax até que a condição de parada seja satisfeita.
@@ -15,26 +23,27 @@
 * @param cor_pecas_avaliacao_param Cor das peças para a qual as avaliações devem ser feitas.
 * @return O melhor estado encontrado para o qual estado_inicial_param pode ir.
 */
-static tabuleiroTetralath ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, int *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param){
+tabuleiroTetralath ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, int *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param){
 	int MAXIMO_ITERACOES = tabuleiroTetralath::NUMERO_CASAS;
 	int nivelMaximoSendoAvaliado = 1;
 	int indiceMelhorJogadaEncontrada;
-	int valoresJogadasEncontradas[MAXIMO_ITERACOES];
+	float valoresJogadasEncontradas[MAXIMO_ITERACOES];
 
-	tabuleiroTetralath resultado_parcial[MAXIMO_ITERACOES];
+	tabuleiroTetralath* resultado_parcial[MAXIMO_ITERACOES];
 
 	for(int i=0; i<MAXIMO_ITERACOES; i++){
 		resultado_parcial[i] = new tabuleiroTetralath();
 	}
 
 	while(*deve_parar_param != PARAR){
-		valoresJogadasEncontradas[nivelMaximoSendoAvaliado] = minimax(estado_inicial_param, &(resultado_parcial[nivelMaximoSendoAvaliado]),
-																	  deve_parar_param, tipo_jogada_param, nivelMaximoSendoAvaliado, NIVEL_INICIAL);
+		valoresJogadasEncontradas[nivelMaximoSendoAvaliado] = minimax(estado_inicial_param, resultado_parcial[nivelMaximoSendoAvaliado],
+																	  deve_parar_param, tipo_jogada_param, nivelMaximoSendoAvaliado,
+																	  NIVEL_INICIAL, cor_pecas_avaliacao_param);
 		nivelMaximoSendoAvaliado++;
 	}
 
 	indiceMelhorJogadaEncontrada = procurarMelhor(valoresJogadasEncontradas, nivelMaximoSendoAvaliado, tipo_jogada_param);
-	return resultado_parcial[indiceMelhorJogadaEncontrada].clonar();
+	return *(resultado_parcial[indiceMelhorJogadaEncontrada]->clonar());
 }
 
 /*
@@ -48,26 +57,27 @@ static tabuleiroTetralath ia::comecar_minimax(tabuleiroTetralath estado_inicial_
 * @param cor_pecas_avaliacao_param Cor das peças para a qual as avaliações devem ser feitas.
 * @return O melhor estado encontrado para o qual estado_inicial_param pode ir.
 */
-static tabuleiroTetralath ia::comecar_minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param, int *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param){
+ tabuleiroTetralath ia::comecar_minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param, int *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param){
 	int MAXIMO_ITERACOES = tabuleiroTetralath::NUMERO_CASAS;
 	int nivelMaximoSendoAvaliado = 1;
 	int indiceMelhorJogadaEncontrada;
-	int valoresJogadasEncontradas[MAXIMO_ITERACOES];
+	float valoresJogadasEncontradas[MAXIMO_ITERACOES];
 
-	tabuleiroTetralath resultado_parcial[MAXIMO_ITERACOES];
+	tabuleiroTetralath* resultado_parcial[MAXIMO_ITERACOES];
 
 	for(int i=0; i<MAXIMO_ITERACOES; i++){
 		resultado_parcial[i] = new tabuleiroTetralath();
 	}
 
 	while(*deve_parar_param != PARAR){
-		valoresJogadasEncontradas[nivelMaximoSendoAvaliado] = minimax_poda_alfa_beta(estado_inicial_param, &(resultado_parcial[nivelMaximoSendoAvaliado]),
-																					 deve_parar_param, tipo_jogada_param, nivelMaximoSendoAvaliado, NIVEL_INICIAL);
+		valoresJogadasEncontradas[nivelMaximoSendoAvaliado] = minimax_poda_alfa_beta(estado_inicial_param, resultado_parcial[nivelMaximoSendoAvaliado],
+																					 deve_parar_param, tipo_jogada_param, nivelMaximoSendoAvaliado,
+																					 NIVEL_INICIAL, cor_pecas_avaliacao_param);
 		nivelMaximoSendoAvaliado++;
 	}
 
 	indiceMelhorJogadaEncontrada = procurarMelhor(valoresJogadasEncontradas, nivelMaximoSendoAvaliado, tipo_jogada_param);
-	return resultado_parcial[indiceMelhorJogadaEncontrada].clonar();
+	return *(resultado_parcial[indiceMelhorJogadaEncontrada]->clonar());
 }
 
 
@@ -91,7 +101,7 @@ static tabuleiroTetralath ia::comecar_minimax_poda_alfa_beta(tabuleiroTetralath 
 * @param cor_pecas_avaliacao_param Cor das peças para a qual as avaliações devem ser feitas.
 * @return O melhor valor de avaliação encontrado em toda a subárvore do nodo estado_inicial_param.
 */
-static tabuleiroTetralath ia::minimax(tabuleiroTetralath estado_inicial_param,
+float ia::minimax(tabuleiroTetralath estado_inicial_param,
 									  tabuleiroTetralath* resultado_parcial_param,
 									  int *deve_parar_param,
 									  int tipo_jogada_param,
@@ -100,7 +110,7 @@ static tabuleiroTetralath ia::minimax(tabuleiroTetralath estado_inicial_param,
 {
 	int filhoAtual;
 	int valorUtilidadeEstado;
-	int tipoJogadaFilho = (tipo_jogada_param == JOGADA_MIN? JOGADA_MAX : JOGADA_MIN);
+	int tipoJogadaFilho = (tipo_jogada_param == (int) JOGADA_MIN? (int) JOGADA_MAX : (int) JOGADA_MIN);
 	int numeroDeFilhos = estado_inicial_param.calcularNumeroMovimentosLegais();
 	int indiceMelhorValorEncontradoNaSubarvore;
 
@@ -115,11 +125,11 @@ static tabuleiroTetralath ia::minimax(tabuleiroTetralath estado_inicial_param,
 	float valoresEncontradosNaSubarvore[numeroDeFilhos];
 
 	if(estado_ehFolha or estado_jahAtingiuNivelMaximo){
-		resultado_parcial_param->copiarDe(estado_inicial_param);
+		resultado_parcial_param->copiarDe(&estado_inicial_param);
 		melhorValorEncontradoNaSubarvore = estado_inicial_param.avaliarParaPecasDaCor(cor_pecas_avaliacao_param);
 	} else {
 		for(int i=0; i<numeroDeFilhos; i++){
-			resultadosParciaisFilhos[i] = new tabuleiroTetralath();
+			resultadosParciaisFilhos[i] = *(new tabuleiroTetralath());
 		}
 		filhoAtual = 1;
 		estadoFilho = estado_inicial_param.procurarEstadoAtingivelNaPosicao(filhoAtual);
@@ -133,8 +143,8 @@ static tabuleiroTetralath ia::minimax(tabuleiroTetralath estado_inicial_param,
 		//Usa-se filhoAtual-1 ao invés de numeroDeFilhos, pois numeroDeFilhos causaria invasão de memória se deve_parar_param tivesse sido acionado.
 		indiceMelhorValorEncontradoNaSubarvore = procurarMelhor(valoresEncontradosNaSubarvore, filhoAtual-1, tipo_jogada_param);
 		melhorEstadoEncontrado = &(resultadosParciaisFilhos[indiceMelhorValorEncontradoNaSubarvore]);
-		resultado_parcial_param->copiarDe(*melhorEstadoEncontrado);
-		melhorValorEncontradoNaSubarvore = melhorEstadoEncontrado.avaliarParaPecasDaCor(cor_pecas_avaliacao_param);
+		resultado_parcial_param->copiarDe(melhorEstadoEncontrado);
+		melhorValorEncontradoNaSubarvore = melhorEstadoEncontrado->avaliarParaPecasDaCor(cor_pecas_avaliacao_param);
 	}
 
 	return melhorValorEncontradoNaSubarvore;
@@ -154,7 +164,7 @@ static tabuleiroTetralath ia::minimax(tabuleiroTetralath estado_inicial_param,
 * @param cor_pecas_avaliacao_param Cor das peças para a qual as avaliações devem ser feitas.
 * @return O melhor valor de avaliação encontrado em toda a subárvore do nodo estado_inicial_param.
 */
-static tabuleiroTetralath ia::minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param,
+float ia::minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param,
 													 tabuleiroTetralath* resultado_parcial_param,
 													 int *deve_parar_param,
 													 int tipo_jogada_param,
@@ -173,7 +183,7 @@ static tabuleiroTetralath ia::minimax_poda_alfa_beta(tabuleiroTetralath estado_i
 *						por aquele que tenha o menor valor (JOGADA_MIN).
 * @return O índice do array que possui o melhor valor.
 */
-static int ia::procurarMelhor(tabuleiroTetralath array_param[], int tamanho_array_param, int objetivo_param){
+ int ia::procurarMelhor(float array_param[], int tamanho_array_param, int objetivo_param){
 	int indiceMelhorResultadoParcial;
 	float valorResultadoParcial;
 	float valorMelhorResultadoParcial = tabuleiroTetralath::PERDA;
@@ -183,5 +193,5 @@ static int ia::procurarMelhor(tabuleiroTetralath array_param[], int tamanho_arra
 			indiceMelhorResultadoParcial = i;
 		}
 	}
-	return i;
+	return indiceMelhorResultadoParcial;
 }
