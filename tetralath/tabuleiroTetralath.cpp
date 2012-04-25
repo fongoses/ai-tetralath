@@ -288,7 +288,7 @@ tabuleiroTetralath* tabuleiroTetralath::procurarEstadoAtingivelNaPosicao(int pos
 
 	nomeCasa = INDICE_PRIMEIRA_CASA;
 	while(0 < estadosQueAindaDevemSerIgnorados){
-		if(casaOcupada(nomeCasa)){
+		if(!casaOcupada(nomeCasa)){
 			estadosQueAindaDevemSerIgnorados--;
 		}
 		nomeCasa++;
@@ -338,6 +338,13 @@ int tabuleiroTetralath::calcularNumeroMovimentosLegais(void){
 	}
 	
 	return numeroMovimentosLegais;
+}
+
+/*
+* @return O número de casas que estão livres.
+*/
+int tabuleiroTetralath::numeroDeCasasLivres(void){
+	return calcularNumeroMovimentosLegais();
 }
 
 /*

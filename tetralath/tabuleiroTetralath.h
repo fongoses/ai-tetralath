@@ -133,6 +133,10 @@ class tabuleiroTetralath{
 		*/
 		int calcularNumeroMovimentosLegais(void);
 		/*
+		* @return O número de casas que estão livres.
+		*/
+		int numeroDeCasasLivres(void);
+		/*
 		* Função auxiliar de imprimir.
 		* Imprime um único caractere (uma única casa do tabuleiro).
 		* É capaz de decidir que cor a casa deve ter, com base nos seguintes critérios:
