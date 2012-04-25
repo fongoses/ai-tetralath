@@ -65,6 +65,7 @@ int pecasDaVez = casaTabuleiroTetralath::PECAS_BRANCAS;
 *
 */
 int main(){
+	int CASA_INEXISTENTE = -1;
 	int casaCursor = 0;
 	int numeroJogadasFeitas = 0;
 
@@ -84,9 +85,10 @@ int main(){
 
 	while(comandoUsuario != COMANDO_FECHAR){
 		Sleep(50); //Movimento não muito rápido, permitindo melhor controle.
+		comandoUsuario = esperarComandoUsuario();
+		
 		if(!jogoAcabou){
 			imprimirTelaTabuleiro(casaCursor, pecasDaVez, &tabuleiro);
-			comandoUsuario = esperarComandoUsuario();
 		}
 
 		if(comandoUsuario != COMANDO_DESFAZER_JOGADA){
@@ -105,8 +107,21 @@ int main(){
 				tabuleirosPassados[numeroJogadasFeitas] = new tabuleiroTetralath(tabuleiro);
 				//Atenção! A jogada é feita dentro de comecar_minimax.
 				tabuleiro = jogadorArtificial.comecar_minimax(tabuleiro, &condicaoParadaMinimax, ia::JOGADA_MAX, casaTabuleiroTetralath::PECAS_PRETAS);
+				(pecasDaVez == casaTabuleiroTetralath::PECAS_BRANCAS) ? 
+					pecasDaVez = casaTabuleiroTetralath::PECAS_PRETAS : pecasDaVez = casaTabuleiroTetralath::PECAS_BRANCAS;
 				numeroJogadasFeitas++;
 				ehVezDoUsuario = true;
+				imprimirTelaTabuleiro(casaCursor, pecasDaVez, &tabuleiro);
+				if(tabuleiro.pecasDaMesmaCorGanharam(tabuleiro.recuperarNomeCasaUltimaJogada())){
+					jogoAcabou = true;
+					imprimirTelaResultado(tabuleiro.recuperarCorPecasUltimaJogada(), CASA_INEXISTENTE, &tabuleiro);
+				} else if(tabuleiro.pecasDaMesmaCorPerderam(tabuleiro.recuperarNomeCasaUltimaJogada())){
+					jogoAcabou = true;
+					tabuleiro.recuperarCorPecasUltimaJogada() == casaTabuleiroTetralath::PECAS_BRANCAS?
+					imprimirTelaResultado(casaTabuleiroTetralath::PECAS_PRETAS, CASA_INEXISTENTE, &tabuleiro) : imprimirTelaResultado(casaTabuleiroTetralath::PECAS_BRANCAS, CASA_INEXISTENTE, &tabuleiro);
+				} else if(tabuleiro.houveEmpate()){
+					imprimirTelaResultado(casaTabuleiroTetralath::PECAS_PRETAS+casaTabuleiroTetralath::PECAS_BRANCAS+5, CASA_INEXISTENTE, &tabuleiro);
+				}
 			}
 		} else {
 			if(0 < numeroJogadasFeitas){
