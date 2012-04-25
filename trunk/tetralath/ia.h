@@ -1,5 +1,11 @@
 #include <iostream>
+
+#ifndef TABULEIRO_TETRALATH
+#define TABULEIRO_TETRALATH
+
 #include "tabuleiroTetralath.h"
+ 
+#endif
 
 /*
 * Classe para inteligência artificial.

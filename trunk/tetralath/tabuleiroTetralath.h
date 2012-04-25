@@ -181,6 +181,13 @@ class tabuleiroTetralath{
 		*		 A cor será verde se a casa puder ser ocupada e vermelha se não puder. Esta cor têm preferência sobre todas as outras.
 		*/
 		void imprimir(int casa_selecionada_param);
+		/*
+		* Dado um movimento e um índice de casa, decide para qual índice de casa o cursor do tabuleiro deve ser movido.
+		* @param movimento_param Caractere que decide o índice.
+		* @param casa_partida_param Casa da qual deseja-se obter o vizinho.
+		* @return Índice a ser passado para imprimir. Se não houver vizinho para o movimento, retorna a casa passada como argumento.
+		*/
+		int getIndiceCasaMovimento(int movimento_param, int casa_partida_param);
 		
 	private:
 		//dados
