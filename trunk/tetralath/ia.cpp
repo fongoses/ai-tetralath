@@ -24,7 +24,7 @@
 * @return O melhor estado encontrado para o qual estado_inicial_param pode ir.
 */
 tabuleiroTetralath ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param){
-	int MAXIMO_ITERACOES = tabuleiroTetralath::NUMERO_CASAS;
+	int MAXIMO_ITERACOES = estado_inicial_param.numeroDeCasasLivres();
 	int nivelMaximoSendoAvaliado = 1;
 	int indiceMelhorJogadaEncontrada;
 	float valoresJogadasEncontradas[MAXIMO_ITERACOES];
@@ -35,7 +35,7 @@ tabuleiroTetralath ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, 
 		resultado_parcial[i] = new tabuleiroTetralath();
 	}
 
-	while(*deve_parar_param != PARAR){
+	while(*deve_parar_param != PARAR and nivelMaximoSendoAvaliado <= MAXIMO_ITERACOES){
 		valoresJogadasEncontradas[nivelMaximoSendoAvaliado] = minimax(estado_inicial_param, resultado_parcial[nivelMaximoSendoAvaliado],
 																	  deve_parar_param, tipo_jogada_param, nivelMaximoSendoAvaliado,
 																	  NIVEL_INICIAL, cor_pecas_avaliacao_param);
@@ -58,7 +58,7 @@ tabuleiroTetralath ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, 
 * @return O melhor estado encontrado para o qual estado_inicial_param pode ir.
 */
  tabuleiroTetralath ia::comecar_minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param){
-	int MAXIMO_ITERACOES = tabuleiroTetralath::NUMERO_CASAS;
+	int MAXIMO_ITERACOES = estado_inicial_param.numeroDeCasasLivres();
 	int nivelMaximoSendoAvaliado = 1;
 	int indiceMelhorJogadaEncontrada;
 	float valoresJogadasEncontradas[MAXIMO_ITERACOES];
@@ -69,7 +69,7 @@ tabuleiroTetralath ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, 
 		resultado_parcial[i] = new tabuleiroTetralath();
 	}
 
-	while(*deve_parar_param != PARAR){
+	while(*deve_parar_param != PARAR and nivelMaximoSendoAvaliado <= MAXIMO_ITERACOES){
 		valoresJogadasEncontradas[nivelMaximoSendoAvaliado] = minimax_poda_alfa_beta(estado_inicial_param, resultado_parcial[nivelMaximoSendoAvaliado],
 																					 deve_parar_param, tipo_jogada_param, nivelMaximoSendoAvaliado,
 																					 NIVEL_INICIAL, cor_pecas_avaliacao_param);
@@ -124,21 +124,29 @@ float ia::minimax(tabuleiroTetralath estado_inicial_param,
 	float melhorValorEncontradoNaSubarvore;
 	float valoresEncontradosNaSubarvore[numeroDeFilhos];
 
+	cout << "-------------------------------\n";
+	estado_inicial_param.imprimir(0);
+
 	if(estado_ehFolha or estado_jahAtingiuNivelMaximo){
+		cout << "é folha ou atingiu máximo\n";
 		resultado_parcial_param->copiarDe(&estado_inicial_param);
 		melhorValorEncontradoNaSubarvore = estado_inicial_param.avaliarParaPecasDaCor(cor_pecas_avaliacao_param);
 	} else {
+		 cout << "não é folha, nem atingiu máximo\n";
 		for(int i=0; i<numeroDeFilhos; i++){
 			resultadosParciaisFilhos[i] = *(new tabuleiroTetralath());
 		}
 		filhoAtual = 1;
 		estadoFilho = estado_inicial_param.procurarEstadoAtingivelNaPosicao(filhoAtual);
 		while(estadoFilho != tabuleiroTetralath::NAO_HA_ESTADO_ATINGIVEL and *deve_parar_param != PARAR){
+			cout << "filhoAtual=" << filhoAtual << "\n";
 			valoresEncontradosNaSubarvore[filhoAtual] = minimax(*estadoFilho, &(resultadosParciaisFilhos[filhoAtual]),
 																deve_parar_param, tipoJogadaFilho, nivel_maximo_param,
 																nivel_atual_param+1, cor_pecas_avaliacao_param);
 			filhoAtual++;
+			cout << "quaseLah\n";
 			estadoFilho = estado_inicial_param.procurarEstadoAtingivelNaPosicao(filhoAtual);
+			cout << "fimIteracao\n";
 		}
 		//Usa-se filhoAtual-1 ao invés de numeroDeFilhos, pois numeroDeFilhos causaria invasão de memória se deve_parar_param tivesse sido acionado.
 		indiceMelhorValorEncontradoNaSubarvore = procurarMelhor(valoresEncontradosNaSubarvore, filhoAtual-1, tipo_jogada_param);

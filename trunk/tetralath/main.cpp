@@ -92,7 +92,6 @@ int main(){
 		if(comandoUsuario != COMANDO_DESFAZER_JOGADA){
 			if(comandoUsuario == COMANDO_JOGAR and !jogoAcabou and ehVezDoUsuario){
 				jogoAcabou = fazerJogadaUsuario(&tabuleiro, casaCursor, pecasDaVez, &ehVezDoUsuario, tabuleirosPassados, &numeroJogadasFeitas);
-				ehVezDoUsuario = true; // DEBUG
 			} else if((comandoUsuario == MOVIMENTO_CIMA or comandoUsuario == MOVIMENTO_BAIXO or comandoUsuario == MOVIMENTO_ESQUERDA or comandoUsuario == MOVIMENTO_DIREITA)
 					and !jogoAcabou and ehVezDoUsuario){
 				movimentoUsuario = comandoUsuario;
@@ -105,7 +104,7 @@ int main(){
 				avisarAoFimDeCincoSegundos(&condicaoParadaMinimax);
 				tabuleirosPassados[numeroJogadasFeitas] = new tabuleiroTetralath(tabuleiro);
 				//Atenção! A jogada é feita dentro de comecar_minimax.
-				//tabuleiro = jogadorArtificial.comecar_minimax(tabuleiro, &condicaoParadaMinimax, ia::JOGADA_MAX, casaTabuleiroTetralath::PECAS_PRETAS);
+				tabuleiro = jogadorArtificial.comecar_minimax(tabuleiro, &condicaoParadaMinimax, ia::JOGADA_MAX, casaTabuleiroTetralath::PECAS_PRETAS);
 				numeroJogadasFeitas++;
 				ehVezDoUsuario = true;
 			}
@@ -351,27 +350,27 @@ void imprimirTelaTabuleiro(int casaAtual_param, int pecasDaVez_param, tabuleiroT
 	//printf(COR_AZUL_FRACA_LINUX);
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
 	imprimirComando("W");
-	printf("ou ");
+	printf(" ou ");
 	imprimirComando("SETA CIMA");
 	printf(" MOVER PARA CASA NA DIAGONAL ESQUERDA SUPERIOR (CIMA)\n");
 
 	imprimirComando("S");
-	printf("ou ");
+	printf(" ou ");
 	imprimirComando("SETA BAIXO");
 	printf(" MOVER PARA CASA NA DIAGONAL DIREITA INFEROR (BAIXO)\n");
 
 	imprimirComando("A");
-	printf("ou ");
+	printf(" ou ");
 	imprimirComando("SETA ESQUERDA");
 	printf(" MOVER PARA CASA A ESQUERDA\n");
 	
 	imprimirComando("D");
-	printf("ou ");
+	printf(" ou ");
 	imprimirComando("SETA DIREITA");
 	printf(" MOVER PARA CASA A DIREITA\n");
 
 	imprimirComando("J");
-	printf("ou ");
+	printf(" ou ");
 	imprimirComando("BARRA ESPACO");
 	printf(" JOGAR\n");
 
