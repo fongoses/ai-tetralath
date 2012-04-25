@@ -1,6 +1,12 @@
 #include <stdio.h>
 #include <windows.h>
+#ifndef TABULEIRO_TETRALATH
+#define TABULEIRO_TETRALATH
+
 #include "tabuleiroTetralath.h"
+ 
+#endif
+#include "interface_gui.h"
 
 /*
 * Classe que implementa um tabuleiro do jogo Tetralath.
@@ -260,7 +266,49 @@ void tabuleiroTetralath::copiarDe(tabuleiroTetralath *modelo_param){
 * 		  empate e 1 (VITORIA) para vitória. Número decimais são permitidos.
 */
 float tabuleiroTetralath::avaliarParaPecasDaCor(int pecas_avaliacao_param){
-	return VITORIA;
+	float AVALIACAO_INDEFINIDA = -5;
+	float avaliacao = AVALIACAO_INDEFINIDA;
+	
+	int nomeCasa = INDICE_PRIMEIRA_CASA;
+	
+	if(houveEmpate()){
+		avaliacao = EMPATE;
+	}
+	
+	while(nomeCasa <= INDICE_ULTIMA_CASA and avaliacao == AVALIACAO_INDEFINIDA){
+		if(casaOcupadaPorPecaBranca(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_BRANCAS){
+			if(pecasDaMesmaCorGanharam(nomeCasa)){
+				avaliacao = VITORIA;
+			} else if(pecasDaMesmaCorPerderam(nomeCasa)){
+				avaliacao = PERDA;
+			}
+		} else if(casaOcupadaPorPecaBranca(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_PRETAS){
+			if(pecasDaMesmaCorGanharam(nomeCasa)){
+				avaliacao = PERDA;
+			} else if(pecasDaMesmaCorPerderam(nomeCasa)){
+				avaliacao = VITORIA;
+			}
+		} else if(casaOcupada(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_PRETAS){
+			if(pecasDaMesmaCorGanharam(nomeCasa)){
+				avaliacao = VITORIA;
+			} else if(pecasDaMesmaCorPerderam(nomeCasa)){
+				avaliacao = PERDA;
+			}
+		}  else if(casaOcupada(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_BRANCAS){
+			if(pecasDaMesmaCorGanharam(nomeCasa)){
+				avaliacao = PERDA;
+			} else if(pecasDaMesmaCorPerderam(nomeCasa)){
+				avaliacao = VITORIA;
+			}
+		}
+		nomeCasa++;
+	}
+	
+	if(avaliacao == AVALIACAO_INDEFINIDA){
+		avaliacao = EMPATE;
+	}
+	
+	return avaliacao;
 }
 
 /*
@@ -510,6 +558,80 @@ void tabuleiroTetralath::imprimir(int casa_selecionada_param){
 	printf("\t\t\t| X 12345678901234567 X |\n");
 	printf("\t\t\t+-----------------------+\n");
 }
+
+
+/*
+* Dado um movimento e um índice de casa, decide para qual índice de casa o cursor do tabuleiro deve ser movido.
+* @param movimento_param Caractere que decide o índice.
+* @param casa_partida_param Casa da qual deseja-se obter o vizinho.
+* @return Índice a ser passado para imprimir. Se não houver vizinho para o movimento, retorna a casa passada como argumento.
+*/
+int tabuleiroTetralath::getIndiceCasaMovimento(int movimento_param, int casa_partida_param){
+	int casa_destino = casa_partida_param;
+	if(movimento_param == MOVIMENTO_CIMA or movimento_param == MOVIMENTO_CIMA_CAPS){ //Movimenta para o vizinho A, se existir.
+		if(casa_partida_param == 0 or casa_partida_param == 1 or casa_partida_param == 2 or casa_partida_param == 3 or casa_partida_param == 4 or
+		   casa_partida_param == 5 or casa_partida_param == 11 or casa_partida_param == 18 or casa_partida_param == 26){
+			casa_destino = casa_partida_param;
+		} else if(casa_partida_param <= 10){
+			casa_destino = casa_partida_param - 6;
+		} else if(casa_partida_param <= 17){
+			casa_destino = casa_partida_param - 7;
+		} else if(casa_partida_param <= 25){
+			casa_destino = casa_partida_param - 8;
+		} else if(casa_partida_param <= 34){
+			casa_destino = casa_partida_param - 9;
+		} else if(casa_partida_param <= 42){
+			casa_destino = casa_partida_param - 9;
+		} else if(casa_partida_param <= 49){
+			casa_destino = casa_partida_param - 8;
+		} else if(casa_partida_param <= 55){
+			casa_destino = casa_partida_param - 7;
+		} else if(casa_partida_param <= 60){
+			casa_destino = casa_partida_param - 6;
+		}
+	} else if(movimento_param == MOVIMENTO_BAIXO or movimento_param == MOVIMENTO_BAIXO_CAPS){ //Movimenta para o vizinho F, se existir.
+		if(casa_partida_param == 56 or casa_partida_param == 57 or casa_partida_param == 58 or casa_partida_param == 59 or casa_partida_param == 60 or
+		   casa_partida_param == 34 or casa_partida_param == 42 or casa_partida_param == 49 or casa_partida_param == 55){
+			casa_destino = casa_partida_param;
+		} else if(casa_partida_param <= 4){
+			casa_destino = casa_partida_param + 6;
+		} else if(casa_partida_param <= 10){
+			casa_destino = casa_partida_param + 7;
+		} else if(casa_partida_param <= 17){
+			casa_destino = casa_partida_param + 8;
+		} else if(casa_partida_param <= 25){
+			casa_destino = casa_partida_param + 9;
+		} else if(casa_partida_param <= 34){
+			casa_destino = casa_partida_param + 9;
+		} else if(casa_partida_param <= 42){
+			casa_destino = casa_partida_param + 8;
+		} else if(casa_partida_param <= 49){
+			casa_destino = casa_partida_param + 7;
+		} else if(casa_partida_param <= 55){
+			casa_destino = casa_partida_param + 6;
+		}
+	} else if(movimento_param == MOVIMENTO_ESQUERDA or movimento_param == MOVIMENTO_ESQUERDA_CAPS){ //Movimenta para o vizinho C, se existir.
+		if(casa_partida_param == 0 or casa_partida_param == 5 or casa_partida_param == 11 or casa_partida_param == 18 or casa_partida_param == 26 or
+		   casa_partida_param == 35 or casa_partida_param == 43 or casa_partida_param == 50 or casa_partida_param == 56){
+			casa_destino = casa_partida_param;
+		} else {
+			casa_destino = casa_partida_param - 1;
+		}
+	} else if(movimento_param == MOVIMENTO_DIREITA or movimento_param == MOVIMENTO_DIREITA_CAPS){ //Movimenta para o vizinho D, se existir.
+		if(casa_partida_param == 4 or casa_partida_param == 10 or casa_partida_param == 17 or casa_partida_param == 25 or casa_partida_param == 34 or
+		   casa_partida_param == 42 or casa_partida_param == 49 or casa_partida_param == 55 or casa_partida_param == 60){
+			casa_destino = casa_partida_param;
+		} else {
+			casa_destino = casa_partida_param + 1;
+		}
+	} else {
+		casa_destino = casa_partida_param;
+	}
+	return casa_destino;
+}
+
+
+
 
 /*************************************************************************************
 * ATENÇÃO: À partir daqui, todos métodos são privados
