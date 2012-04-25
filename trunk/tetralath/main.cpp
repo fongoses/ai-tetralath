@@ -33,6 +33,8 @@ using namespace std;
 #define COMANDO_JOGAR 'j' //Faz uma jogada na posição em que estiver, se possível.
 #define COMANDO_JOGAR_CAPS 'J'
 #define COMANDO_JOGAR_ALTERNATIVO ' '
+#define COMANDO_DESFAZER_JOGADA 'z' //Desfaz a última jogada.
+#define COMANDO_DESFAZER_JOGADA_CAPS 'Z' 
 #define COMANDO_SEM_ACAO 'o' //Usado para inicialização. Não deve ter ação atribuída.
 
 
@@ -47,16 +49,24 @@ void imprimirCoresWindows(void);
 void imprimirTelaTabuleiro(int casaAtual_param, int pecasDaVez_param, tabuleiroTetralath *tabuleiro_param);
 void imprimirTelaResultado(int cor_pecas_ganhadoras_param, int casaAtual_param, tabuleiroTetralath *tabuleiro_param);
 int getIndiceCasaMovimento(int movimento_param, int casa_partida_param);
-bool fazerJogadaUsuario(tabuleiroTetralath *tabuleiro_param, int casaAtual_param, int pecasDaVez_param, bool *ehVezDoUsuario_param);
+bool fazerJogadaUsuario(tabuleiroTetralath *tabuleiro_param, int casaAtual_param, int pecasDaVez_param, bool *ehVezDoUsuario_param,
+						tabuleiroTetralath* tabuleirosPassados_param[], int *numeroJogadasFeitas_param);
+
+
+/**************************************************
+* Variáveis globais.
+*
+*/
+
+int pecasDaVez = casaTabuleiroTetralath::PECAS_BRANCAS;
 
 /**************************************************
 * Função principal.
 *
 */
-
-int pecasDaVez = casaTabuleiroTetralath::PECAS_BRANCAS;
 int main(){
 	int casaCursor = 0;
+	int numeroJogadasFeitas = 0;
 
 	char comandoUsuario = COMANDO_SEM_ACAO;
 	char movimentoUsuario = COMANDO_SEM_ACAO;
@@ -68,30 +78,44 @@ int main(){
 	ia jogadorArtificial = *(new ia());
 
 	tabuleiroTetralath tabuleiro = *(new tabuleiroTetralath());
+	tabuleiroTetralath* tabuleirosPassados[tabuleiroTetralath::NUMERO_CASAS+1];
 
 	Sleep(500); //Para que não saia jogando logo no início.
 
-	while(comandoUsuario != COMANDO_FECHAR and comandoUsuario != COMANDO_FECHAR_CAPS){
+	while(comandoUsuario != COMANDO_FECHAR){
 		Sleep(50); //Movimento não muito rápido, permitindo melhor controle.
 		if(!jogoAcabou){
 			imprimirTelaTabuleiro(casaCursor, pecasDaVez, &tabuleiro);
 			comandoUsuario = esperarComandoUsuario();
 		}
 
-		if(comandoUsuario == COMANDO_JOGAR and !jogoAcabou and ehVezDoUsuario){
-			jogoAcabou = fazerJogadaUsuario(&tabuleiro, casaCursor, pecasDaVez, &ehVezDoUsuario);
-		} else if((comandoUsuario == MOVIMENTO_CIMA or comandoUsuario == MOVIMENTO_BAIXO or comandoUsuario == MOVIMENTO_ESQUERDA or comandoUsuario == MOVIMENTO_DIREITA)
-				  and !jogoAcabou and ehVezDoUsuario){
-			movimentoUsuario = comandoUsuario;
-			casaCursor = getIndiceCasaMovimento(movimentoUsuario, casaCursor);
-		}
-
-		if(!jogoAcabou and !ehVezDoUsuario){
-			imprimirTelaTabuleiro(casaCursor, pecasDaVez, &tabuleiro);
-			condicaoParadaMinimax = false;
-			avisarAoFimDeCincoSegundos(&condicaoParadaMinimax);
-			//tabuleiro = jogadorArtificial.comecar_minimax(tabuleiro, &condicaoParadaMinimax, ia::JOGADA_MAX, casaTabuleiroTetralath::PECAS_PRETAS);
-			ehVezDoUsuario = true;
+		if(comandoUsuario != COMANDO_DESFAZER_JOGADA){
+			if(comandoUsuario == COMANDO_JOGAR and !jogoAcabou and ehVezDoUsuario){
+				jogoAcabou = fazerJogadaUsuario(&tabuleiro, casaCursor, pecasDaVez, &ehVezDoUsuario, tabuleirosPassados, &numeroJogadasFeitas);
+				ehVezDoUsuario = true; // DEBUG
+			} else if((comandoUsuario == MOVIMENTO_CIMA or comandoUsuario == MOVIMENTO_BAIXO or comandoUsuario == MOVIMENTO_ESQUERDA or comandoUsuario == MOVIMENTO_DIREITA)
+					and !jogoAcabou and ehVezDoUsuario){
+				movimentoUsuario = comandoUsuario;
+				casaCursor = getIndiceCasaMovimento(movimentoUsuario, casaCursor);
+			}
+	
+			if(!jogoAcabou and !ehVezDoUsuario){
+				imprimirTelaTabuleiro(casaCursor, pecasDaVez, &tabuleiro);
+				condicaoParadaMinimax = false;
+				avisarAoFimDeCincoSegundos(&condicaoParadaMinimax);
+				tabuleirosPassados[numeroJogadasFeitas] = new tabuleiroTetralath(tabuleiro);
+				//Atenção! A jogada é feita dentro de comecar_minimax.
+				//tabuleiro = jogadorArtificial.comecar_minimax(tabuleiro, &condicaoParadaMinimax, ia::JOGADA_MAX, casaTabuleiroTetralath::PECAS_PRETAS);
+				numeroJogadasFeitas++;
+				ehVezDoUsuario = true;
+			}
+		} else {
+			if(0 < numeroJogadasFeitas){
+				tabuleiro = *(tabuleirosPassados[numeroJogadasFeitas - 1]);
+				numeroJogadasFeitas--;
+				(pecasDaVez == casaTabuleiroTetralath::PECAS_BRANCAS) ? 
+					pecasDaVez = casaTabuleiroTetralath::PECAS_PRETAS : pecasDaVez = casaTabuleiroTetralath::PECAS_BRANCAS;
+			}
 		}
 	}
 
@@ -169,6 +193,8 @@ char esperarComandoUsuario(void){
 			comandoUsuario = COMANDO_JOGAR;
 		} else if(GetAsyncKeyState(COMANDO_FECHAR) or GetAsyncKeyState(COMANDO_FECHAR_CAPS)){
 			comandoUsuario = COMANDO_FECHAR;
+		} else if(GetAsyncKeyState(COMANDO_DESFAZER_JOGADA) or GetAsyncKeyState(COMANDO_DESFAZER_JOGADA_CAPS)){
+			comandoUsuario = COMANDO_DESFAZER_JOGADA;
 		}
 	}
 
@@ -181,16 +207,22 @@ char esperarComandoUsuario(void){
 * @param casaAtual_param A casa do tabuleiro na qual a jogada é feita.
 * @param pecasDaVez_param A cor das peças que farão a jogada. Esta cor é trocada caso a jogada tenha sucesso.
 * @param ehVezDoUsuario_param Não é feita verificação desta variável. Ela apenas é setada como false, caso o usuário consiga jogar.
+* @param tabuleirosPassados_param Array com os tabuleiros que já foram usados, para poder desfazer jogadas.
+* @param numeroJogadasFeitas_param Quantas jogadas estão no array tabuleirosPassados_param.
 * @return bool indicando se o jogo acabou.
 */
-bool fazerJogadaUsuario(tabuleiroTetralath *tabuleiro_param, int casaAtual_param, int pecasDaVez_param, bool *ehVezDoUsuario_param){
+bool fazerJogadaUsuario(tabuleiroTetralath *tabuleiro_param, int casaAtual_param, int pecasDaVez_param, bool *ehVezDoUsuario_param,
+						tabuleiroTetralath* tabuleirosPassados_param[], int *numeroJogadasFeitas_param){
 	bool conseguiuJogar;
 	bool jogoAcabou = false;
 
 	int CASA_INEXISTENTE = -1;
 
+	tabuleirosPassados_param[*numeroJogadasFeitas_param] = new tabuleiroTetralath(tabuleiro_param);
+
 	conseguiuJogar = tabuleiro_param->jogar(casaAtual_param, pecasDaVez_param);
 	if(conseguiuJogar){
+		*numeroJogadasFeitas_param = *numeroJogadasFeitas_param + 1;
 		*ehVezDoUsuario_param = false;
 		(pecasDaVez_param == casaTabuleiroTetralath::PECAS_BRANCAS) ? 
 			pecasDaVez = casaTabuleiroTetralath::PECAS_PRETAS : pecasDaVez = casaTabuleiroTetralath::PECAS_BRANCAS;
@@ -281,6 +313,19 @@ int getIndiceCasaMovimento(int movimento_param, int casa_partida_param){
 }
 
 /*
+* Imprime um comando com letras brancas em colchetes.
+* É auxiliar da função imprimirTelaTabuleiro.
+* @param comando_param Comando a imprimir.
+*/
+void imprimirComando(string comando_param){
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
+	printf("[");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
+	cout << comando_param;
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
+	printf("]");
+}
+/*
 * Imprime a tela do jogo.
 * @param casaAtual_param A casa em que está o cursor.
 * @param pecasDaVez_param A cor das peças que estão jogando.
@@ -305,12 +350,38 @@ void imprimirTelaTabuleiro(int casaAtual_param, int pecasDaVez_param, tabuleiroT
 
 	//printf(COR_AZUL_FRACA_LINUX);
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
-	printf("[W] ou [SETA CIMA] MOVER PARA CASA NA DIAGONAL ESQUERDA SUPERIOR (CIMA)\n");
-	printf("[S] ou [SETA BAIXO] MOVER PARA CASA NA DIAGONAL DIREITA INFEROR (BAIXO)\n");
-	printf("[A] ou [SETA ESQUERDA] MOVER PARA CASA A ESQUERDA\n");
-	printf("[D] ou [SETA DIREITA] MOVER PARA CASA A DIREITA\n");
-	printf("[J] ou [BARRA ESPACO] JOGAR\n");
-	printf("[Q] SAIR\n");
+	imprimirComando("W");
+	printf("ou ");
+	imprimirComando("SETA CIMA");
+	printf(" MOVER PARA CASA NA DIAGONAL ESQUERDA SUPERIOR (CIMA)\n");
+
+	imprimirComando("S");
+	printf("ou ");
+	imprimirComando("SETA BAIXO");
+	printf(" MOVER PARA CASA NA DIAGONAL DIREITA INFEROR (BAIXO)\n");
+
+	imprimirComando("A");
+	printf("ou ");
+	imprimirComando("SETA ESQUERDA");
+	printf(" MOVER PARA CASA A ESQUERDA\n");
+	
+	imprimirComando("D");
+	printf("ou ");
+	imprimirComando("SETA DIREITA");
+	printf(" MOVER PARA CASA A DIREITA\n");
+
+	imprimirComando("J");
+	printf("ou ");
+	imprimirComando("BARRA ESPACO");
+	printf(" JOGAR\n");
+
+	imprimirComando("Z");
+	printf(" DESFAZER ULTIMA JOGADA\n");
+
+	imprimirComando("Q");
+	printf(" SAIR\n");
+
+
 	//printf(COR_BRANCA_LINUX);
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
 }

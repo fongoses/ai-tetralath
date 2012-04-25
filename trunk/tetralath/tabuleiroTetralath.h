@@ -49,6 +49,12 @@ class tabuleiroTetralath{
 		*/
 		tabuleiroTetralath();
 		/*
+		* Construtor de cópia. A cópia é profunda, isto é, não ocupa a mesma posição de memória que o modelo.
+		* Inicializa todas as casas com seus vizinhos. Copia o conteúdo de um tabuleiro para este.
+		* @param modelo_param O modelo a ser copiado.
+		*/
+		tabuleiroTetralath(tabuleiroTetralath *modelo_param);
+		/*
 		* Determina se a casa de nome passado como parâmetro está ocupada por alguma peça.
 		* @param nomeCasa_param O nome da casa a ser verificada. Nomes de casas são constantes definidas no início deste arquivo.
 		* @return Booleano indicando se a casa está ocupada por alguma peça.
@@ -97,11 +103,6 @@ class tabuleiroTetralath{
 		* @param modelo_param Tabuleiro que será copiado.
 		*/
 		void copiarDe(tabuleiroTetralath *modelo_param);
-		/*
-		* @return Ponteiro cópia do objeto em que for invocada. A cópia possui exatamente o mesmo conteúdo,
-		* 		  mas é armazenada em outra posição de memória.
-		*/
-		tabuleiroTetralath* clonar(void);
 		/*
 		* Avalia a utilidade deste tabuleiro para as peças de parâmetro, isto é, o quão favorável o tabuleiro está.
 		* @param pecas_avaliacao_param A cor das peças que será usada para avaliar o tabuleiro (PECAS_BRANCAS ou PECAS_PRETAS).
