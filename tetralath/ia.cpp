@@ -42,7 +42,7 @@ tabuleiroTetralath ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, 
 		nivelMaximoSendoAvaliado++;
 	}
 
-	indiceMelhorJogadaEncontrada = procurarMelhor(valoresJogadasEncontradas, nivelMaximoSendoAvaliado, tipo_jogada_param);
+	indiceMelhorJogadaEncontrada = procurarMelhor(valoresJogadasEncontradas, nivelMaximoSendoAvaliado-1, tipo_jogada_param);
 	return *(new tabuleiroTetralath(resultado_parcial[indiceMelhorJogadaEncontrada]));
 }
 
@@ -76,7 +76,7 @@ tabuleiroTetralath ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, 
 		nivelMaximoSendoAvaliado++;
 	}
 
-	indiceMelhorJogadaEncontrada = procurarMelhor(valoresJogadasEncontradas, nivelMaximoSendoAvaliado, tipo_jogada_param);
+	indiceMelhorJogadaEncontrada = procurarMelhor(valoresJogadasEncontradas, nivelMaximoSendoAvaliado-1, tipo_jogada_param);
 	return *(new tabuleiroTetralath(resultado_parcial[indiceMelhorJogadaEncontrada]));
 }
 
