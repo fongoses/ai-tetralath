@@ -42,7 +42,7 @@ tabuleiroTetralath ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, 
 		nivelMaximoSendoAvaliado++;
 	}
 
-	indiceMelhorJogadaEncontrada = procurarMelhor(valoresJogadasEncontradas, nivelMaximoSendoAvaliado-1, tipo_jogada_param);
+	indiceMelhorJogadaEncontrada = procurarMelhor(valoresJogadasEncontradas, nivelMaximoSendoAvaliado-2, tipo_jogada_param);
 	return *(new tabuleiroTetralath(resultado_parcial[indiceMelhorJogadaEncontrada]));
 }
 
@@ -124,31 +124,28 @@ float ia::minimax(tabuleiroTetralath estado_inicial_param,
 	float melhorValorEncontradoNaSubarvore;
 	float valoresEncontradosNaSubarvore[numeroDeFilhos];
 
-	cout << "-------------------------------\n";
-	estado_inicial_param.imprimir(0);
+	//cout << "-------------------------------\n";
+	//estado_inicial_param.imprimir(0);
+	//cout << "nivelAtual=" << nivel_atual_param << "\n";
 
 	if(estado_ehFolha or estado_jahAtingiuNivelMaximo){
-		cout << "é folha ou atingiu máximo\n";
+	//	cout << "é folha ou atingiu máximo\n";
 		resultado_parcial_param->copiarDe(&estado_inicial_param);
 		melhorValorEncontradoNaSubarvore = estado_inicial_param.avaliarParaPecasDaCor(cor_pecas_avaliacao_param);
 	} else {
-		 cout << "não é folha, nem atingiu máximo\n";
+	//	 cout << "não é folha, nem atingiu máximo\n";
 		for(int i=0; i<numeroDeFilhos; i++){
 			resultadosParciaisFilhos[i] = *(new tabuleiroTetralath());
 		}
 		filhoAtual = 1;
 		estadoFilho = estado_inicial_param.procurarEstadoAtingivelNaPosicao(filhoAtual);
 		while(estadoFilho != tabuleiroTetralath::NAO_HA_ESTADO_ATINGIVEL and *deve_parar_param != PARAR){
-			cout << "filhoAtual=" << filhoAtual << "\n";
 			valoresEncontradosNaSubarvore[filhoAtual] = minimax(*estadoFilho, &(resultadosParciaisFilhos[filhoAtual]),
 																deve_parar_param, tipoJogadaFilho, nivel_maximo_param,
 																nivel_atual_param+1, cor_pecas_avaliacao_param);
 			filhoAtual++;
-			cout << "quaseLah\n";
 			estadoFilho = estado_inicial_param.procurarEstadoAtingivelNaPosicao(filhoAtual);
-			cout << "fimIteracao\n";
 		}
-		//Usa-se filhoAtual-1 ao invés de numeroDeFilhos, pois numeroDeFilhos causaria invasão de memória se deve_parar_param tivesse sido acionado.
 		indiceMelhorValorEncontradoNaSubarvore = procurarMelhor(valoresEncontradosNaSubarvore, filhoAtual-1, tipo_jogada_param);
 		melhorEstadoEncontrado = &(resultadosParciaisFilhos[indiceMelhorValorEncontradoNaSubarvore]);
 		resultado_parcial_param->copiarDe(melhorEstadoEncontrado);

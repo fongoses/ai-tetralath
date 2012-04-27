@@ -20,8 +20,13 @@ using namespace std;
 *
 */
 
-void inverterCorPecas(int *pecas_param);
+int escolhaCorPecasUsuario(void);
+int inverterCorPecas(int pecas_param);
+
+void conferirFimDoJogo();
 void avisarAoFimDeCincoSegundos(bool *variavel_aviso_param);
+
+bool conferirFimDoJogo(tabuleiroTetralath *tabuleiro_param);
 bool fazerJogadaUsuario(tabuleiroTetralath *tabuleiro_param, int casaAtual_param, int pecasDaVez_param, bool *ehVezDoUsuario_param,
 						tabuleiroTetralath* tabuleirosPassados_param[], int *numeroJogadasFeitas_param);
 
@@ -39,7 +44,6 @@ int pecasDaVez;
 *
 */
 int main(){
-	int CASA_INEXISTENTE = -1;
 	int casaCursor = 0;
 	int numeroJogadasFeitas = 0;
 
@@ -51,47 +55,31 @@ int main(){
 	bool ehVezDoUsuario = true;
 
 	ia jogadorArtificial = *(new ia());
-	
+
 	gui = *(new interface_gui());
-	
+
 	tabuleiroTetralath tabuleiro = *(new tabuleiroTetralath());
 	tabuleiroTetralath* tabuleirosPassados[tabuleiroTetralath::NUMERO_CASAS+1];
 
 	pecasDaVez = casaTabuleiroTetralath::PECAS_BRANCAS;
-	
+
 	Sleep(500); //Para que não saia jogando logo no início.
-	
-	/*
-	* Escolha das peças do usuário.
-	*/
-	char opcaoRealcarInterface = COMANDO_ESCOLHER_BRANCAS;
-	int pecasEscolhidas = casaTabuleiroTetralath::PECAS_BRANCAS;
-	gui.imprimirTelaInicio(opcaoRealcarInterface);
-	do{
-		Sleep(50); //Movimento não muito rápido, permitindo melhor controle.
-		comandoUsuario = gui.esperarComandoUsuario();
-		if(comandoUsuario == COMANDO_PERCORRER_ALTERNATIVAS){
-			inverterCorPecas(&pecasEscolhidas);
-			if(pecasEscolhidas == casaTabuleiroTetralath::PECAS_BRANCAS){
-				opcaoRealcarInterface = COMANDO_ESCOLHER_BRANCAS;
-			} else {
-				opcaoRealcarInterface = COMANDO_ESCOLHER_PRETAS;
-			}
-		} else if(comandoUsuario == COMANDO_ESCOLHER){
-			pecasDaVez = pecasEscolhidas;
-		}
-		gui.imprimirTelaInicio(opcaoRealcarInterface);
-	} while(comandoUsuario != COMANDO_FECHAR and comandoUsuario != COMANDO_ESCOLHER);
+
+	if(escolhaCorPecasUsuario() == casaTabuleiroTetralath::PECAS_BRANCAS){
+		ehVezDoUsuario = true;
+		gui.imprimirTelaTabuleiro(casaCursor, pecasDaVez, &tabuleiro);
+	} else {
+		ehVezDoUsuario = false;
+	}
 
 	/*
 	* Início do jogo.
 	*/
 	while(comandoUsuario != COMANDO_FECHAR){
 		Sleep(50); //Movimento não muito rápido, permitindo melhor controle.
-		comandoUsuario = gui.esperarComandoUsuario();
-		
-		if(!jogoAcabou){
-			gui.imprimirTelaTabuleiro(casaCursor, pecasDaVez, &tabuleiro);
+
+		if(ehVezDoUsuario){
+			comandoUsuario = gui.esperarComandoUsuario();
 		}
 
 		if(comandoUsuario != COMANDO_DESFAZER_JOGADA){
@@ -102,35 +90,38 @@ int main(){
 				movimentoUsuario = comandoUsuario;
 				casaCursor = tabuleiro.getIndiceCasaMovimento(movimentoUsuario, casaCursor);
 			}
-	
-			if(!jogoAcabou and !ehVezDoUsuario){
+
+			if(!jogoAcabou){
 				gui.imprimirTelaTabuleiro(casaCursor, pecasDaVez, &tabuleiro);
+			}
+
+			if(!jogoAcabou and !ehVezDoUsuario){
 				condicaoParadaMinimax = false;
 				avisarAoFimDeCincoSegundos(&condicaoParadaMinimax);
 				tabuleirosPassados[numeroJogadasFeitas] = new tabuleiroTetralath(tabuleiro);
+				gui.imprimirTelaAguardarJogada();
 				tabuleiro = jogadorArtificial.comecar_minimax(tabuleiro, &condicaoParadaMinimax, ia::JOGADA_MAX, casaTabuleiroTetralath::PECAS_PRETAS); //Atenção! A jogada é feita dentro de comecar_minimax.
-				inverterCorPecas(&pecasDaVez);
+				pecasDaVez = inverterCorPecas(pecasDaVez);
 				numeroJogadasFeitas++;
 				ehVezDoUsuario = true;
+				jogoAcabou = conferirFimDoJogo(&tabuleiro);
+			}
+
+			if(!jogoAcabou){
 				gui.imprimirTelaTabuleiro(casaCursor, pecasDaVez, &tabuleiro);
-				if(tabuleiro.pecasDaMesmaCorGanharam(tabuleiro.recuperarNomeCasaUltimaJogada())){
-					jogoAcabou = true;
-					gui.imprimirTelaResultado(tabuleiro.recuperarCorPecasUltimaJogada(), CASA_INEXISTENTE, &tabuleiro);
-				} else if(tabuleiro.pecasDaMesmaCorPerderam(tabuleiro.recuperarNomeCasaUltimaJogada())){
-					jogoAcabou = true;
-					tabuleiro.recuperarCorPecasUltimaJogada() == casaTabuleiroTetralath::PECAS_BRANCAS?
-					gui.imprimirTelaResultado(casaTabuleiroTetralath::PECAS_PRETAS, CASA_INEXISTENTE, &tabuleiro) : gui.imprimirTelaResultado(casaTabuleiroTetralath::PECAS_BRANCAS, CASA_INEXISTENTE, &tabuleiro);
-				} else if(tabuleiro.houveEmpate()){
-					gui.imprimirTelaResultado(casaTabuleiroTetralath::PECAS_PRETAS+casaTabuleiroTetralath::PECAS_BRANCAS+5, CASA_INEXISTENTE, &tabuleiro);
-				}
 			}
 		} else {
 			if(0 < numeroJogadasFeitas){
 				tabuleiro = *(tabuleirosPassados[numeroJogadasFeitas - 1]);
 				numeroJogadasFeitas--;
-				inverterCorPecas(&pecasDaVez);
+				pecasDaVez = inverterCorPecas(pecasDaVez);
+			}
+
+			if(!jogoAcabou){
+				gui.imprimirTelaTabuleiro(casaCursor, pecasDaVez, &tabuleiro);
 			}
 		}
+		
 	}
 
 	system("cls");
@@ -212,17 +203,8 @@ bool fazerJogadaUsuario(tabuleiroTetralath *tabuleiro_param, int casaAtual_param
 	if(conseguiuJogar){
 		*numeroJogadasFeitas_param = *numeroJogadasFeitas_param + 1;
 		*ehVezDoUsuario_param = false;
-		inverterCorPecas(&pecasDaVez);
-		if(tabuleiro_param->pecasDaMesmaCorGanharam(tabuleiro_param->recuperarNomeCasaUltimaJogada())){
-			jogoAcabou = true;
-			gui.imprimirTelaResultado(tabuleiro_param->recuperarCorPecasUltimaJogada(), CASA_INEXISTENTE, tabuleiro_param);
-		} else if(tabuleiro_param->pecasDaMesmaCorPerderam(tabuleiro_param->recuperarNomeCasaUltimaJogada())){
-			jogoAcabou = true;
-			tabuleiro_param->recuperarCorPecasUltimaJogada() == casaTabuleiroTetralath::PECAS_BRANCAS?
-				gui.imprimirTelaResultado(casaTabuleiroTetralath::PECAS_PRETAS, CASA_INEXISTENTE, tabuleiro_param) : gui.imprimirTelaResultado(casaTabuleiroTetralath::PECAS_BRANCAS, CASA_INEXISTENTE, tabuleiro_param);
-		} else if(tabuleiro_param->houveEmpate()){
-			gui.imprimirTelaResultado(casaTabuleiroTetralath::PECAS_PRETAS+casaTabuleiroTetralath::PECAS_BRANCAS+5, CASA_INEXISTENTE, tabuleiro_param);
-		}
+		pecasDaVez = inverterCorPecas(pecasDaVez);
+		jogoAcabou = conferirFimDoJogo(tabuleiro_param);
 	}
 
 	return jogoAcabou;
@@ -264,8 +246,62 @@ bool fazerJogadaUsuario(tabuleiroTetralath *tabuleiro_param, int casaAtual_param
 /*
 * Inverte a cor das peças passadas. Se forem brancas, serão pretas. Se forem pretas, serão brancas.
 * @param pecas_param Cor das peças a ser invertida.
+* @return A cor das peças, após invertida.
 */
-void inverterCorPecas(int *pecas_param){
-	(*pecas_param == casaTabuleiroTetralath::PECAS_BRANCAS) ? 
-			*pecas_param = casaTabuleiroTetralath::PECAS_PRETAS : *pecas_param = casaTabuleiroTetralath::PECAS_BRANCAS;
+int inverterCorPecas(int pecas_param){
+	int pecas_invertidas;
+	(pecas_param == casaTabuleiroTetralath::PECAS_BRANCAS) ? 
+		pecas_invertidas = casaTabuleiroTetralath::PECAS_PRETAS : pecas_invertidas = casaTabuleiroTetralath::PECAS_BRANCAS;
+	return pecas_invertidas;
+}
+
+
+/*
+* Gerencia a escolha da cor de peças que o usuário deseja.
+* @return A cor das peças que ele escolheu.
+*/
+int escolhaCorPecasUsuario(void){
+	char opcaoRealcarInterface = COMANDO_ESCOLHER_BRANCAS;
+	char comandoUsuario;
+	int pecasEscolhidas = casaTabuleiroTetralath::PECAS_BRANCAS;
+	interface_gui gui = *(new interface_gui());
+	gui.imprimirTelaInicio(opcaoRealcarInterface);
+	do{
+		Sleep(50); //Movimento não muito rápido, permitindo melhor controle.
+		comandoUsuario = gui.esperarComandoUsuario();
+		if(comandoUsuario == COMANDO_PERCORRER_ALTERNATIVAS){
+			pecasEscolhidas = inverterCorPecas(pecasEscolhidas);
+			if(pecasEscolhidas == casaTabuleiroTetralath::PECAS_BRANCAS){
+				opcaoRealcarInterface = COMANDO_ESCOLHER_BRANCAS;
+			} else {
+				opcaoRealcarInterface = COMANDO_ESCOLHER_PRETAS;
+			}
+		} else if(comandoUsuario == COMANDO_ESCOLHER){
+			pecasDaVez = pecasEscolhidas;
+		}
+		gui.imprimirTelaInicio(opcaoRealcarInterface);
+	} while(comandoUsuario != COMANDO_FECHAR and comandoUsuario != COMANDO_ESCOLHER);
+	return pecasEscolhidas;
+}
+
+/*
+* Deve ser chamada ao fim de uma jogada.
+* Irá conferir se o jogo acabou e dirá de quem é a vitória.
+* Se o jogo acabou, já imprime a tela de resultado.
+* @param tabuleiro_param Tabuleiro do jogo.
+* @return Booleano indicando se o jogo acabou.
+*/
+bool conferirFimDoJogo(tabuleiroTetralath *tabuleiro_param){
+	int CASA_INEXISTENTE = -1;
+	bool jogoAcabou = false;
+	if(tabuleiro_param->pecasDaMesmaCorGanharam(tabuleiro_param->recuperarNomeCasaUltimaJogada())){
+		jogoAcabou = true;
+		gui.imprimirTelaResultado(tabuleiro_param->recuperarCorPecasUltimaJogada(), CASA_INEXISTENTE, tabuleiro_param);
+	} else if(tabuleiro_param->pecasDaMesmaCorPerderam(tabuleiro_param->recuperarNomeCasaUltimaJogada())){
+		jogoAcabou = true;
+		gui.imprimirTelaResultado(inverterCorPecas(tabuleiro_param->recuperarCorPecasUltimaJogada()), CASA_INEXISTENTE, tabuleiro_param);
+	} else if(tabuleiro_param->houveEmpate()){
+		gui.imprimirTelaResultado(casaTabuleiroTetralath::PECAS_PRETAS+casaTabuleiroTetralath::PECAS_BRANCAS+5, CASA_INEXISTENTE, tabuleiro_param);
+	}
+	return jogoAcabou;
 }
