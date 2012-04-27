@@ -65,6 +65,10 @@ class interface_gui{
 	*/
 	void imprimirTelaResultado(int cor_pecas_ganhadoras_param, int casaAtual_param, tabuleiroTetralath *tabuleiro_param);
 	/*
+	* Imprime a tela que informa ao usuário para aguardar a jogada da inteligência artificial.
+	*/
+	void imprimirTelaAguardarJogada();
+	/*
 	* Imprime todas as cores possíveis no prompt no windows (Só funciona no windows!!!!!!).
 	*/
 	void imprimirCoresWindows(void);
@@ -76,6 +80,9 @@ class interface_gui{
 	* @param comando_param Comando a imprimir.
 	*/
 	void imprimirComando(string comando_param);
-	
-	
+	/*
+	* Imprime um texto centralizado na tela.
+	* @param texto_param Texto a ser impresso.
+	*/
+	void imprimirTextoCentralizado(string texto_param);
 };
