@@ -37,6 +37,10 @@ class casaTabuleiroTetralath{
 		*/
 		casaTabuleiroTetralath(void);
 		/*
+		* Destrutor da classe.
+		*/
+		//~casaTabuleiroTetralath(void);
+		/*
 		* Determina se esta casa está ocupada.
 		* @return Booleano indicando se a casa está ocupada por alguma peça.
 		*/

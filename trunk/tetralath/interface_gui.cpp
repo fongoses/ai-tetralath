@@ -102,13 +102,13 @@ void interface_gui::imprimirTelaInicio(char opcao_realcar){
 	imprimirTextoCentralizado("Escolha a cor que deseja usar.");
 	printf("\n\n");
 	if(opcao_realcar == COMANDO_ESCOLHER_BRANCAS){
-		printf("\t\t\t");imprimirComando("BRANCAS");printf("\n");
+		printf("\t\t\t\t");imprimirComando("BRANCAS");printf("\n");
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
-		printf("\t\t\t[PRETAS]\n");
+		printf("\t\t\t\t[PRETAS]\n");
 	} else {
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
-		printf("\t\t\t[BRANCAS]\n");
-		printf("\t\t\t");imprimirComando("PRETAS");printf("\n");
+		printf("\t\t\t\t[BRANCAS]\n");
+		printf("\t\t\t\t");imprimirComando("PRETAS");printf("\n");
 	}
 	printf("\n\n\n\n");
 
@@ -127,10 +127,9 @@ void interface_gui::imprimirTelaInicio(char opcao_realcar){
 /*
 * Imprime a tela do jogo.
 * @param casaAtual_param A casa em que está o cursor.
-* @param pecasDaVez_param A cor das peças que estão jogando.
 * @param tabuleiro_param O tabuleiro que será impresso.
 */
-void interface_gui::imprimirTelaTabuleiro(int casaAtual_param, int pecasDaVez_param, tabuleiroTetralath *tabuleiro_param){
+void interface_gui::imprimirTelaTabuleiro(int casaAtual_param, tabuleiroTetralath *tabuleiro_param){
 	//printf(COR_BRANCA_LINUX);	
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
 	system("cls");
@@ -139,7 +138,7 @@ void interface_gui::imprimirTelaTabuleiro(int casaAtual_param, int pecasDaVez_pa
 	imprimirTextoCentralizado("O tetralath em modo texto!");
 	printf("\n");
 
-	if(pecasDaVez_param == casaTabuleiroTetralath::PECAS_BRANCAS){
+	if(tabuleiro_param->recuperarCorPecasUltimaJogada() == casaTabuleiroTetralath::PECAS_PRETAS){
 		printf("\n\n");
 		imprimirTextoCentralizado("Eh a vez das pecas BRANCAS");
 	} else {

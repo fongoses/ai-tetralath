@@ -49,6 +49,10 @@ class tabuleiroTetralath{
 		*/
 		tabuleiroTetralath();
 		/*
+		* Destrutor da classe.
+		*/
+		//~tabuleiroTetralath();
+		/*
 		* Construtor de cópia. A cópia é profunda, isto é, não ocupa a mesma posição de memória que o modelo.
 		* Inicializa todas as casas com seus vizinhos. Copia o conteúdo de um tabuleiro para este.
 		* @param modelo_param O modelo a ser copiado.
@@ -70,10 +74,9 @@ class tabuleiroTetralath{
 		/*
 		* Realiza uma jogada das peças passadas como parâmetro.
 		* @param nomeCasa_param Casa a jogar.
-		* @param corPecas_param Cor das peças que realizarão a jogada.
 		* @return Booleano indicando se foi possível realizar a jogada.
 		*/
-		bool jogar(int nomeCasa_param, int corPecas_param);
+		bool jogar(int nomeCasa_param);
 		/*
 		* Indica se as peças da cor da peça parâmetro ganharam, isto acontece em um caso:
 		*	(1) Se elas formaram uma linha de 4 peças consecutivas.
@@ -188,6 +191,10 @@ class tabuleiroTetralath{
 		* @return Índice a ser passado para imprimir. Se não houver vizinho para o movimento, retorna a casa passada como argumento.
 		*/
 		int getIndiceCasaMovimento(int movimento_param, int casa_partida_param);
+		/*
+		* Desfaz a última jogada feita com jogar.
+		*/
+		void desfazerUltimaJogada(void);
 		
 	private:
 		//dados
@@ -205,6 +212,16 @@ class tabuleiroTetralath{
 		* A cor (PECAS_PRETAS ou PECAS_BRANCAS) das peças que jogaram na última jogada.
 		*/
 		int corUltimaJogada;
+		
+		/*
+		* Array com tabuleiros passados, usado para desfazer jogadas passadas.
+		*/
+		tabuleiroTetralath **tabuleirosPassados;
+		
+		/*
+		* Número de jogadas já feitas. Usado para desfazer jogadas passadas.
+		*/
+		int numeroJogadasFeitas;
 		
 		/*
 		* Índices de casas no array que representa o tabuleiro.
@@ -229,9 +246,18 @@ class tabuleiroTetralath{
 		*/
 		bool haSequenciaCasasMesmaCor(int nomeCasa_param, int tamanhoSequencia_param);
 
+		/*
+		* Cria as vizinhanças e inicializa os dados.
+		*/
+		void inicializarDados(void);
+		
 
-
-
+		/*
+		* Inverte a cor das peças passadas. Se forem brancas, serão pretas. Se forem pretas, serão brancas.
+		* @param pecas_param Cor das peças a ser invertida.
+		* @return A cor das peças, após invertida.
+		*/
+		int inverterCorPecas(int pecas_param);
 
 
 

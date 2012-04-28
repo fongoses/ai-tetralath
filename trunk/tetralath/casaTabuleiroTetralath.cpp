@@ -1,4 +1,5 @@
 #include "casaTabuleiroTetralath.h"
+#include <stdlib.h>
 using namespace std;
 
 /*
@@ -25,6 +26,20 @@ casaTabuleiroTetralath::casaTabuleiroTetralath(void){
 	E = NULL;
 	F = NULL;
 }
+
+/*
+* Destrutor da classe.
+*//*
+casaTabuleiroTetralath::~casaTabuleiroTetralath(void){
+	free(&ocupada);
+	free(&conteudo);
+	free(A);
+	free(B);
+	free(C);
+	free(D);
+	free(E);
+	free(F);
+}*/
 
 /*
 * Determina se esta casa está ocupada.
