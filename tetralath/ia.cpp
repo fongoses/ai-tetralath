@@ -108,7 +108,7 @@ float ia::minimax(tabuleiroTetralath estado_inicial_param,
 									  int nivel_maximo_param,
 									  int nivel_atual_param, int cor_pecas_avaliacao_param)
 {
-	int filhoAtual;
+	/*int filhoAtual;
 	int valorUtilidadeEstado;
 	int tipoJogadaFilho = (tipo_jogada_param == (int) JOGADA_MIN? (int) JOGADA_MAX : (int) JOGADA_MIN);
 	int numeroDeFilhos = estado_inicial_param.calcularNumeroMovimentosLegais();
@@ -117,42 +117,33 @@ float ia::minimax(tabuleiroTetralath estado_inicial_param,
 	bool estado_ehFolha = (numeroDeFilhos == 0);
 	bool estado_jahAtingiuNivelMaximo = (nivel_atual_param == nivel_maximo_param);
 
-	tabuleiroTetralath *estadoFilho;
 	tabuleiroTetralath *melhorEstadoEncontrado;
 	tabuleiroTetralath resultadosParciaisFilhos[numeroDeFilhos+1]; //O primeiro indice válido será 1.
 
 	float melhorValorEncontradoNaSubarvore;
 	float valoresEncontradosNaSubarvore[numeroDeFilhos];
 
-	//cout << "-------------------------------\n";
-	//estado_inicial_param.imprimir(0);
-	//cout << "nivelAtual=" << nivel_atual_param << "\n";
-
 	if(estado_ehFolha or estado_jahAtingiuNivelMaximo){
-	//	cout << "é folha ou atingiu máximo\n";
 		resultado_parcial_param->copiarDe(&estado_inicial_param);
 		melhorValorEncontradoNaSubarvore = estado_inicial_param.avaliarParaPecasDaCor(cor_pecas_avaliacao_param);
+		estado_inicial_param.desfazerUltimaJogada();
 	} else {
-	//	 cout << "não é folha, nem atingiu máximo\n";
-		for(int i=0; i<numeroDeFilhos; i++){
-			resultadosParciaisFilhos[i] = *(new tabuleiroTetralath());
-		}
-		filhoAtual = 1;
-		estadoFilho = estado_inicial_param.procurarEstadoAtingivelNaPosicao(filhoAtual);
-		while(estadoFilho != tabuleiroTetralath::NAO_HA_ESTADO_ATINGIVEL and *deve_parar_param != PARAR){
-			valoresEncontradosNaSubarvore[filhoAtual] = minimax(*estadoFilho, &(resultadosParciaisFilhos[filhoAtual]),
+		for(filhoAtual=1; filhoAtual < tabuleiroTetralath::NUMERO_CASAS+1; filhoAtual++){
+			estado_inicial_param.jogar();
+			valoresEncontradosNaSubarvore[filhoAtual-1] = minimax(estado_inicial_param, &(resultadosParciaisFilhos[filhoAtual]),
 																deve_parar_param, tipoJogadaFilho, nivel_maximo_param,
 																nivel_atual_param+1, cor_pecas_avaliacao_param);
-			filhoAtual++;
 			estadoFilho = estado_inicial_param.procurarEstadoAtingivelNaPosicao(filhoAtual);
 		}
 		indiceMelhorValorEncontradoNaSubarvore = procurarMelhor(valoresEncontradosNaSubarvore, filhoAtual-1, tipo_jogada_param);
-		melhorEstadoEncontrado = &(resultadosParciaisFilhos[indiceMelhorValorEncontradoNaSubarvore]);
+		delete[] valoresEncontradosNaSubarvore;
+		melhorEstadoEncontrado = new tabuleiroTetralath(resultadosParciaisFilhos[indiceMelhorValorEncontradoNaSubarvore]);
+		delete[] resultadosParciaisFilhos;
 		resultado_parcial_param->copiarDe(melhorEstadoEncontrado);
 		melhorValorEncontradoNaSubarvore = melhorEstadoEncontrado->avaliarParaPecasDaCor(cor_pecas_avaliacao_param);
 	}
-
-	return melhorValorEncontradoNaSubarvore;
+*/
+	return 1;//melhorValorEncontradoNaSubarvore;
 }
 
 /*

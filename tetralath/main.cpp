@@ -21,14 +21,12 @@ using namespace std;
 */
 
 int escolhaCorPecasUsuario(void);
-int inverterCorPecas(int pecas_param);
 
 void conferirFimDoJogo();
 void avisarAoFimDeCincoSegundos(bool *variavel_aviso_param);
 
 bool conferirFimDoJogo(tabuleiroTetralath *tabuleiro_param);
-bool fazerJogadaUsuario(tabuleiroTetralath *tabuleiro_param, int casaAtual_param, int pecasDaVez_param, bool *ehVezDoUsuario_param,
-						tabuleiroTetralath* tabuleirosPassados_param[], int *numeroJogadasFeitas_param);
+bool fazerJogadaUsuario(tabuleiroTetralath *tabuleiro_param, int casaAtual_param, bool *ehVezDoUsuario_param);
 
 
 /**************************************************
@@ -37,7 +35,6 @@ bool fazerJogadaUsuario(tabuleiroTetralath *tabuleiro_param, int casaAtual_param
 */
 
 interface_gui gui;
-int pecasDaVez;
 
 /**************************************************
 * Função principal.
@@ -45,7 +42,6 @@ int pecasDaVez;
 */
 int main(){
 	int casaCursor = 0;
-	int numeroJogadasFeitas = 0;
 
 	char comandoUsuario = COMANDO_SEM_ACAO;
 	char movimentoUsuario = COMANDO_SEM_ACAO;
@@ -59,15 +55,12 @@ int main(){
 	gui = *(new interface_gui());
 
 	tabuleiroTetralath tabuleiro = *(new tabuleiroTetralath());
-	tabuleiroTetralath* tabuleirosPassados[tabuleiroTetralath::NUMERO_CASAS+1];
-
-	pecasDaVez = casaTabuleiroTetralath::PECAS_BRANCAS;
 
 	Sleep(500); //Para que não saia jogando logo no início.
 
 	if(escolhaCorPecasUsuario() == casaTabuleiroTetralath::PECAS_BRANCAS){
 		ehVezDoUsuario = true;
-		gui.imprimirTelaTabuleiro(casaCursor, pecasDaVez, &tabuleiro);
+		gui.imprimirTelaTabuleiro(casaCursor, &tabuleiro);
 	} else {
 		ehVezDoUsuario = false;
 	}
@@ -82,45 +75,32 @@ int main(){
 			comandoUsuario = gui.esperarComandoUsuario();
 		}
 
-		if(comandoUsuario != COMANDO_DESFAZER_JOGADA){
-			if(comandoUsuario == COMANDO_JOGAR and !jogoAcabou and ehVezDoUsuario){
-				jogoAcabou = fazerJogadaUsuario(&tabuleiro, casaCursor, pecasDaVez, &ehVezDoUsuario, tabuleirosPassados, &numeroJogadasFeitas);
-			} else if((comandoUsuario == MOVIMENTO_CIMA or comandoUsuario == MOVIMENTO_BAIXO or comandoUsuario == MOVIMENTO_ESQUERDA or comandoUsuario == MOVIMENTO_DIREITA)
+		if(comandoUsuario == COMANDO_JOGAR and !jogoAcabou and ehVezDoUsuario){
+			jogoAcabou = fazerJogadaUsuario(&tabuleiro, casaCursor, &ehVezDoUsuario);
+		} else if((comandoUsuario == MOVIMENTO_CIMA or comandoUsuario == MOVIMENTO_BAIXO or comandoUsuario == MOVIMENTO_ESQUERDA or comandoUsuario == MOVIMENTO_DIREITA)
 					and !jogoAcabou and ehVezDoUsuario){
-				movimentoUsuario = comandoUsuario;
-				casaCursor = tabuleiro.getIndiceCasaMovimento(movimentoUsuario, casaCursor);
-			}
-
-			if(!jogoAcabou){
-				gui.imprimirTelaTabuleiro(casaCursor, pecasDaVez, &tabuleiro);
-			}
-
-			if(!jogoAcabou and !ehVezDoUsuario){
-				condicaoParadaMinimax = false;
-				avisarAoFimDeCincoSegundos(&condicaoParadaMinimax);
-				tabuleirosPassados[numeroJogadasFeitas] = new tabuleiroTetralath(tabuleiro);
-				gui.imprimirTelaAguardarJogada();
-				tabuleiro = jogadorArtificial.comecar_minimax(tabuleiro, &condicaoParadaMinimax, ia::JOGADA_MAX, casaTabuleiroTetralath::PECAS_PRETAS); //Atenção! A jogada é feita dentro de comecar_minimax.
-				pecasDaVez = inverterCorPecas(pecasDaVez);
-				numeroJogadasFeitas++;
-				ehVezDoUsuario = true;
-				jogoAcabou = conferirFimDoJogo(&tabuleiro);
-			}
-
-			if(!jogoAcabou){
-				gui.imprimirTelaTabuleiro(casaCursor, pecasDaVez, &tabuleiro);
-			}
-		} else {
-			if(0 < numeroJogadasFeitas){
-				tabuleiro = *(tabuleirosPassados[numeroJogadasFeitas - 1]);
-				numeroJogadasFeitas--;
-				pecasDaVez = inverterCorPecas(pecasDaVez);
-			}
-
-			if(!jogoAcabou){
-				gui.imprimirTelaTabuleiro(casaCursor, pecasDaVez, &tabuleiro);
-			}
+			movimentoUsuario = comandoUsuario;
+			casaCursor = tabuleiro.getIndiceCasaMovimento(movimentoUsuario, casaCursor);
+		} else if(comandoUsuario == COMANDO_DESFAZER_JOGADA){
+			tabuleiro.desfazerUltimaJogada(); //Desfaz jogada do usuário...
+			tabuleiro.desfazerUltimaJogada(); //... e da IA.
 		}
+ehVezDoUsuario=true;
+		if(!jogoAcabou){
+			gui.imprimirTelaTabuleiro(casaCursor, &tabuleiro);
+		}
+
+/*		if(!jogoAcabou and !ehVezDoUsuario){
+			avisarAoFimDeCincoSegundos(&condicaoParadaMinimax);
+			gui.imprimirTelaAguardarJogada();
+			tabuleiro = jogadorArtificial.comecar_minimax(tabuleiro, &condicaoParadaMinimax, ia::JOGADA_MAX, casaTabuleiroTetralath::PECAS_PRETAS); //Atenção! A jogada é feita dentro de comecar_minimax.
+			ehVezDoUsuario = true;
+			jogoAcabou = conferirFimDoJogo(&tabuleiro);
+		}
+
+		if(!jogoAcabou){
+			gui.imprimirTelaTabuleiro(casaCursor, &tabuleiro);
+		}*/
 		
 	}
 
@@ -143,67 +123,28 @@ unsigned int __stdcall esperar(void *variavel_aviso_param){
 	return 0;
 }
 void avisarAoFimDeCincoSegundos(bool *variavel_aviso_param){
+	*variavel_aviso_param = false;
 	_beginthreadex(0, 0, &esperar, (void *) variavel_aviso_param, 0, 0);
-	/*
-	pid_t pid;
-	pid_t pid_filho = 0;
-	pid = fork();
-	if(pid == pid_filho){
-		Sleep(5000);
-		*variavel_aviso_param = true;
-		exit(0);
-	}
-	*/
 }
-/*
-* Passou no teste se os tempos estiverem certos e (x) 1<=x<=6 não repetir.
-* Não pode repetir, pois apenas o pai pode sair de avisarAoFimDeCincoSegundos.
-* Os filhos devem ser terminados, de modo que não seja possível voltarem à main!
-*/
-/*void testesAvisarAoFimDeCincoSegundos(){
-	bool avisoUm = FALSE;
-	bool avisoDois = FALSE;
-	bool avisoTres = FALSE;
-	
-	avisarAoFimDeCincoSegundos(&avisoUm);
-	printf("(1) avisoUm contém %d\n", avisoUm);
-	avisarAoFimDeCincoSegundos(&avisoDois);
-	printf("(2) avisoDois contém %d\n", avisoDois);
-	avisarAoFimDeCincoSegundos(&avisoTres);
-	printf("(3) avisoTres contém %d\n", avisoTres);
-	system("pause");
-	printf("(4) avisoUm contém %d\n", avisoUm);
-	printf("(5) avisoDois contém %d\n", avisoDois);
-	printf("(6) avisoTres contém %d\n", avisoTres);
-	system("pause");
-}*/
-
-
 
 /*
 * Realiza uma jogada. Mostra a tela do resultado, se o jogo acabar.
 * @param tabuleiro_param O tabuleiro no qual a jogada é feita.
 * @param casaAtual_param A casa do tabuleiro na qual a jogada é feita.
-* @param pecasDaVez_param A cor das peças que farão a jogada. Esta cor é trocada caso a jogada tenha sucesso.
 * @param ehVezDoUsuario_param Não é feita verificação desta variável. Ela apenas é setada como false, caso o usuário consiga jogar.
 * @param tabuleirosPassados_param Array com os tabuleiros que já foram usados, para poder desfazer jogadas.
 * @param numeroJogadasFeitas_param Quantas jogadas estão no array tabuleirosPassados_param.
 * @return bool indicando se o jogo acabou.
 */
-bool fazerJogadaUsuario(tabuleiroTetralath *tabuleiro_param, int casaAtual_param, int pecasDaVez_param, bool *ehVezDoUsuario_param,
-						tabuleiroTetralath* tabuleirosPassados_param[], int *numeroJogadasFeitas_param){
+bool fazerJogadaUsuario(tabuleiroTetralath *tabuleiro_param, int casaAtual_param, bool *ehVezDoUsuario_param){
 	bool conseguiuJogar;
 	bool jogoAcabou = false;
 
 	int CASA_INEXISTENTE = -1;
 
-	tabuleirosPassados_param[*numeroJogadasFeitas_param] = new tabuleiroTetralath(tabuleiro_param);
-
-	conseguiuJogar = tabuleiro_param->jogar(casaAtual_param, pecasDaVez_param);
+	conseguiuJogar = tabuleiro_param->jogar(casaAtual_param);
 	if(conseguiuJogar){
-		*numeroJogadasFeitas_param = *numeroJogadasFeitas_param + 1;
 		*ehVezDoUsuario_param = false;
-		pecasDaVez = inverterCorPecas(pecasDaVez);
 		jogoAcabou = conferirFimDoJogo(tabuleiro_param);
 	}
 
@@ -211,77 +152,30 @@ bool fazerJogadaUsuario(tabuleiroTetralath *tabuleiro_param, int casaAtual_param
 }
 
 /*
-* Realiza uma jogada da IA. Mostra a tela do resultado, se o jogo acabar.
-* @param tabuleiro_param O tabuleiro no qual a jogada é feita.
-* @param casaAtual_param A casa do tabuleiro na qual a jogada é feita.
-* @param pecasDaVez_param A cor das peças que farão a jogada. Esta cor é trocada caso a jogada tenha sucesso.
-* @param ehVezDoUsuario_param Não é feita verificação desta variável. Ela apenas é setada como false, caso o usuário consiga jogar.
-* @param tabuleirosPassados_param Array com os tabuleiros que já foram usados, para poder desfazer jogadas.
-* @param numeroJogadasFeitas_param Quantas jogadas estão no array tabuleirosPassados_param.
-* @return bool indicando se o jogo acabou.
-*/
-/*bool fazerJogadaIA(tabuleiroTetralath *tabuleiro_param, int casaAtual_param, int pecasDaVez_param, bool *ehVezDoUsuario_param,
-				   tabuleiroTetralath* tabuleirosPassados_param[], int *numeroJogadasFeitas_param){
-	gui.imprimirTelaTabuleiro(casaCursor, pecasDaVez, &tabuleiro);
-	condicaoParadaMinimax = false;
-	avisarAoFimDeCincoSegundos(&condicaoParadaMinimax);
-	tabuleirosPassados[numeroJogadasFeitas] = new tabuleiroTetralath(tabuleiro);
-	tabuleiro = jogadorArtificial.comecar_minimax(tabuleiro, &condicaoParadaMinimax, ia::JOGADA_MAX, casaTabuleiroTetralath::PECAS_PRETAS); //Atenção! A jogada é feita dentro de comecar_minimax.
-	inverterCorPecas(&pecasDaVez);
-	numeroJogadasFeitas++;
-	ehVezDoUsuario = true;
-	gui.imprimirTelaTabuleiro(casaCursor, pecasDaVez, &tabuleiro);
-	if(tabuleiro.pecasDaMesmaCorGanharam(tabuleiro.recuperarNomeCasaUltimaJogada())){
-		jogoAcabou = true;
-		gui.imprimirTelaResultado(tabuleiro.recuperarCorPecasUltimaJogada(), CASA_INEXISTENTE, &tabuleiro);
-	} else if(tabuleiro.pecasDaMesmaCorPerderam(tabuleiro.recuperarNomeCasaUltimaJogada())){
-		jogoAcabou = true;
-		tabuleiro.recuperarCorPecasUltimaJogada() == casaTabuleiroTetralath::PECAS_BRANCAS?
-		gui.imprimirTelaResultado(casaTabuleiroTetralath::PECAS_PRETAS, CASA_INEXISTENTE, &tabuleiro) : gui.imprimirTelaResultado(casaTabuleiroTetralath::PECAS_BRANCAS, CASA_INEXISTENTE, &tabuleiro);
-	} else if(tabuleiro.houveEmpate()){
-		gui.imprimirTelaResultado(casaTabuleiroTetralath::PECAS_PRETAS+casaTabuleiroTetralath::PECAS_BRANCAS+5, CASA_INEXISTENTE, &tabuleiro);
-	}
-	}*/
-
-/*
-* Inverte a cor das peças passadas. Se forem brancas, serão pretas. Se forem pretas, serão brancas.
-* @param pecas_param Cor das peças a ser invertida.
-* @return A cor das peças, após invertida.
-*/
-int inverterCorPecas(int pecas_param){
-	int pecas_invertidas;
-	(pecas_param == casaTabuleiroTetralath::PECAS_BRANCAS) ? 
-		pecas_invertidas = casaTabuleiroTetralath::PECAS_PRETAS : pecas_invertidas = casaTabuleiroTetralath::PECAS_BRANCAS;
-	return pecas_invertidas;
-}
-
-
-/*
 * Gerencia a escolha da cor de peças que o usuário deseja.
-* @return A cor das peças que ele escolheu.
+* @return Booleano indicando se o usuário deve começar (se escolheu as brancas).
 */
 int escolhaCorPecasUsuario(void){
 	char opcaoRealcarInterface = COMANDO_ESCOLHER_BRANCAS;
 	char comandoUsuario;
-	int pecasEscolhidas = casaTabuleiroTetralath::PECAS_BRANCAS;
+	bool usuarioEscolheuBrancas = true;
 	interface_gui gui = *(new interface_gui());
 	gui.imprimirTelaInicio(opcaoRealcarInterface);
 	do{
 		Sleep(50); //Movimento não muito rápido, permitindo melhor controle.
 		comandoUsuario = gui.esperarComandoUsuario();
 		if(comandoUsuario == COMANDO_PERCORRER_ALTERNATIVAS){
-			pecasEscolhidas = inverterCorPecas(pecasEscolhidas);
-			if(pecasEscolhidas == casaTabuleiroTetralath::PECAS_BRANCAS){
+			if(!usuarioEscolheuBrancas){
 				opcaoRealcarInterface = COMANDO_ESCOLHER_BRANCAS;
+				usuarioEscolheuBrancas = true;
 			} else {
 				opcaoRealcarInterface = COMANDO_ESCOLHER_PRETAS;
+				usuarioEscolheuBrancas = false;
 			}
-		} else if(comandoUsuario == COMANDO_ESCOLHER){
-			pecasDaVez = pecasEscolhidas;
 		}
 		gui.imprimirTelaInicio(opcaoRealcarInterface);
 	} while(comandoUsuario != COMANDO_FECHAR and comandoUsuario != COMANDO_ESCOLHER);
-	return pecasEscolhidas;
+	return usuarioEscolheuBrancas;
 }
 
 /*
@@ -294,13 +188,23 @@ int escolhaCorPecasUsuario(void){
 bool conferirFimDoJogo(tabuleiroTetralath *tabuleiro_param){
 	int CASA_INEXISTENTE = -1;
 	bool jogoAcabou = false;
-	if(tabuleiro_param->pecasDaMesmaCorGanharam(tabuleiro_param->recuperarNomeCasaUltimaJogada())){
+	bool brancasGanharam = (tabuleiro_param->pecasDaMesmaCorGanharam(tabuleiro_param->recuperarNomeCasaUltimaJogada())
+						   and tabuleiro_param->casaOcupadaPorPecaBranca(tabuleiro_param->recuperarNomeCasaUltimaJogada()))
+						   or (tabuleiro_param->pecasDaMesmaCorPerderam(tabuleiro_param->recuperarNomeCasaUltimaJogada()) 
+						   and !tabuleiro_param->casaOcupadaPorPecaBranca(tabuleiro_param->recuperarNomeCasaUltimaJogada()));
+						   
+	bool pretasGanharam = (tabuleiro_param->pecasDaMesmaCorGanharam(tabuleiro_param->recuperarNomeCasaUltimaJogada()) 
+						   and !tabuleiro_param->casaOcupadaPorPecaBranca(tabuleiro_param->recuperarNomeCasaUltimaJogada()))
+						   or (tabuleiro_param->pecasDaMesmaCorPerderam(tabuleiro_param->recuperarNomeCasaUltimaJogada()) 
+						   and tabuleiro_param->casaOcupadaPorPecaBranca(tabuleiro_param->recuperarNomeCasaUltimaJogada()));
+	if(brancasGanharam){
 		jogoAcabou = true;
-		gui.imprimirTelaResultado(tabuleiro_param->recuperarCorPecasUltimaJogada(), CASA_INEXISTENTE, tabuleiro_param);
-	} else if(tabuleiro_param->pecasDaMesmaCorPerderam(tabuleiro_param->recuperarNomeCasaUltimaJogada())){
+		gui.imprimirTelaResultado(casaTabuleiroTetralath::PECAS_BRANCAS, CASA_INEXISTENTE, tabuleiro_param);
+	} else if(pretasGanharam){
 		jogoAcabou = true;
-		gui.imprimirTelaResultado(inverterCorPecas(tabuleiro_param->recuperarCorPecasUltimaJogada()), CASA_INEXISTENTE, tabuleiro_param);
+		gui.imprimirTelaResultado(casaTabuleiroTetralath::PECAS_PRETAS, CASA_INEXISTENTE, tabuleiro_param);
 	} else if(tabuleiro_param->houveEmpate()){
+		jogoAcabou = true;
 		gui.imprimirTelaResultado(casaTabuleiroTetralath::PECAS_PRETAS+casaTabuleiroTetralath::PECAS_BRANCAS+5, CASA_INEXISTENTE, tabuleiro_param);
 	}
 	return jogoAcabou;

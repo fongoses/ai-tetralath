@@ -53,10 +53,9 @@ class interface_gui{
 	/*
 	* Imprime a tela do jogo.
 	* @param casaAtual_param A casa em que está o cursor.
-	* @param pecasDaVez_param A cor das peças que estão jogando.
 	* @param tabuleiro_param O tabuleiro que será impresso.
 	*/
-	void imprimirTelaTabuleiro(int casaAtual_param, int pecasDaVez_param, tabuleiroTetralath *tabuleiro_param);
+	void imprimirTelaTabuleiro(int casaAtual_param, tabuleiroTetralath *tabuleiro_param);
 	/*
 	* Imprime a tela do resultado de um jogo.
 	* @param cor_pecas_ganhadoras_param A cor das peças que ganharam o jogo. Qualquer valor diferente de PECAS_PRETAS e PECAS_BRANCAS é empate.
