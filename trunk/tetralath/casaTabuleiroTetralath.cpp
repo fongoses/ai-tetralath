@@ -28,20 +28,6 @@ casaTabuleiroTetralath::casaTabuleiroTetralath(void){
 }
 
 /*
-* Destrutor da classe.
-*//*
-casaTabuleiroTetralath::~casaTabuleiroTetralath(void){
-	free(&ocupada);
-	free(&conteudo);
-	free(A);
-	free(B);
-	free(C);
-	free(D);
-	free(E);
-	free(F);
-}*/
-
-/*
 * Determina se esta casa está ocupada.
 * @return Booleano indicando se a casa está ocupada por alguma peça.
 */
@@ -88,6 +74,14 @@ bool casaTabuleiroTetralath::ocuparCom(int corPeca_param){
 		return false;
 	}
 }
+
+/*
+* Desocupa esta casa, se estiver ocupada.
+*/
+void casaTabuleiroTetralath::desocupar(void){
+	ocupada = false;
+}
+
 
 /*
 * As funções à seguir possuem comportamento semelhante.

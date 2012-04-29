@@ -20,29 +20,33 @@
 * Construtor da classe.
 * Inicializa todas as casas com seus vizinhos.
 */
-tabuleiroTetralath::tabuleiroTetralath(){
+tabuleiroTetralath::tabuleiroTetralath(void){
 	inicializarDados();
+	manterRegistroJogadas = false;
 }
 
 /*
-* Destrutor da classe.
-*//*
-tabuleiroTetralath::~tabuleiroTetralath(){
-	delete[] tabuleiro;
-	delete[] tabuleirosPassados;
-	free(&casaUltimaJogada);
-	free(&corUltimaJogada);
-	free(&numeroJogadasFeitas);
-}*/
+* Construtor da classe.
+* Inicializa todas as casas com seus vizinhos.
+* @param manter_registro_jogadas_param Indica se deve ser mantido registro de jogadas neste tabuleiro, para uso em desfazerUltimaJogada.
+*		 Atentar para o alto custo de memória desta opção! Com poucos tabuleiros assim, é possível estourar o limite bem rápido!
+*/
+tabuleiroTetralath::tabuleiroTetralath(bool manter_registro_jogadas_param){
+	inicializarDados();
+	manterRegistroJogadas = manter_registro_jogadas_param;
+}
 
 /*
 * Construtor de cópia. A cópia é profunda, isto é, não ocupa a mesma posição de memória que o modelo.
 * Inicializa todas as casas com seus vizinhos. Copia o conteúdo de um tabuleiro para este.
 * @param modelo_param O modelo a ser copiado.
+* @param manter_registro_jogadas_param Indica se deve ser mantido registro de jogadas neste tabuleiro, para uso em desfazerUltimaJogada.
+*		 Atentar para o alto custo de memória desta opção! Com poucos tabuleiros assim, é possível estourar o limite bem rápido!
 */
-tabuleiroTetralath::tabuleiroTetralath(tabuleiroTetralath* modelo_param){
+tabuleiroTetralath::tabuleiroTetralath(tabuleiroTetralath* modelo_param, bool manter_registro_jogadas_param){
 	inicializarDados();
 	copiarDe(modelo_param);
+	manterRegistroJogadas = manter_registro_jogadas_param;
 }
 /*
 * Determina se a casa de nome passado como parâmetro está ocupada por alguma peça.
@@ -50,7 +54,7 @@ tabuleiroTetralath::tabuleiroTetralath(tabuleiroTetralath* modelo_param){
 * @return Booleano indicando se a casa está ocupada por alguma peça.
 */
 bool tabuleiroTetralath::casaOcupada(int nomeCasa_param){
-	return tabuleiro[nomeCasa_param]->estahOcupada();
+	return tabuleiro[nomeCasa_param].estahOcupada();
 }
 
 /*
@@ -60,7 +64,7 @@ bool tabuleiroTetralath::casaOcupada(int nomeCasa_param){
 *	Atenção: Se a casa não estiver ocupada ou se estiver ocupada por peça preta, retornará false.
 */
 bool tabuleiroTetralath::casaOcupadaPorPecaBranca(int nomeCasa_param){
-	return tabuleiro[nomeCasa_param]->estahOcupadaPorPecaBranca();
+	return tabuleiro[nomeCasa_param].estahOcupadaPorPecaBranca();
 }
 
 /*
@@ -72,8 +76,11 @@ bool tabuleiroTetralath::jogar(int nomeCasa_param){
 	bool conseguiu;
 	int corPecas = inverterCorPecas(corUltimaJogada);
 
-	tabuleirosPassados[numeroJogadasFeitas] = new tabuleiroTetralath(this);
-	conseguiu = tabuleiro[nomeCasa_param]->ocuparCom(corPecas);
+	if(manterRegistroJogadas){
+		casasJogadas[numeroJogadasFeitas] = casaUltimaJogada;
+		coresJogadas[numeroJogadasFeitas] = corUltimaJogada;
+	}
+	conseguiu = tabuleiro[nomeCasa_param].ocuparCom(corPecas);
 	if(conseguiu){
 		casaUltimaJogada = nomeCasa_param;
 		corUltimaJogada = corPecas;
@@ -114,7 +121,7 @@ bool tabuleiroTetralath::houveEmpate(void){
 	int indiceCasa=0;
 	bool encontrouCasaDesocupada = false;
 	while(!encontrouCasaDesocupada and indiceCasa<NUMERO_CASAS){
-		encontrouCasaDesocupada = !tabuleiro[indiceCasa]->estahOcupada();
+		encontrouCasaDesocupada = !tabuleiro[indiceCasa].estahOcupada();
 		indiceCasa++;
 	}
 	return !encontrouCasaDesocupada;
@@ -126,16 +133,19 @@ bool tabuleiroTetralath::houveEmpate(void){
 * @param modelo_param Tabuleiro que será copiado.
 */
 void tabuleiroTetralath::copiarDe(tabuleiroTetralath *modelo_param){
-	inicializarDados();
+	int nomeCasa;
+	for(nomeCasa=INDICE_PRIMEIRA_CASA; nomeCasa<NUMERO_CASAS; nomeCasa++){
+		tabuleiro[nomeCasa].desocupar();
+	}
 
-	for(int nomeCasa=INDICE_PRIMEIRA_CASA; nomeCasa<NUMERO_CASAS; nomeCasa++){
+	for(nomeCasa=INDICE_PRIMEIRA_CASA; nomeCasa<NUMERO_CASAS; nomeCasa++){
 		if(modelo_param->casaOcupada(nomeCasa)){
 			if(modelo_param->casaOcupadaPorPecaBranca(nomeCasa)){
 				jogar(nomeCasa);
-				(*tabuleiro[nomeCasa]).ocuparCom((int) casaTabuleiroTetralath::PECAS_BRANCAS);
+				tabuleiro[nomeCasa].ocuparCom((int) casaTabuleiroTetralath::PECAS_BRANCAS);
 			} else {
 				jogar(nomeCasa);
-				(*tabuleiro[nomeCasa]).ocuparCom((int) casaTabuleiroTetralath::PECAS_PRETAS);
+				tabuleiro[nomeCasa].ocuparCom((int) casaTabuleiroTetralath::PECAS_PRETAS);
 			}
 		}
 	}
@@ -214,7 +224,7 @@ tabuleiroTetralath* tabuleiroTetralath::procurarEstadoAtingivelNaPosicao(int pos
 	}
 
 	tabuleiroTetralath* estadoAtingivelNaPosicao;
-	estadoAtingivelNaPosicao = new tabuleiroTetralath();
+	estadoAtingivelNaPosicao = new tabuleiroTetralath(false);
 	estadoAtingivelNaPosicao->copiarDe(this);
 
 	nomeCasa = INDICE_PRIMEIRA_CASA;
@@ -538,14 +548,11 @@ int tabuleiroTetralath::getIndiceCasaMovimento(int movimento_param, int casa_par
 bool tabuleiroTetralath::haSequenciaCasasMesmaCor(int nomeCasa_param, int tamanhoSequencia_param){
 	bool existeSequenciaCasasMesmaCor = false;
 	casaTabuleiroTetralath *casaAux;
-	casaTabuleiroTetralath casaReferencia = *tabuleiro[nomeCasa_param];
+	casaTabuleiroTetralath casaReferencia = tabuleiro[nomeCasa_param];
 	//Variáveis à seguir são bitstreams que representam com 1 a presença de uma peça da mesma cor da peça de parâmetro e 0 caso contrário.
 	unsigned short linhaHorizontal = 0x0000;
 	unsigned short linhaDiagonalDecrescente = 0x0000;
 	unsigned short linhaDiagonalCrescente = 0x0000;
-
-	cout << "haSequencia...\n";
-	imprimir(0);
 
 	if(tamanhoSequencia_param == 3 and casaReferencia.estahOcupadaPorPecaBranca()){
 		/***************************************
@@ -908,7 +915,7 @@ bool tabuleiroTetralath::haSequenciaCasasMesmaCor(int nomeCasa_param, int tamanh
 			linhaDiagonalCrescente = linhaDiagonalCrescente | 0x0200;
 		}
 	}
-imprimir(0);
+
 	if(tamanhoSequencia_param == 3){
 		existeSequenciaCasasMesmaCor = ((linhaHorizontal & 0xE000) == 0xE000)
 					       or ((linhaHorizontal & 0x7000) == 0x7000)
@@ -933,8 +940,7 @@ imprimir(0);
 					       or ((linhaDiagonalCrescente & 0x3C00) == 0x3C00)
 					       or ((linhaDiagonalCrescente & 0x1E00) == 0x1E00);
 	}
-imprimir(0);
-	cout << "fimHaSequ...\n";
+
 	return existeSequenciaCasasMesmaCor;
 }
 
@@ -943,10 +949,14 @@ imprimir(0);
 * Desfaz a última jogada feita com jogar.
 */
 void tabuleiroTetralath::desfazerUltimaJogada(void){
-	if(0 < numeroJogadasFeitas){
-		copiarDe(tabuleirosPassados[numeroJogadasFeitas-1]); 
-		//Atenção! Contra-intuitivo! Ao copiar do último, numeroJogadasFeitas estará correto!
-		//Não é necessário decrementar numeroJogadasFeitas aqui, portanto!
+	int nomeCasa;
+	int casaJogadaCopiar = casasJogadas[numeroJogadasFeitas-1];
+	int corJogadaCopiar = coresJogadas[numeroJogadasFeitas-1];
+	if(0 < numeroJogadasFeitas and manterRegistroJogadas){
+		tabuleiro[casaUltimaJogada].desocupar();
+		casaUltimaJogada = casaJogadaCopiar;
+		corUltimaJogada = corJogadaCopiar;
+		numeroJogadasFeitas--;
 	}
 }
 
@@ -956,77 +966,79 @@ void tabuleiroTetralath::desfazerUltimaJogada(void){
 */
 void tabuleiroTetralath::inicializarDados(void){
 	int indiceCasa = 0;
-	tabuleiro = new casaTabuleiroTetralath*[NUMERO_CASAS];
-	tabuleirosPassados = new tabuleiroTetralath*[NUMERO_CASAS+1];
+	tabuleiro = new casaTabuleiroTetralath[NUMERO_CASAS];
+	casasJogadas = new int[NUMERO_CASAS+1];
+	coresJogadas = new int[NUMERO_CASAS+1];
 	for(indiceCasa=0; indiceCasa<NUMERO_CASAS; indiceCasa++){
-		tabuleiro[indiceCasa] = new casaTabuleiroTetralath();
+		tabuleiro[indiceCasa] = *(new casaTabuleiroTetralath());
 	}
 
 	//Criação do tabuleiro. Para informações sobre vizinhanças, verificar figuras anexas ao projeto.
-	 tabuleiro[0]->criarVizinhanca(VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE,tabuleiro[1]       ,tabuleiro[5]       ,tabuleiro[6]);
-	 tabuleiro[1]->criarVizinhanca(VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE,tabuleiro[0]       ,tabuleiro[2]       ,tabuleiro[6]       ,tabuleiro[7]);
-	 tabuleiro[2]->criarVizinhanca(VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE,tabuleiro[1]       ,tabuleiro[3]       ,tabuleiro[7]       ,tabuleiro[8]);
-	 tabuleiro[3]->criarVizinhanca(VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE,tabuleiro[2]       ,tabuleiro[4]       ,tabuleiro[8]       ,tabuleiro[9]);
-	 tabuleiro[4]->criarVizinhanca(VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE,tabuleiro[3]       ,VIZINHO_INEXISTENTE,tabuleiro[9]       ,tabuleiro[10]);
-	 tabuleiro[5]->criarVizinhanca(VIZINHO_INEXISTENTE,tabuleiro[0]       ,VIZINHO_INEXISTENTE,tabuleiro[6]       ,tabuleiro[11]      ,tabuleiro[12]);
-	 tabuleiro[6]->criarVizinhanca(tabuleiro[0]       ,tabuleiro[1]       ,tabuleiro[5]       ,tabuleiro[7]       ,tabuleiro[12]      ,tabuleiro[13]);
-	 tabuleiro[7]->criarVizinhanca(tabuleiro[1]       ,tabuleiro[2]       ,tabuleiro[6]       ,tabuleiro[8]       ,tabuleiro[13]      ,tabuleiro[14]);
-	 tabuleiro[8]->criarVizinhanca(tabuleiro[2]       ,tabuleiro[3]       ,tabuleiro[7]       ,tabuleiro[9]       ,tabuleiro[14]      ,tabuleiro[15]);
-	 tabuleiro[9]->criarVizinhanca(tabuleiro[3]       ,tabuleiro[4]       ,tabuleiro[8]       ,tabuleiro[10]      ,tabuleiro[15]      ,tabuleiro[16]);
-	tabuleiro[10]->criarVizinhanca(tabuleiro[4]       ,VIZINHO_INEXISTENTE,tabuleiro[9]       ,VIZINHO_INEXISTENTE,tabuleiro[16]      ,tabuleiro[17]);
-	tabuleiro[11]->criarVizinhanca(VIZINHO_INEXISTENTE,tabuleiro[5]       ,VIZINHO_INEXISTENTE,tabuleiro[12]      ,tabuleiro[18]      ,tabuleiro[19]);
-	tabuleiro[12]->criarVizinhanca(tabuleiro[5]       ,tabuleiro[6]       ,tabuleiro[11]      ,tabuleiro[13]      ,tabuleiro[19]      ,tabuleiro[20]);
-	tabuleiro[13]->criarVizinhanca(tabuleiro[6]       ,tabuleiro[7]       ,tabuleiro[12]      ,tabuleiro[14]      ,tabuleiro[20]      ,tabuleiro[21]);
-	tabuleiro[14]->criarVizinhanca(tabuleiro[7]       ,tabuleiro[8]       ,tabuleiro[13]      ,tabuleiro[15]      ,tabuleiro[21]      ,tabuleiro[22]);
-	tabuleiro[15]->criarVizinhanca(tabuleiro[8]       ,tabuleiro[9]       ,tabuleiro[14]      ,tabuleiro[16]      ,tabuleiro[22]      ,tabuleiro[23]);
-	tabuleiro[16]->criarVizinhanca(tabuleiro[9]       ,tabuleiro[10]      ,tabuleiro[15]      ,tabuleiro[17]      ,tabuleiro[23]      ,tabuleiro[24]);
-	tabuleiro[17]->criarVizinhanca(tabuleiro[10]      ,VIZINHO_INEXISTENTE,tabuleiro[16]      ,VIZINHO_INEXISTENTE,tabuleiro[24]      ,tabuleiro[25]);
-	tabuleiro[18]->criarVizinhanca(VIZINHO_INEXISTENTE,tabuleiro[11]      ,VIZINHO_INEXISTENTE,tabuleiro[19]      ,tabuleiro[26]      ,tabuleiro[27]);
-	tabuleiro[19]->criarVizinhanca(tabuleiro[11]      ,tabuleiro[12]      ,tabuleiro[18]      ,tabuleiro[20]      ,tabuleiro[27]      ,tabuleiro[28]);
-	tabuleiro[20]->criarVizinhanca(tabuleiro[12]      ,tabuleiro[13]      ,tabuleiro[19]      ,tabuleiro[21]      ,tabuleiro[28]      ,tabuleiro[29]);
-	tabuleiro[21]->criarVizinhanca(tabuleiro[13]      ,tabuleiro[14]      ,tabuleiro[20]      ,tabuleiro[22]      ,tabuleiro[29]      ,tabuleiro[30]);
-	tabuleiro[22]->criarVizinhanca(tabuleiro[14]      ,tabuleiro[15]      ,tabuleiro[21]      ,tabuleiro[23]      ,tabuleiro[30]      ,tabuleiro[31]);
-	tabuleiro[23]->criarVizinhanca(tabuleiro[15]      ,tabuleiro[16]      ,tabuleiro[22]      ,tabuleiro[24]      ,tabuleiro[31]      ,tabuleiro[32]);
-	tabuleiro[24]->criarVizinhanca(tabuleiro[16]      ,tabuleiro[17]      ,tabuleiro[23]      ,tabuleiro[25]      ,tabuleiro[32]      ,tabuleiro[33]);
-	tabuleiro[25]->criarVizinhanca(tabuleiro[17]      ,VIZINHO_INEXISTENTE,tabuleiro[24]      ,VIZINHO_INEXISTENTE,tabuleiro[33]      ,tabuleiro[34]);
-	tabuleiro[26]->criarVizinhanca(VIZINHO_INEXISTENTE,tabuleiro[18]      ,VIZINHO_INEXISTENTE,tabuleiro[27]      ,VIZINHO_INEXISTENTE,tabuleiro[35]);
-	tabuleiro[27]->criarVizinhanca(tabuleiro[18]      ,tabuleiro[19]      ,tabuleiro[26]      ,tabuleiro[28]      ,tabuleiro[35]      ,tabuleiro[36]);
-	tabuleiro[28]->criarVizinhanca(tabuleiro[19]      ,tabuleiro[20]      ,tabuleiro[27]      ,tabuleiro[29]      ,tabuleiro[36]      ,tabuleiro[37]);
-	tabuleiro[29]->criarVizinhanca(tabuleiro[20]      ,tabuleiro[21]      ,tabuleiro[28]      ,tabuleiro[30]      ,tabuleiro[37]      ,tabuleiro[38]);
-	tabuleiro[30]->criarVizinhanca(tabuleiro[21]      ,tabuleiro[22]      ,tabuleiro[29]      ,tabuleiro[31]      ,tabuleiro[38]      ,tabuleiro[39]);
-	tabuleiro[31]->criarVizinhanca(tabuleiro[22]      ,tabuleiro[23]      ,tabuleiro[30]      ,tabuleiro[32]      ,tabuleiro[39]      ,tabuleiro[40]);
-	tabuleiro[32]->criarVizinhanca(tabuleiro[23]      ,tabuleiro[24]      ,tabuleiro[31]      ,tabuleiro[33]      ,tabuleiro[40]      ,tabuleiro[41]);
-	tabuleiro[33]->criarVizinhanca(tabuleiro[24]      ,tabuleiro[25]      ,tabuleiro[32]      ,tabuleiro[34]      ,tabuleiro[41]      ,tabuleiro[42]);
-	tabuleiro[34]->criarVizinhanca(tabuleiro[25]      ,VIZINHO_INEXISTENTE,tabuleiro[33]      ,VIZINHO_INEXISTENTE,tabuleiro[42]      ,VIZINHO_INEXISTENTE);
-	tabuleiro[35]->criarVizinhanca(tabuleiro[26]      ,tabuleiro[27]      ,VIZINHO_INEXISTENTE,tabuleiro[36]      ,VIZINHO_INEXISTENTE,tabuleiro[43]);
-	tabuleiro[36]->criarVizinhanca(tabuleiro[27]      ,tabuleiro[28]      ,tabuleiro[35]      ,tabuleiro[37]      ,tabuleiro[43]      ,tabuleiro[44]);
-	tabuleiro[37]->criarVizinhanca(tabuleiro[28]      ,tabuleiro[29]      ,tabuleiro[36]      ,tabuleiro[38]      ,tabuleiro[44]      ,tabuleiro[45]);
-	tabuleiro[38]->criarVizinhanca(tabuleiro[29]      ,tabuleiro[30]      ,tabuleiro[37]      ,tabuleiro[39]      ,tabuleiro[45]      ,tabuleiro[46]);
-	tabuleiro[39]->criarVizinhanca(tabuleiro[30]      ,tabuleiro[31]      ,tabuleiro[38]      ,tabuleiro[40]      ,tabuleiro[46]      ,tabuleiro[47]);
-	tabuleiro[40]->criarVizinhanca(tabuleiro[31]      ,tabuleiro[32]      ,tabuleiro[39]      ,tabuleiro[41]      ,tabuleiro[47]      ,tabuleiro[48]);
-	tabuleiro[41]->criarVizinhanca(tabuleiro[32]      ,tabuleiro[33]      ,tabuleiro[40]      ,tabuleiro[42]      ,tabuleiro[48]      ,tabuleiro[49]);
-	tabuleiro[42]->criarVizinhanca(tabuleiro[33]      ,tabuleiro[34]      ,tabuleiro[41]      ,VIZINHO_INEXISTENTE,tabuleiro[49]      ,VIZINHO_INEXISTENTE);
-	tabuleiro[43]->criarVizinhanca(tabuleiro[35]      ,tabuleiro[36]      ,VIZINHO_INEXISTENTE,tabuleiro[44]      ,VIZINHO_INEXISTENTE,tabuleiro[50]);
-	tabuleiro[44]->criarVizinhanca(tabuleiro[36]      ,tabuleiro[37]      ,tabuleiro[43]      ,tabuleiro[45]      ,tabuleiro[50]      ,tabuleiro[51]);
-	tabuleiro[45]->criarVizinhanca(tabuleiro[37]      ,tabuleiro[38]      ,tabuleiro[44]      ,tabuleiro[46]      ,tabuleiro[51]      ,tabuleiro[52]);
-	tabuleiro[46]->criarVizinhanca(tabuleiro[38]      ,tabuleiro[39]      ,tabuleiro[45]      ,tabuleiro[47]      ,tabuleiro[52]      ,tabuleiro[53]);
-	tabuleiro[47]->criarVizinhanca(tabuleiro[39]      ,tabuleiro[40]      ,tabuleiro[46]      ,tabuleiro[48]      ,tabuleiro[53]      ,tabuleiro[54]);
-	tabuleiro[48]->criarVizinhanca(tabuleiro[40]      ,tabuleiro[41]      ,tabuleiro[47]      ,tabuleiro[49]      ,tabuleiro[54]      ,tabuleiro[55]);
-	tabuleiro[49]->criarVizinhanca(tabuleiro[41]      ,tabuleiro[42]      ,tabuleiro[48]      ,VIZINHO_INEXISTENTE,tabuleiro[55]      ,VIZINHO_INEXISTENTE);
-	tabuleiro[50]->criarVizinhanca(tabuleiro[43]      ,tabuleiro[44]      ,VIZINHO_INEXISTENTE,tabuleiro[51]      ,VIZINHO_INEXISTENTE,tabuleiro[56]);
-	tabuleiro[51]->criarVizinhanca(tabuleiro[44]      ,tabuleiro[45]      ,tabuleiro[50]      ,tabuleiro[52]      ,tabuleiro[56]      ,tabuleiro[57]);
-	tabuleiro[52]->criarVizinhanca(tabuleiro[45]      ,tabuleiro[46]      ,tabuleiro[51]      ,tabuleiro[53]      ,tabuleiro[57]      ,tabuleiro[58]);
-	tabuleiro[53]->criarVizinhanca(tabuleiro[46]      ,tabuleiro[47]      ,tabuleiro[52]      ,tabuleiro[54]      ,tabuleiro[58]      ,tabuleiro[59]);
-	tabuleiro[54]->criarVizinhanca(tabuleiro[47]      ,tabuleiro[48]      ,tabuleiro[53]      ,tabuleiro[55]      ,tabuleiro[59]      ,tabuleiro[60]);
-	tabuleiro[55]->criarVizinhanca(tabuleiro[48]      ,tabuleiro[49]      ,tabuleiro[54]      ,VIZINHO_INEXISTENTE,tabuleiro[60]      ,VIZINHO_INEXISTENTE);
-	tabuleiro[56]->criarVizinhanca(tabuleiro[50]      ,tabuleiro[51]      ,VIZINHO_INEXISTENTE,tabuleiro[57]      ,VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE);
-	tabuleiro[57]->criarVizinhanca(tabuleiro[51]      ,tabuleiro[52]      ,tabuleiro[56]      ,tabuleiro[58]      ,VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE);
-	tabuleiro[58]->criarVizinhanca(tabuleiro[52]      ,tabuleiro[53]      ,tabuleiro[57]      ,tabuleiro[59]      ,VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE);
-	tabuleiro[59]->criarVizinhanca(tabuleiro[53]      ,tabuleiro[54]      ,tabuleiro[58]      ,tabuleiro[60]      ,VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE);
-	tabuleiro[60]->criarVizinhanca(tabuleiro[54]      ,tabuleiro[55]      ,tabuleiro[59]      ,VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE,VIZINHO_INEXISTENTE);
+	 tabuleiro[0].criarVizinhanca(VIZINHO_INEXISTENTE ,VIZINHO_INEXISTENTE ,VIZINHO_INEXISTENTE ,&tabuleiro[1]       ,&tabuleiro[5]       ,&tabuleiro[6]);
+	 tabuleiro[1].criarVizinhanca(VIZINHO_INEXISTENTE ,VIZINHO_INEXISTENTE ,&tabuleiro[0]       ,&tabuleiro[2]       ,&tabuleiro[6]       ,&tabuleiro[7]);
+	 tabuleiro[2].criarVizinhanca(VIZINHO_INEXISTENTE ,VIZINHO_INEXISTENTE ,&tabuleiro[1]       ,&tabuleiro[3]       ,&tabuleiro[7]       ,&tabuleiro[8]);
+	 tabuleiro[3].criarVizinhanca(VIZINHO_INEXISTENTE ,VIZINHO_INEXISTENTE ,&tabuleiro[2]       ,&tabuleiro[4]       ,&tabuleiro[8]       ,&tabuleiro[9]);
+	 tabuleiro[4].criarVizinhanca(VIZINHO_INEXISTENTE ,VIZINHO_INEXISTENTE ,&tabuleiro[3]       ,VIZINHO_INEXISTENTE ,&tabuleiro[9]       ,&tabuleiro[10]);
+	 tabuleiro[5].criarVizinhanca(VIZINHO_INEXISTENTE ,&tabuleiro[0]       ,VIZINHO_INEXISTENTE ,&tabuleiro[6]       ,&tabuleiro[11]      ,&tabuleiro[12]);
+	 tabuleiro[6].criarVizinhanca(&tabuleiro[0]       ,&tabuleiro[1]       ,&tabuleiro[5]       ,&tabuleiro[7]       ,&tabuleiro[12]      ,&tabuleiro[13]);
+	 tabuleiro[7].criarVizinhanca(&tabuleiro[1]       ,&tabuleiro[2]       ,&tabuleiro[6]       ,&tabuleiro[8]       ,&tabuleiro[13]      ,&tabuleiro[14]);
+	 tabuleiro[8].criarVizinhanca(&tabuleiro[2]       ,&tabuleiro[3]       ,&tabuleiro[7]       ,&tabuleiro[9]       ,&tabuleiro[14]      ,&tabuleiro[15]);
+	 tabuleiro[9].criarVizinhanca(&tabuleiro[3]       ,&tabuleiro[4]       ,&tabuleiro[8]       ,&tabuleiro[10]      ,&tabuleiro[15]      ,&tabuleiro[16]);
+	tabuleiro[10].criarVizinhanca(&tabuleiro[4]       ,VIZINHO_INEXISTENTE ,&tabuleiro[9]       ,VIZINHO_INEXISTENTE ,&tabuleiro[16]      ,&tabuleiro[17]);
+	tabuleiro[11].criarVizinhanca(VIZINHO_INEXISTENTE ,&tabuleiro[5]       ,VIZINHO_INEXISTENTE ,&tabuleiro[12]      ,&tabuleiro[18]      ,&tabuleiro[19]);
+	tabuleiro[12].criarVizinhanca(&tabuleiro[5]       ,&tabuleiro[6]       ,&tabuleiro[11]      ,&tabuleiro[13]      ,&tabuleiro[19]      ,&tabuleiro[20]);
+	tabuleiro[13].criarVizinhanca(&tabuleiro[6]       ,&tabuleiro[7]       ,&tabuleiro[12]      ,&tabuleiro[14]      ,&tabuleiro[20]      ,&tabuleiro[21]);
+	tabuleiro[14].criarVizinhanca(&tabuleiro[7]       ,&tabuleiro[8]       ,&tabuleiro[13]      ,&tabuleiro[15]      ,&tabuleiro[21]      ,&tabuleiro[22]);
+	tabuleiro[15].criarVizinhanca(&tabuleiro[8]       ,&tabuleiro[9]       ,&tabuleiro[14]      ,&tabuleiro[16]      ,&tabuleiro[22]      ,&tabuleiro[23]);
+	tabuleiro[16].criarVizinhanca(&tabuleiro[9]       ,&tabuleiro[10]      ,&tabuleiro[15]      ,&tabuleiro[17]      ,&tabuleiro[23]      ,&tabuleiro[24]);
+	tabuleiro[17].criarVizinhanca(&tabuleiro[10]      ,VIZINHO_INEXISTENTE ,&tabuleiro[16]      ,VIZINHO_INEXISTENTE ,&tabuleiro[24]      ,&tabuleiro[25]);
+	tabuleiro[18].criarVizinhanca(VIZINHO_INEXISTENTE ,&tabuleiro[11]      ,VIZINHO_INEXISTENTE ,&tabuleiro[19]      ,&tabuleiro[26]      ,&tabuleiro[27]);
+	tabuleiro[19].criarVizinhanca(&tabuleiro[11]      ,&tabuleiro[12]      ,&tabuleiro[18]      ,&tabuleiro[20]      ,&tabuleiro[27]      ,&tabuleiro[28]);
+	tabuleiro[20].criarVizinhanca(&tabuleiro[12]      ,&tabuleiro[13]      ,&tabuleiro[19]      ,&tabuleiro[21]      ,&tabuleiro[28]      ,&tabuleiro[29]);
+	tabuleiro[21].criarVizinhanca(&tabuleiro[13]      ,&tabuleiro[14]      ,&tabuleiro[20]      ,&tabuleiro[22]      ,&tabuleiro[29]      ,&tabuleiro[30]);
+	tabuleiro[22].criarVizinhanca(&tabuleiro[14]      ,&tabuleiro[15]      ,&tabuleiro[21]      ,&tabuleiro[23]      ,&tabuleiro[30]      ,&tabuleiro[31]);
+	tabuleiro[23].criarVizinhanca(&tabuleiro[15]      ,&tabuleiro[16]      ,&tabuleiro[22]      ,&tabuleiro[24]      ,&tabuleiro[31]      ,&tabuleiro[32]);
+	tabuleiro[24].criarVizinhanca(&tabuleiro[16]      ,&tabuleiro[17]      ,&tabuleiro[23]      ,&tabuleiro[25]      ,&tabuleiro[32]      ,&tabuleiro[33]);
+	tabuleiro[25].criarVizinhanca(&tabuleiro[17]      ,VIZINHO_INEXISTENTE ,&tabuleiro[24]      ,VIZINHO_INEXISTENTE ,&tabuleiro[33]      ,&tabuleiro[34]);
+	tabuleiro[26].criarVizinhanca(VIZINHO_INEXISTENTE ,&tabuleiro[18]      ,VIZINHO_INEXISTENTE ,&tabuleiro[27]      ,VIZINHO_INEXISTENTE ,&tabuleiro[35]);
+	tabuleiro[27].criarVizinhanca(&tabuleiro[18]      ,&tabuleiro[19]      ,&tabuleiro[26]      ,&tabuleiro[28]      ,&tabuleiro[35]      ,&tabuleiro[36]);
+	tabuleiro[28].criarVizinhanca(&tabuleiro[19]      ,&tabuleiro[20]      ,&tabuleiro[27]      ,&tabuleiro[29]      ,&tabuleiro[36]      ,&tabuleiro[37]);
+	tabuleiro[29].criarVizinhanca(&tabuleiro[20]      ,&tabuleiro[21]      ,&tabuleiro[28]      ,&tabuleiro[30]      ,&tabuleiro[37]      ,&tabuleiro[38]);
+	tabuleiro[30].criarVizinhanca(&tabuleiro[21]      ,&tabuleiro[22]      ,&tabuleiro[29]      ,&tabuleiro[31]      ,&tabuleiro[38]      ,&tabuleiro[39]);
+	tabuleiro[31].criarVizinhanca(&tabuleiro[22]      ,&tabuleiro[23]      ,&tabuleiro[30]      ,&tabuleiro[32]      ,&tabuleiro[39]      ,&tabuleiro[40]);
+	tabuleiro[32].criarVizinhanca(&tabuleiro[23]      ,&tabuleiro[24]      ,&tabuleiro[31]      ,&tabuleiro[33]      ,&tabuleiro[40]      ,&tabuleiro[41]);
+	tabuleiro[33].criarVizinhanca(&tabuleiro[24]      ,&tabuleiro[25]      ,&tabuleiro[32]      ,&tabuleiro[34]      ,&tabuleiro[41]      ,&tabuleiro[42]);
+	tabuleiro[34].criarVizinhanca(&tabuleiro[25]      ,VIZINHO_INEXISTENTE ,&tabuleiro[33]      ,VIZINHO_INEXISTENTE ,&tabuleiro[42]      ,VIZINHO_INEXISTENTE);
+	tabuleiro[35].criarVizinhanca(&tabuleiro[26]      ,&tabuleiro[27]      ,VIZINHO_INEXISTENTE ,&tabuleiro[36]      ,VIZINHO_INEXISTENTE ,&tabuleiro[43]);
+	tabuleiro[36].criarVizinhanca(&tabuleiro[27]      ,&tabuleiro[28]      ,&tabuleiro[35]      ,&tabuleiro[37]      ,&tabuleiro[43]      ,&tabuleiro[44]);
+	tabuleiro[37].criarVizinhanca(&tabuleiro[28]      ,&tabuleiro[29]      ,&tabuleiro[36]      ,&tabuleiro[38]      ,&tabuleiro[44]      ,&tabuleiro[45]);
+	tabuleiro[38].criarVizinhanca(&tabuleiro[29]      ,&tabuleiro[30]      ,&tabuleiro[37]      ,&tabuleiro[39]      ,&tabuleiro[45]      ,&tabuleiro[46]);
+	tabuleiro[39].criarVizinhanca(&tabuleiro[30]      ,&tabuleiro[31]      ,&tabuleiro[38]      ,&tabuleiro[40]      ,&tabuleiro[46]      ,&tabuleiro[47]);
+	tabuleiro[40].criarVizinhanca(&tabuleiro[31]      ,&tabuleiro[32]      ,&tabuleiro[39]      ,&tabuleiro[41]      ,&tabuleiro[47]      ,&tabuleiro[48]);
+	tabuleiro[41].criarVizinhanca(&tabuleiro[32]      ,&tabuleiro[33]      ,&tabuleiro[40]      ,&tabuleiro[42]      ,&tabuleiro[48]      ,&tabuleiro[49]);
+	tabuleiro[42].criarVizinhanca(&tabuleiro[33]      ,&tabuleiro[34]      ,&tabuleiro[41]      ,VIZINHO_INEXISTENTE ,&tabuleiro[49]      ,VIZINHO_INEXISTENTE);
+	tabuleiro[43].criarVizinhanca(&tabuleiro[35]      ,&tabuleiro[36]      ,VIZINHO_INEXISTENTE ,&tabuleiro[44]      ,VIZINHO_INEXISTENTE ,&tabuleiro[50]);
+	tabuleiro[44].criarVizinhanca(&tabuleiro[36]      ,&tabuleiro[37]      ,&tabuleiro[43]      ,&tabuleiro[45]      ,&tabuleiro[50]      ,&tabuleiro[51]);
+	tabuleiro[45].criarVizinhanca(&tabuleiro[37]      ,&tabuleiro[38]      ,&tabuleiro[44]      ,&tabuleiro[46]      ,&tabuleiro[51]      ,&tabuleiro[52]);
+	tabuleiro[46].criarVizinhanca(&tabuleiro[38]      ,&tabuleiro[39]      ,&tabuleiro[45]      ,&tabuleiro[47]      ,&tabuleiro[52]      ,&tabuleiro[53]);
+	tabuleiro[47].criarVizinhanca(&tabuleiro[39]      ,&tabuleiro[40]      ,&tabuleiro[46]      ,&tabuleiro[48]      ,&tabuleiro[53]      ,&tabuleiro[54]);
+	tabuleiro[48].criarVizinhanca(&tabuleiro[40]      ,&tabuleiro[41]      ,&tabuleiro[47]      ,&tabuleiro[49]      ,&tabuleiro[54]      ,&tabuleiro[55]);
+	tabuleiro[49].criarVizinhanca(&tabuleiro[41]      ,&tabuleiro[42]      ,&tabuleiro[48]      ,VIZINHO_INEXISTENTE ,&tabuleiro[55]      ,VIZINHO_INEXISTENTE);
+	tabuleiro[50].criarVizinhanca(&tabuleiro[43]      ,&tabuleiro[44]      ,VIZINHO_INEXISTENTE ,&tabuleiro[51]      ,VIZINHO_INEXISTENTE ,&tabuleiro[56]);
+	tabuleiro[51].criarVizinhanca(&tabuleiro[44]      ,&tabuleiro[45]      ,&tabuleiro[50]      ,&tabuleiro[52]      ,&tabuleiro[56]      ,&tabuleiro[57]);
+	tabuleiro[52].criarVizinhanca(&tabuleiro[45]      ,&tabuleiro[46]      ,&tabuleiro[51]      ,&tabuleiro[53]      ,&tabuleiro[57]      ,&tabuleiro[58]);
+	tabuleiro[53].criarVizinhanca(&tabuleiro[46]      ,&tabuleiro[47]      ,&tabuleiro[52]      ,&tabuleiro[54]      ,&tabuleiro[58]      ,&tabuleiro[59]);
+	tabuleiro[54].criarVizinhanca(&tabuleiro[47]      ,&tabuleiro[48]      ,&tabuleiro[53]      ,&tabuleiro[55]      ,&tabuleiro[59]      ,&tabuleiro[60]);
+	tabuleiro[55].criarVizinhanca(&tabuleiro[48]      ,&tabuleiro[49]      ,&tabuleiro[54]      ,VIZINHO_INEXISTENTE ,&tabuleiro[60]      ,VIZINHO_INEXISTENTE);
+	tabuleiro[56].criarVizinhanca(&tabuleiro[50]      ,&tabuleiro[51]      ,VIZINHO_INEXISTENTE ,&tabuleiro[57]      ,VIZINHO_INEXISTENTE ,VIZINHO_INEXISTENTE);
+	tabuleiro[57].criarVizinhanca(&tabuleiro[51]      ,&tabuleiro[52]      ,&tabuleiro[56]      ,&tabuleiro[58]      ,VIZINHO_INEXISTENTE ,VIZINHO_INEXISTENTE);
+	tabuleiro[58].criarVizinhanca(&tabuleiro[52]      ,&tabuleiro[53]      ,&tabuleiro[57]      ,&tabuleiro[59]      ,VIZINHO_INEXISTENTE ,VIZINHO_INEXISTENTE);
+	tabuleiro[59].criarVizinhanca(&tabuleiro[53]      ,&tabuleiro[54]      ,&tabuleiro[58]      ,&tabuleiro[60]      ,VIZINHO_INEXISTENTE ,VIZINHO_INEXISTENTE);
+	tabuleiro[60].criarVizinhanca(&tabuleiro[54]      ,&tabuleiro[55]      ,&tabuleiro[59]      ,VIZINHO_INEXISTENTE ,VIZINHO_INEXISTENTE ,VIZINHO_INEXISTENTE);
 
 	numeroJogadasFeitas = 0;
 	corUltimaJogada = casaTabuleiroTetralath::PECAS_PRETAS; //Faz com que a primeira jogada seja das brancas.
+	manterRegistroJogadas = false;
 }
 
 /*

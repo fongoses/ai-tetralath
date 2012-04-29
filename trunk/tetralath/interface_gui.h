@@ -71,9 +71,9 @@ class interface_gui{
 	* Imprime todas as cores possíveis no prompt no windows (Só funciona no windows!!!!!!).
 	*/
 	void imprimirCoresWindows(void);
-		
+
 	private:
-	
+
 	/*
 	* Imprime um comando com letras brancas em colchetes.
 	* @param comando_param Comando a imprimir.
