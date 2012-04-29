@@ -37,10 +37,6 @@ class casaTabuleiroTetralath{
 		*/
 		casaTabuleiroTetralath(void);
 		/*
-		* Destrutor da classe.
-		*/
-		//~casaTabuleiroTetralath(void);
-		/*
 		* Determina se esta casa está ocupada.
 		* @return Booleano indicando se a casa está ocupada por alguma peça.
 		*/
@@ -63,6 +59,10 @@ class casaTabuleiroTetralath{
 		* @return Booleano indicando se foi possível ocupar a casa (se ela estiver ocupada, não será possível).
 		*/
 		bool ocuparCom(int corPeca_param);
+		/*
+		* Desocupa esta casa, se estiver ocupada.
+		*/
+		void desocupar(void);
 		/*
 		* As funções à seguir possuem comportamento semelhante.
 		* Cada uma retorna um ponteiro para uma casaTabuleiroTetralath que é vizinha desta casa.

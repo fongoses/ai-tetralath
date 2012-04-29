@@ -42,6 +42,7 @@ interface_gui gui;
 */
 int main(){
 	int casaCursor = 0;
+	int casaJogadaIA;
 
 	char comandoUsuario = COMANDO_SEM_ACAO;
 	char movimentoUsuario = COMANDO_SEM_ACAO;
@@ -52,9 +53,9 @@ int main(){
 
 	ia jogadorArtificial = *(new ia());
 
-	gui = *(new interface_gui());
+	gui = (*new interface_gui());
 
-	tabuleiroTetralath tabuleiro = *(new tabuleiroTetralath());
+	tabuleiroTetralath tabuleiro = *(new tabuleiroTetralath(true));
 
 	Sleep(500); //Para que não saia jogando logo no início.
 
@@ -85,23 +86,23 @@ int main(){
 			tabuleiro.desfazerUltimaJogada(); //Desfaz jogada do usuário...
 			tabuleiro.desfazerUltimaJogada(); //... e da IA.
 		}
-ehVezDoUsuario=true;
+
 		if(!jogoAcabou){
 			gui.imprimirTelaTabuleiro(casaCursor, &tabuleiro);
 		}
 
-/*		if(!jogoAcabou and !ehVezDoUsuario){
+		if(!jogoAcabou and !ehVezDoUsuario){
 			avisarAoFimDeCincoSegundos(&condicaoParadaMinimax);
 			gui.imprimirTelaAguardarJogada();
-			tabuleiro = jogadorArtificial.comecar_minimax(tabuleiro, &condicaoParadaMinimax, ia::JOGADA_MAX, casaTabuleiroTetralath::PECAS_PRETAS); //Atenção! A jogada é feita dentro de comecar_minimax.
+			casaJogadaIA = jogadorArtificial.comecar_minimax(tabuleiro, &condicaoParadaMinimax, ia::JOGADA_MAX, casaTabuleiroTetralath::PECAS_PRETAS);
+			tabuleiro.jogar(casaJogadaIA);
 			ehVezDoUsuario = true;
 			jogoAcabou = conferirFimDoJogo(&tabuleiro);
 		}
 
 		if(!jogoAcabou){
 			gui.imprimirTelaTabuleiro(casaCursor, &tabuleiro);
-		}*/
-		
+		}
 	}
 
 	system("cls");
@@ -188,11 +189,11 @@ int escolhaCorPecasUsuario(void){
 bool conferirFimDoJogo(tabuleiroTetralath *tabuleiro_param){
 	int CASA_INEXISTENTE = -1;
 	bool jogoAcabou = false;
+	tabuleiro_param->pecasDaMesmaCorGanharam(tabuleiro_param->recuperarNomeCasaUltimaJogada());
 	bool brancasGanharam = (tabuleiro_param->pecasDaMesmaCorGanharam(tabuleiro_param->recuperarNomeCasaUltimaJogada())
 						   and tabuleiro_param->casaOcupadaPorPecaBranca(tabuleiro_param->recuperarNomeCasaUltimaJogada()))
 						   or (tabuleiro_param->pecasDaMesmaCorPerderam(tabuleiro_param->recuperarNomeCasaUltimaJogada()) 
 						   and !tabuleiro_param->casaOcupadaPorPecaBranca(tabuleiro_param->recuperarNomeCasaUltimaJogada()));
-						   
 	bool pretasGanharam = (tabuleiro_param->pecasDaMesmaCorGanharam(tabuleiro_param->recuperarNomeCasaUltimaJogada()) 
 						   and !tabuleiro_param->casaOcupadaPorPecaBranca(tabuleiro_param->recuperarNomeCasaUltimaJogada()))
 						   or (tabuleiro_param->pecasDaMesmaCorPerderam(tabuleiro_param->recuperarNomeCasaUltimaJogada()) 

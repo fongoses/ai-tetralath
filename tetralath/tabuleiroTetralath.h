@@ -47,17 +47,22 @@ class tabuleiroTetralath{
 		* Construtor da classe.
 		* Inicializa todas as casas com seus vizinhos.
 		*/
-		tabuleiroTetralath();
+		tabuleiroTetralath(void);
 		/*
-		* Destrutor da classe.
+		* Construtor da classe.
+		* Inicializa todas as casas com seus vizinhos.
+		* @param manter_registro_jogadas_param Indica se deve ser mantido registro de jogadas neste tabuleiro, para uso em desfazerUltimaJogada.
+		*		 Atentar para o alto custo de memória desta opção! Com poucos tabuleiros assim, é possível estourar o limite bem rápido!
 		*/
-		//~tabuleiroTetralath();
+		tabuleiroTetralath(bool manter_registro_jogadas_param);
 		/*
 		* Construtor de cópia. A cópia é profunda, isto é, não ocupa a mesma posição de memória que o modelo.
 		* Inicializa todas as casas com seus vizinhos. Copia o conteúdo de um tabuleiro para este.
 		* @param modelo_param O modelo a ser copiado.
+		* @param manter_registro_jogadas_param Indica se deve ser mantido registro de jogadas neste tabuleiro, para uso em desfazerUltimaJogada.
+		*		 Atentar para o alto custo de memória desta opção! Com poucos tabuleiros assim, é possível estourar o limite bem rápido!
 		*/
-		tabuleiroTetralath(tabuleiroTetralath *modelo_param);
+		tabuleiroTetralath(tabuleiroTetralath *modelo_param, bool manter_registro_jogadas_param);
 		/*
 		* Determina se a casa de nome passado como parâmetro está ocupada por alguma peça.
 		* @param nomeCasa_param O nome da casa a ser verificada. Nomes de casas são constantes definidas no início deste arquivo.
@@ -201,7 +206,7 @@ class tabuleiroTetralath{
 		/*
 		* Array construído no momento da criação com os dados de todas as casas deste tabuleiro.
 		*/
-		casaTabuleiroTetralath **tabuleiro;
+		casaTabuleiroTetralath *tabuleiro;
 		
 		/*
 		* Nome da casa (entre INDICE_PRIMEIRA_CASA e INDICE_ULTIMA_CASA) na qual foi feita a última jogada.
@@ -214,9 +219,14 @@ class tabuleiroTetralath{
 		int corUltimaJogada;
 		
 		/*
-		* Array com tabuleiros passados, usado para desfazer jogadas passadas.
+		* Array com casas de jogadas passadas, usado para desfazer jogadas passadas.
 		*/
-		tabuleiroTetralath **tabuleirosPassados;
+		int *casasJogadas;
+		
+		/*
+		* Array com cores de jogadas passadas, usado para desfazer jogadas passadas.
+		*/
+		int *coresJogadas;
 		
 		/*
 		* Número de jogadas já feitas. Usado para desfazer jogadas passadas.
@@ -228,6 +238,11 @@ class tabuleiroTetralath{
 		*/
 		static const int INDICE_PRIMEIRA_CASA = 0;
 		static const int INDICE_ULTIMA_CASA = 60;
+		
+		/*
+		* Indica se deve manter registro das jogadas feitas, para uso em desfazerUltimaJogada.
+		*/
+		bool manterRegistroJogadas;
 		
 		//métodos
 		/*

@@ -49,67 +49,67 @@ void testesAvaliarParaPecasDaCor(void){
 	tabuleiroTetralath pretasPerderam = *(new tabuleiroTetralath());
 	
 	//Exemplo de empate retirado da definicao do trabalho. Sim, possui muito mais pretas do que brancas.
-	empate.jogar(0,  casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(2,  casaTabuleiroTetralath::PECAS_BRANCAS);
-	empate.jogar(1,  casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(6,  casaTabuleiroTetralath::PECAS_BRANCAS);
-	empate.jogar(3,  casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(9,  casaTabuleiroTetralath::PECAS_BRANCAS);
-	empate.jogar(4,  casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(11, casaTabuleiroTetralath::PECAS_BRANCAS);
-	empate.jogar(5,  casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(14, casaTabuleiroTetralath::PECAS_BRANCAS);
-	empate.jogar(7,  casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(17, casaTabuleiroTetralath::PECAS_BRANCAS);
-	empate.jogar(8,  casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(20, casaTabuleiroTetralath::PECAS_BRANCAS);
-	empate.jogar(10, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(23, casaTabuleiroTetralath::PECAS_BRANCAS);
-	empate.jogar(12, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(27, casaTabuleiroTetralath::PECAS_BRANCAS);
-	empate.jogar(13, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(30, casaTabuleiroTetralath::PECAS_BRANCAS);
-	empate.jogar(15, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(33, casaTabuleiroTetralath::PECAS_BRANCAS);
-	empate.jogar(16, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(37, casaTabuleiroTetralath::PECAS_BRANCAS);
-	empate.jogar(18, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(40, casaTabuleiroTetralath::PECAS_BRANCAS);
-	empate.jogar(19, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(43, casaTabuleiroTetralath::PECAS_BRANCAS);
-	empate.jogar(21, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(46, casaTabuleiroTetralath::PECAS_BRANCAS);
-	empate.jogar(22, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(49, casaTabuleiroTetralath::PECAS_BRANCAS);
-	empate.jogar(24, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(51, casaTabuleiroTetralath::PECAS_BRANCAS);
-	empate.jogar(25, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(54, casaTabuleiroTetralath::PECAS_BRANCAS);
-	empate.jogar(26, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(58, casaTabuleiroTetralath::PECAS_BRANCAS);
-	empate.jogar(28, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(29, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(31, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(32, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(34, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(35, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(36, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(38, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(39, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(41, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(42, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(44, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(45, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(47, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(48, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(50, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(52, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(53, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(55, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(56, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(57, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(59, casaTabuleiroTetralath::PECAS_PRETAS);
-	empate.jogar(60, casaTabuleiroTetralath::PECAS_PRETAS);
+	empate.jogar(0);
+	empate.jogar(2);
+	empate.jogar(1);
+	empate.jogar(6);
+	empate.jogar(3);
+	empate.jogar(9);
+	empate.jogar(4);
+	empate.jogar(11);
+	empate.jogar(5);
+	empate.jogar(14);
+	empate.jogar(7);
+	empate.jogar(17);
+	empate.jogar(8);
+	empate.jogar(20);
+	empate.jogar(10);
+	empate.jogar(23);
+	empate.jogar(12);
+	empate.jogar(27);
+	empate.jogar(13);
+	empate.jogar(30);
+	empate.jogar(15);
+	empate.jogar(33);
+	empate.jogar(16);
+	empate.jogar(37);
+	empate.jogar(18);
+	empate.jogar(40);
+	empate.jogar(19);
+	empate.jogar(43);
+	empate.jogar(21);
+	empate.jogar(46);
+	empate.jogar(22);
+	empate.jogar(49);
+	empate.jogar(24);
+	empate.jogar(51);
+	empate.jogar(25);
+	empate.jogar(54);
+	empate.jogar(26);
+	empate.jogar(58);
+	empate.jogar(28);
+	empate.jogar(29);
+	empate.jogar(31);
+	empate.jogar(32);
+	empate.jogar(34);
+	empate.jogar(35);
+	empate.jogar(36);
+	empate.jogar(38);
+	empate.jogar(39);
+	empate.jogar(41);
+	empate.jogar(42);
+	empate.jogar(44);
+	empate.jogar(45);
+	empate.jogar(47);
+	empate.jogar(48);
+	empate.jogar(50);
+	empate.jogar(52);
+	empate.jogar(53);
+	empate.jogar(55);
+	empate.jogar(56);
+	empate.jogar(57);
+	empate.jogar(59);
+	empate.jogar(60);
 	if(empate.avaliarParaPecasDaCor(casaTabuleiroTetralath::PECAS_PRETAS) == tabuleiroTetralath::EMPATE
 	   and empate.avaliarParaPecasDaCor(casaTabuleiroTetralath::PECAS_BRANCAS) == tabuleiroTetralath::EMPATE){
 		cout << "\tavaliarParaPecasDaCor está OK (1 de 5).\n";
@@ -118,13 +118,13 @@ void testesAvaliarParaPecasDaCor(void){
 	}
 	
 	
-	brancasGanharam.jogar(28, casaTabuleiroTetralath::PECAS_BRANCAS);
-	brancasGanharam.jogar(13, casaTabuleiroTetralath::PECAS_PRETAS);
-	brancasGanharam.jogar(30, casaTabuleiroTetralath::PECAS_BRANCAS);
-	brancasGanharam.jogar(20, casaTabuleiroTetralath::PECAS_PRETAS);
-	brancasGanharam.jogar(29, casaTabuleiroTetralath::PECAS_BRANCAS);
-	brancasGanharam.jogar(36, casaTabuleiroTetralath::PECAS_PRETAS);
-	brancasGanharam.jogar(31, casaTabuleiroTetralath::PECAS_BRANCAS);
+	brancasGanharam.jogar(28);
+	brancasGanharam.jogar(13);
+	brancasGanharam.jogar(30);
+	brancasGanharam.jogar(20);
+	brancasGanharam.jogar(29);
+	brancasGanharam.jogar(36);
+	brancasGanharam.jogar(31);
 	if(brancasGanharam.avaliarParaPecasDaCor(casaTabuleiroTetralath::PECAS_PRETAS) == tabuleiroTetralath::PERDA
 	   and brancasGanharam.avaliarParaPecasDaCor(casaTabuleiroTetralath::PECAS_BRANCAS) == tabuleiroTetralath::VITORIA){
 		cout << "\tavaliarParaPecasDaCor está OK (2 de 5).\n";
@@ -133,11 +133,11 @@ void testesAvaliarParaPecasDaCor(void){
 	}
 	
 	
-	brancasPerderam.jogar(30, casaTabuleiroTetralath::PECAS_BRANCAS);
-	brancasPerderam.jogar(1, casaTabuleiroTetralath::PECAS_PRETAS);
-	brancasPerderam.jogar(31, casaTabuleiroTetralath::PECAS_BRANCAS);
-	brancasPerderam.jogar(2, casaTabuleiroTetralath::PECAS_PRETAS);
-	brancasPerderam.jogar(32, casaTabuleiroTetralath::PECAS_BRANCAS);
+	brancasPerderam.jogar(30);
+	brancasPerderam.jogar(1);
+	brancasPerderam.jogar(31);
+	brancasPerderam.jogar(2);
+	brancasPerderam.jogar(32);
 	if(brancasPerderam.avaliarParaPecasDaCor(casaTabuleiroTetralath::PECAS_PRETAS) == tabuleiroTetralath::VITORIA
 	   and brancasPerderam.avaliarParaPecasDaCor(casaTabuleiroTetralath::PECAS_BRANCAS) == tabuleiroTetralath::PERDA){
 		cout << "\tavaliarParaPecasDaCor está OK (3 de 5).\n";
@@ -145,14 +145,14 @@ void testesAvaliarParaPecasDaCor(void){
 		cout << "\tavaliarParaPecasDaCor está NOT_OK (3 de 5).\n";
 	}
 	
-	pretasGanharam.jogar(23, casaTabuleiroTetralath::PECAS_BRANCAS);
-	pretasGanharam.jogar(30, casaTabuleiroTetralath::PECAS_PRETAS);
-	pretasGanharam.jogar(21, casaTabuleiroTetralath::PECAS_BRANCAS);
-	pretasGanharam.jogar(22, casaTabuleiroTetralath::PECAS_PRETAS);
-	pretasGanharam.jogar(31, casaTabuleiroTetralath::PECAS_BRANCAS);
-	pretasGanharam.jogar(38, casaTabuleiroTetralath::PECAS_PRETAS);
-	pretasGanharam.jogar(29, casaTabuleiroTetralath::PECAS_BRANCAS);
-	pretasGanharam.jogar(15, casaTabuleiroTetralath::PECAS_PRETAS);
+	pretasGanharam.jogar(23);
+	pretasGanharam.jogar(30);
+	pretasGanharam.jogar(21);
+	pretasGanharam.jogar(22);
+	pretasGanharam.jogar(31);
+	pretasGanharam.jogar(38);
+	pretasGanharam.jogar(29);
+	pretasGanharam.jogar(15);
 	if(pretasGanharam.avaliarParaPecasDaCor(casaTabuleiroTetralath::PECAS_PRETAS) == tabuleiroTetralath::VITORIA
 	   and pretasGanharam.avaliarParaPecasDaCor(casaTabuleiroTetralath::PECAS_BRANCAS) == tabuleiroTetralath::PERDA){
 		cout << "\tavaliarParaPecasDaCor está OK (4 de 5).\n";
@@ -160,12 +160,12 @@ void testesAvaliarParaPecasDaCor(void){
 		cout << "\tavaliarParaPecasDaCor está NOT_OK (4 de 5).\n";
 	}
 	
-	pretasPerderam.jogar(1, casaTabuleiroTetralath::PECAS_BRANCAS);
-	pretasPerderam.jogar(13, casaTabuleiroTetralath::PECAS_PRETAS);
-	pretasPerderam.jogar(7, casaTabuleiroTetralath::PECAS_BRANCAS);
-	pretasPerderam.jogar(0, casaTabuleiroTetralath::PECAS_PRETAS);
-	pretasPerderam.jogar(12, casaTabuleiroTetralath::PECAS_BRANCAS);
-	pretasPerderam.jogar(6, casaTabuleiroTetralath::PECAS_PRETAS);
+	pretasPerderam.jogar(1);
+	pretasPerderam.jogar(13);
+	pretasPerderam.jogar(7);
+	pretasPerderam.jogar(0);
+	pretasPerderam.jogar(12);
+	pretasPerderam.jogar(6);
 	if(pretasPerderam.avaliarParaPecasDaCor(casaTabuleiroTetralath::PECAS_PRETAS) == tabuleiroTetralath::PERDA
 	   and pretasPerderam.avaliarParaPecasDaCor(casaTabuleiroTetralath::PECAS_BRANCAS) == tabuleiroTetralath::VITORIA){
 		cout << "\tavaliarParaPecasDaCor está OK (5 de 5).\n";
@@ -206,47 +206,47 @@ void testesCalcularNumeroMovimentosLegais(void){
 		cout << "\tcalcularNumeroMovimentosLegais está NOT_OK (1 de 8).\n";
 	}
 
-	tabuleiro5.jogar(1, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiro5.jogar(30, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiro5.jogar(19, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiro5.jogar(54, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiro5.jogar(33, casaTabuleiroTetralath::PECAS_BRANCAS);
+	tabuleiro5.jogar(1);
+	tabuleiro5.jogar(30);
+	tabuleiro5.jogar(19);
+	tabuleiro5.jogar(54);
+	tabuleiro5.jogar(33);
 	if(tabuleiro5.calcularNumeroMovimentosLegais() == tabuleiroTetralath::NUMERO_CASAS - 5){
 		cout << "\tcalcularNumeroMovimentosLegais está OK (2 de 8).\n";
 	} else {
 		cout << "\tcalcularNumeroMovimentosLegais está NOT_OK (2 de 8).\n";
 	}
 	
-	tabuleiro30.jogar(0, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiro30.jogar(5, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiro30.jogar(11, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiro30.jogar(18, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiro30.jogar(26, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiro30.jogar(7, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiro30.jogar(2, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiro30.jogar(20, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiro30.jogar(13, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiro30.jogar(36, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiro30.jogar(28, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiro30.jogar(9, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiro30.jogar(43, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiro30.jogar(22, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiro30.jogar(4, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiro30.jogar(38, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiro30.jogar(15, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiro30.jogar(51, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiro30.jogar(30, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiro30.jogar(24, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiro30.jogar(45, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiro30.jogar(40, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiro30.jogar(56, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiro30.jogar(53, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiro30.jogar(17, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiro30.jogar(42, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiro30.jogar(32, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiro30.jogar(55, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiro30.jogar(47, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiro30.jogar(1, casaTabuleiroTetralath::PECAS_PRETAS);
+	tabuleiro30.jogar(0);
+	tabuleiro30.jogar(5);
+	tabuleiro30.jogar(11);
+	tabuleiro30.jogar(18);
+	tabuleiro30.jogar(26);
+	tabuleiro30.jogar(7);
+	tabuleiro30.jogar(2);
+	tabuleiro30.jogar(20);
+	tabuleiro30.jogar(13);
+	tabuleiro30.jogar(36);
+	tabuleiro30.jogar(28);
+	tabuleiro30.jogar(9,);
+	tabuleiro30.jogar(43);
+	tabuleiro30.jogar(22);
+	tabuleiro30.jogar(4);
+	tabuleiro30.jogar(38);
+	tabuleiro30.jogar(15);
+	tabuleiro30.jogar(51);
+	tabuleiro30.jogar(30);
+	tabuleiro30.jogar(24);
+	tabuleiro30.jogar(45);
+	tabuleiro30.jogar(40);
+	tabuleiro30.jogar(56);
+	tabuleiro30.jogar(53);
+	tabuleiro30.jogar(17);
+	tabuleiro30.jogar(42);
+	tabuleiro30.jogar(32);
+	tabuleiro30.jogar(55);
+	tabuleiro30.jogar(47);
+	tabuleiro30.jogar(1);
 	if(tabuleiro30.calcularNumeroMovimentosLegais() == tabuleiroTetralath::NUMERO_CASAS - 30){
 		cout << "\tcalcularNumeroMovimentosLegais está OK (3 de 8).\n";
 	} else {
@@ -254,117 +254,117 @@ void testesCalcularNumeroMovimentosLegais(void){
 	}
 	
 	//Exemplo de empate retirado da definicao do trabalho. Sim, possui muito mais brancas do que pretas.
-	tabuleiroCheio.jogar(0, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(2, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroCheio.jogar(1, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(6, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroCheio.jogar(3, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(9, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroCheio.jogar(4, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(11, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroCheio.jogar(5, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(14, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroCheio.jogar(7, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(17, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroCheio.jogar(8, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(20, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroCheio.jogar(10, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(23, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroCheio.jogar(12, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(27, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroCheio.jogar(13, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(30, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroCheio.jogar(15, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(33, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroCheio.jogar(16, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(37, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroCheio.jogar(18, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(40, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroCheio.jogar(19, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(43, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroCheio.jogar(21, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(46, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroCheio.jogar(22, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(49, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroCheio.jogar(24, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(51, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroCheio.jogar(25, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(54, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroCheio.jogar(26, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(58, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroCheio.jogar(28, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(29, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(31, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(32, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(34, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(35, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(36, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(38, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(39, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(41, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(42, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(44, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(45, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(47, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(48, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(50, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(52, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(53, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(55, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(56, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(57, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(59, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroCheio.jogar(60, casaTabuleiroTetralath::PECAS_BRANCAS);
+	tabuleiroCheio.jogar(0);
+	tabuleiroCheio.jogar(2);
+	tabuleiroCheio.jogar(1);
+	tabuleiroCheio.jogar(6);
+	tabuleiroCheio.jogar(3);
+	tabuleiroCheio.jogar(9);
+	tabuleiroCheio.jogar(4);
+	tabuleiroCheio.jogar(11);
+	tabuleiroCheio.jogar(5);
+	tabuleiroCheio.jogar(14);
+	tabuleiroCheio.jogar(7);
+	tabuleiroCheio.jogar(17);
+	tabuleiroCheio.jogar(8);
+	tabuleiroCheio.jogar(20);
+	tabuleiroCheio.jogar(10);
+	tabuleiroCheio.jogar(23);
+	tabuleiroCheio.jogar(12);
+	tabuleiroCheio.jogar(27);
+	tabuleiroCheio.jogar(13);
+	tabuleiroCheio.jogar(30);
+	tabuleiroCheio.jogar(15);
+	tabuleiroCheio.jogar(33);
+	tabuleiroCheio.jogar(16);
+	tabuleiroCheio.jogar(37);
+	tabuleiroCheio.jogar(18);
+	tabuleiroCheio.jogar(40);
+	tabuleiroCheio.jogar(19);
+	tabuleiroCheio.jogar(43);
+	tabuleiroCheio.jogar(21);
+	tabuleiroCheio.jogar(46);
+	tabuleiroCheio.jogar(22);
+	tabuleiroCheio.jogar(49);
+	tabuleiroCheio.jogar(24);
+	tabuleiroCheio.jogar(51);
+	tabuleiroCheio.jogar(25);
+	tabuleiroCheio.jogar(54);
+	tabuleiroCheio.jogar(26);
+	tabuleiroCheio.jogar(58);
+	tabuleiroCheio.jogar(28);
+	tabuleiroCheio.jogar(29);
+	tabuleiroCheio.jogar(31);
+	tabuleiroCheio.jogar(32);
+	tabuleiroCheio.jogar(34);
+	tabuleiroCheio.jogar(35);
+	tabuleiroCheio.jogar(36);
+	tabuleiroCheio.jogar(38);
+	tabuleiroCheio.jogar(39);
+	tabuleiroCheio.jogar(41);
+	tabuleiroCheio.jogar(42);
+	tabuleiroCheio.jogar(44);
+	tabuleiroCheio.jogar(45);
+	tabuleiroCheio.jogar(47);
+	tabuleiroCheio.jogar(48);
+	tabuleiroCheio.jogar(50);
+	tabuleiroCheio.jogar(52);
+	tabuleiroCheio.jogar(53);
+	tabuleiroCheio.jogar(55);
+	tabuleiroCheio.jogar(56);
+	tabuleiroCheio.jogar(57);
+	tabuleiroCheio.jogar(59);
+	tabuleiroCheio.jogar(60);
 	if(tabuleiroCheio.calcularNumeroMovimentosLegais() == 0){
 		cout << "\tcalcularNumeroMovimentosLegais está OK (4 de 8).\n";
 	} else {
 		cout << "\tcalcularNumeroMovimentosLegais está NOT_OK (4 de 8).\n";
 	}
 	
-	tabuleiroBrancasGanharam.jogar(14, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroBrancasGanharam.jogar(12, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroBrancasGanharam.jogar(29, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroBrancasGanharam.jogar(47, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroBrancasGanharam.jogar(21, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroBrancasGanharam.jogar(24, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroBrancasGanharam.jogar(37, casaTabuleiroTetralath::PECAS_BRANCAS);
+	tabuleiroBrancasGanharam.jogar(14);
+	tabuleiroBrancasGanharam.jogar(12);
+	tabuleiroBrancasGanharam.jogar(29);
+	tabuleiroBrancasGanharam.jogar(47);
+	tabuleiroBrancasGanharam.jogar(21);
+	tabuleiroBrancasGanharam.jogar(24);
+	tabuleiroBrancasGanharam.jogar(37);
 	if(tabuleiroBrancasGanharam.calcularNumeroMovimentosLegais() == 0){
 		cout << "\tcalcularNumeroMovimentosLegais está OK (5 de 8).\n";
 	} else {
 		cout << "\tcalcularNumeroMovimentosLegais está NOT_OK (5 de 8).\n";
 	}
 	
-	tabuleiroBrancasPerderam.jogar(13, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroBrancasPerderam.jogar(31, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroBrancasPerderam.jogar(14, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroBrancasPerderam.jogar(47, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroBrancasPerderam.jogar(15, casaTabuleiroTetralath::PECAS_BRANCAS);
+	tabuleiroBrancasPerderam.jogar(13);
+	tabuleiroBrancasPerderam.jogar(31);
+	tabuleiroBrancasPerderam.jogar(14);
+	tabuleiroBrancasPerderam.jogar(47);
+	tabuleiroBrancasPerderam.jogar(15);
 	if(tabuleiroBrancasPerderam.calcularNumeroMovimentosLegais() == 0){
 		cout << "\tcalcularNumeroMovimentosLegais está OK (6 de 8).\n";
 	} else {
 		cout << "\tcalcularNumeroMovimentosLegais está NOT_OK (6 de 8).\n";
 	}
 	
-	tabuleiroPretasGanharam.jogar(1, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroPretasGanharam.jogar(40, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroPretasGanharam.jogar(7, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroPretasGanharam.jogar(22, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroPretasGanharam.jogar(55, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroPretasGanharam.jogar(31, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroPretasGanharam.jogar(27, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroPretasGanharam.jogar(14, casaTabuleiroTetralath::PECAS_PRETAS);
+	tabuleiroPretasGanharam.jogar(1);
+	tabuleiroPretasGanharam.jogar(40);
+	tabuleiroPretasGanharam.jogar(7);
+	tabuleiroPretasGanharam.jogar(22);
+	tabuleiroPretasGanharam.jogar(55);
+	tabuleiroPretasGanharam.jogar(31);
+	tabuleiroPretasGanharam.jogar(27);
+	tabuleiroPretasGanharam.jogar(14);
 	if(tabuleiroPretasGanharam.calcularNumeroMovimentosLegais() == 0){
 		cout << "\tcalcularNumeroMovimentosLegais está OK (7 de 8).\n";
 	} else {
 		cout << "\tcalcularNumeroMovimentosLegais está NOT_OK (7 de 8).\n";
 	}
 	
-	tabuleiroPretasPerderam.jogar(2, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroPretasPerderam.jogar(40, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroPretasPerderam.jogar(12, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroPretasPerderam.jogar(22, casaTabuleiroTetralath::PECAS_PRETAS);
-	tabuleiroPretasPerderam.jogar(51, casaTabuleiroTetralath::PECAS_BRANCAS);
-	tabuleiroPretasPerderam.jogar(31, casaTabuleiroTetralath::PECAS_PRETAS);
+	tabuleiroPretasPerderam.jogar(2);
+	tabuleiroPretasPerderam.jogar(40);
+	tabuleiroPretasPerderam.jogar(12);
+	tabuleiroPretasPerderam.jogar(22);
+	tabuleiroPretasPerderam.jogar(51);
+	tabuleiroPretasPerderam.jogar(31);
 	if(tabuleiroPretasPerderam.calcularNumeroMovimentosLegais() == 0){
 		cout << "\tcalcularNumeroMovimentosLegais está OK (8 de 8).\n";
 	} else {
