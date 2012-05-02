@@ -142,9 +142,11 @@ void tabuleiroTetralath::copiarDe(tabuleiroTetralath *modelo_param){
 		if(modelo_param->casaOcupada(nomeCasa)){
 			if(modelo_param->casaOcupadaPorPecaBranca(nomeCasa)){
 				jogar(nomeCasa);
+				tabuleiro[nomeCasa].desocupar();
 				tabuleiro[nomeCasa].ocuparCom((int) casaTabuleiroTetralath::PECAS_BRANCAS);
 			} else {
 				jogar(nomeCasa);
+				tabuleiro[nomeCasa].desocupar();
 				tabuleiro[nomeCasa].ocuparCom((int) casaTabuleiroTetralath::PECAS_PRETAS);
 			}
 		}

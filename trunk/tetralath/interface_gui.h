@@ -33,6 +33,7 @@
 #define COMANDO_ESCOLHER_PRETAS 'p' //No início, escolhe as peças pretas para o usuário.
 #define COMANDO_ESCOLHER '$'//Faz um escolha em um menu.
 #define COMANDO_PERCORRER_ALTERNATIVAS '*'//Percorre alternativas em um menu.
+#define COMANDO_DEBUG_AVALIAR 'm'
 
 class interface_gui{
 	public:

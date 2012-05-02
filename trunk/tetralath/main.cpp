@@ -47,6 +47,7 @@ int main(){
 	char comandoUsuario = COMANDO_SEM_ACAO;
 	char movimentoUsuario = COMANDO_SEM_ACAO;
 
+	bool usuarioEhBrancas = false;
 	bool condicaoParadaMinimax = false;
 	bool jogoAcabou = false;
 	bool ehVezDoUsuario = true;
@@ -61,8 +62,10 @@ int main(){
 
 	if(escolhaCorPecasUsuario() == casaTabuleiroTetralath::PECAS_BRANCAS){
 		ehVezDoUsuario = true;
+		usuarioEhBrancas = true;
 		gui.imprimirTelaTabuleiro(casaCursor, &tabuleiro);
 	} else {
+		usuarioEhBrancas = false;
 		ehVezDoUsuario = false;
 	}
 
@@ -94,7 +97,11 @@ int main(){
 		if(!jogoAcabou and !ehVezDoUsuario){
 			avisarAoFimDeCincoSegundos(&condicaoParadaMinimax);
 			gui.imprimirTelaAguardarJogada();
-			casaJogadaIA = jogadorArtificial.comecar_minimax(tabuleiro, &condicaoParadaMinimax, ia::JOGADA_MAX, casaTabuleiroTetralath::PECAS_PRETAS);
+			if(usuarioEhBrancas){
+				casaJogadaIA = jogadorArtificial.comecar_minimax(tabuleiro, &condicaoParadaMinimax, ia::JOGADA_MAX, casaTabuleiroTetralath::PECAS_PRETAS);
+			} else {
+				casaJogadaIA = jogadorArtificial.comecar_minimax(tabuleiro, &condicaoParadaMinimax, ia::JOGADA_MAX, casaTabuleiroTetralath::PECAS_BRANCAS);
+			}
 			tabuleiro.jogar(casaJogadaIA);
 			ehVezDoUsuario = true;
 			jogoAcabou = conferirFimDoJogo(&tabuleiro);
