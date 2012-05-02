@@ -78,6 +78,8 @@ char interface_gui::esperarComandoUsuario(void){
 					case COMANDO_DESFAZER_JOGADA:
 					case COMANDO_DESFAZER_JOGADA_CAPS: comandoUsuario = COMANDO_DESFAZER_JOGADA;
 						break;
+					case COMANDO_DEBUG_AVALIAR: comandoUsuario = COMANDO_DEBUG_AVALIAR;
+						break;
 				}
 			}
 		}

@@ -35,8 +35,6 @@ int ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, bool *deve_para
 			nivelMaximoSendoAvaliado++;
 		}
 	}
-
-	cout << "fim comecar_minimax\n";
 	return casaMelhorJogada;
 }
 
@@ -90,30 +88,31 @@ float ia::minimax(bool *deve_parar_param, int tipo_jogada_param, int nivel_maxim
 	if(estado_ehFolha or estado_jahAtingiuNivelMaximo){
 		valorMelhorJogada = tabuleiro.avaliarParaPecasDaCor(cor_pecas_avaliacao_param);
 	} else {
-		if(nivel_atual_param == 0){ //Necessário saber qual a casa de melhor jogada.
+		if(nivel_atual_param == NIVEL_INICIAL){ //Necessário saber qual a casa de melhor jogada.
 			casaMelhorJogada = 0;
-			valorMelhorJogada = tabuleiroTetralath::PERDA;
 			jogadaAtual=0;
 			if(valor_deveSerMaximizado){
+				valorMelhorJogada = tabuleiroTetralath::PERDA;
 				while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS){
-					if(tabuleiro.jogar(jogadaAtual)){ 
+					if(tabuleiro.jogar(jogadaAtual)){
 						valorJogada = minimax(deve_parar_param, tipoJogadaFilho, nivel_maximo_param, nivel_atual_param+1, cor_pecas_avaliacao_param);
 						tabuleiro.desfazerUltimaJogada();
 						if(valorMelhorJogada <= valorJogada){
 							casaMelhorJogada = jogadaAtual;
-							valorMelhorJogada = jogadaAtual;
+							valorMelhorJogada = valorJogada;
 						}
 					}
 					jogadaAtual++;
 				}
 			} else {
+				valorMelhorJogada = tabuleiroTetralath::VITORIA;
 				while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS){
 					if(tabuleiro.jogar(jogadaAtual)){
 						valorJogada = minimax(deve_parar_param, tipoJogadaFilho, nivel_maximo_param, nivel_atual_param+1, cor_pecas_avaliacao_param);
 						tabuleiro.desfazerUltimaJogada();
 						if(valorJogada <= valorMelhorJogada){
 							casaMelhorJogada = jogadaAtual;
-							valorMelhorJogada = jogadaAtual;
+							valorMelhorJogada = valorJogada;
 						}
 					}
 					jogadaAtual++;
@@ -121,27 +120,27 @@ float ia::minimax(bool *deve_parar_param, int tipo_jogada_param, int nivel_maxim
 			}
 			resultado_minimax = casaMelhorJogada;
 		} else { //Não é necessário saber a casa de melhor jogada, só seu valor.
-			valorMelhorJogada = tabuleiroTetralath::PERDA;
 			jogadaAtual=0;
 			if(valor_deveSerMaximizado){
+				valorMelhorJogada = tabuleiroTetralath::PERDA;
 				while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS){
 					if(tabuleiro.jogar(jogadaAtual)){
 						valorJogada = minimax(deve_parar_param, tipoJogadaFilho, nivel_maximo_param, nivel_atual_param+1, cor_pecas_avaliacao_param);
 						tabuleiro.desfazerUltimaJogada();
-						if(valorMelhorJogada < valorJogada){
-							casaMelhorJogada = jogadaAtual;
-							valorMelhorJogada = jogadaAtual;
+						if(valorMelhorJogada <= valorJogada){
+							valorMelhorJogada = valorJogada;
 						}
 					}
 					jogadaAtual++;
 				}
 			} else {
+				valorMelhorJogada = tabuleiroTetralath::VITORIA;
 				while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS){
 					if(tabuleiro.jogar(jogadaAtual)){
 						valorJogada = minimax(deve_parar_param, tipoJogadaFilho, nivel_maximo_param, nivel_atual_param+1, cor_pecas_avaliacao_param);
 						tabuleiro.desfazerUltimaJogada();
-						if(valorJogada < valorMelhorJogada){
-							valorMelhorJogada = jogadaAtual;
+						if(valorJogada <= valorMelhorJogada){
+							valorMelhorJogada = valorJogada;
 						}
 					}
 					jogadaAtual++;
