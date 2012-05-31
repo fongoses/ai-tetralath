@@ -37,11 +37,57 @@ class ia{
 	
 	//métodos
 	/*
-	* Construtor. Não faz nada.
-	* Só existe porque deixar os métodos estáticos estava dando erros demais.
+	* Construtor base... Faz nada!
 	*/
-	ia();
+	ia(void);
 	
+	/*
+	* Construtor. 
+	* @param _algoritmo O algoritmo que deve ser utilizado por esta ia. Definido nesta classe.
+	*/
+	ia(int _algoritmo);
+
+	/*
+	* Construtor de cópia.
+	* @param _ia ia a ser copiada.
+	*/
+	ia(ia *_ia);
+	
+	/*
+	* Gerencia o uso do algoritmo escolhido até que a condição de parada seja satisfeita.
+	* São feitas avaliações em grafos de profundidades crescentes.
+	* @param estado_inicial_param Estado à partir do qual o grafo será expandido.
+	* @param deve_parar_param Ponteiro para variável que indica se o minimax deve terminar sua execução e retornar o resultado parcial.
+	*		 Esta variável é constantemente checada para verificar se é necessário parar. Seus possíveis valores são CONTINUAR e PARAR,
+	*		 definidos nesta classe. Caso o valor não seja nenhum destes, o default assumido é continuar.
+	* @param tipo_jogada_param O tipo de jogada (JOGADA_MAX ou JOGADA_MIN) que deve ser aplicado aos valores dos filhos de estado_inicial_param.
+	* @return O nome da casa em que deve ser feita a jogada.
+	*/
+	int comecar_avaliacao(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param);
+	
+	private:
+	/*
+	* Algoritmo utilizado.
+	*/
+	int algoritmo;
+		
+	//dados
+	/*
+	* Na expansão do grafo do minimax, é o valor atribuído ao nível do estado_inicial passado à função comecar_(nome do algortimo).
+	*/
+	static const int NIVEL_INICIAL = 0;
+
+	/*
+	* Tabuleiro utilizado nos algoritmos. É sempre inicializado nas funções comecar_x.
+	*/
+	tabuleiroTetralath tabuleiro;
+	
+	/*
+	* Contem o nome da casa em que deve ser feita a jogada, apos execucao do minimax.
+	*/
+	int resultado_minimax;
+
+	//métodos
 	/*
 	* Gerencia o uso do minimax até que a condição de parada seja satisfeita.
 	* São feitas avaliações em grafos de profundidades crescentes.
@@ -64,27 +110,7 @@ class ia{
 	* @param tipo_jogada_param O tipo de jogada (JOGADA_MAX ou JOGADA_MIN) que deve ser aplicado aos valores dos filhos de estado_inicial_param.
 	* @return O melhor estado encontrado para o qual estado_inicial_param pode ir.
 	*/
-	tabuleiroTetralath comecar_minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param);
-	
-	
-	private:
-	//dados
-	/*
-	* Na expansão do grafo do minimax, é o valor atribuído ao nível do estado_inicial passado à função comecar_(nome do algortimo).
-	*/
-	static const int NIVEL_INICIAL = 0;
-
-	/*
-	* Tabuleiro utilizado nos algoritmos. É sempre inicializado nas funções comecar_x.
-	*/
-	tabuleiroTetralath tabuleiro;
-	
-	/*
-	* Contem o nome da casa em que deve ser feita a jogada, apos execucao do minimax.
-	*/
-	int resultado_minimax;
-
-	//métodos
+	int comecar_minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param);
 
 	/*
 	* Executa o algoritmo minimax. O caminhamento utilizado é progressivo em profundidade.

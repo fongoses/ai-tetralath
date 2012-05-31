@@ -8,16 +8,16 @@
 * @param _corPecas Cor das peças deste jogador.
 */
 jogadorMaquina::jogadorMaquina(ia _iaEscolhida, int _corPecas){
-	iaEscolhida = _iaEscolhida;
 	setCorPecas(_corPecas);
 	setTipoJogador(jogadorTetralath::TIPO_MAQUINA);
+	iaEscolhida = _iaEscolhida;
 }
 
 /*
 * @param _tabuleiro O tabuleiro em que é feita a jogada.
 * @return O índice da casa em que o jogador resolveu fazer sua jogada. Esta função é implementada somente nas herdeiras.
 */
-int jogadorMaquina::getIndiceCasaJogada(tabuleiroTetralath _tabuleiro){
+int jogadorMaquina::getIndiceCasaJogada(tabuleiroTetralath *_tabuleiro){
 	return 0;
 }
 

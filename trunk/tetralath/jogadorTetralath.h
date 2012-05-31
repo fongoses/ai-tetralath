@@ -53,7 +53,7 @@ class jogadorTetralath{
 	* @param _tabuleiro O tabuleiro em que é feita a jogada.
 	* @return O índice da casa em que o jogador resolveu fazer sua jogada. Esta função é implementada somente nas herdeiras.
 	*/
-	virtual int getIndiceCasaJogada(tabuleiroTetralath _tabuleiro) = 0;
+	virtual int getIndiceCasaJogada(tabuleiroTetralath *_tabuleiro) = 0;
 
 	private:
 	/*
