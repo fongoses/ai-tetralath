@@ -25,12 +25,15 @@ int ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, bool *deve_para
 	int MAXIMO_ITERACOES = estado_inicial_param.numeroDeCasasLivres();
 	int nivelMaximoSendoAvaliado = 1;
 	int casaMelhorJogada = 0;
+	float resultado_melhor_aplicacao_minimax = tabuleiroTetralath::PERDA;
+	float resultado_aplicacao_minimax = tabuleiroTetralath::PERDA;
 
 	tabuleiro = *(new tabuleiroTetralath(&estado_inicial_param, true));
 
 	while(*deve_parar_param != PARAR and nivelMaximoSendoAvaliado <= MAXIMO_ITERACOES){
-		minimax(deve_parar_param, tipo_jogada_param, nivelMaximoSendoAvaliado, NIVEL_INICIAL, cor_pecas_avaliacao_param);
-		if(!(*deve_parar_param)){
+		resultado_aplicacao_minimax = minimax(deve_parar_param, tipo_jogada_param, nivelMaximoSendoAvaliado, NIVEL_INICIAL, cor_pecas_avaliacao_param);
+		if(!(*deve_parar_param) && resultado_melhor_aplicacao_minimax <= resultado_aplicacao_minimax){
+			resultado_melhor_aplicacao_minimax = resultado_aplicacao_minimax;
 			casaMelhorJogada = resultado_minimax;
 			nivelMaximoSendoAvaliado++;
 		}
