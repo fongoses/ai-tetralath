@@ -5,10 +5,9 @@ Para compilar no windows:
 
 #include <windows.h>
 #include <process.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include "ia.h"
-#include "interface_gui.h"
+#include "jogoTetralath.h"
+#include "jogadorMaquina.h"
+#include "jogadorHumano.h"
 using namespace std;
 
 /*
@@ -41,7 +40,16 @@ interface_gui gui;
 *
 */
 int main(){
-	int casaCursor = 0;
+	gui = (*new interface_gui());
+	
+	jogadorTetralath *jogadorUm = new jogadorHumano(gui, casaTabuleiroTetralath::PECAS_BRANCAS);
+	jogadorTetralath *jogadorDois = new jogadorMaquina(*(new ia()), casaTabuleiroTetralath::PECAS_PRETAS);
+	jogoTetralath jogo = *(new jogoTetralath(jogadorUm, jogadorDois));
+	
+	
+	
+	
+	/*int casaCursor = 0;
 	int casaJogadaIA;
 
 	char comandoUsuario = COMANDO_SEM_ACAO;
@@ -68,11 +76,11 @@ int main(){
 		usuarioEhBrancas = false;
 		ehVezDoUsuario = false;
 	}
-
+*/
 	/*
 	* Início do jogo.
 	*/
-	while(comandoUsuario != COMANDO_FECHAR){
+	/*while(comandoUsuario != COMANDO_FECHAR){
 		Sleep(50); //Movimento não muito rápido, permitindo melhor controle.
 
 		if(ehVezDoUsuario){
@@ -114,7 +122,7 @@ int main(){
 
 	system("cls");
 	system("color 0f");
-
+*/
 	return 0;
 }
 
@@ -164,27 +172,63 @@ bool fazerJogadaUsuario(tabuleiroTetralath *tabuleiro_param, int casaAtual_param
 * @return Booleano indicando se o usuário deve começar (se escolheu as brancas).
 */
 int escolhaCorPecasUsuario(void){
-	char opcaoRealcarInterface = COMANDO_ESCOLHER_BRANCAS;
+	vector<string> opcoes;
+	int opcaoRealcarInterface = 0;
 	char comandoUsuario;
 	bool usuarioEscolheuBrancas = true;
+	
+	opcoes.push_back("BRANCAS");
+	opcoes.push_back("PRETAS");
 	interface_gui gui = *(new interface_gui());
-	gui.imprimirTelaInicio(opcaoRealcarInterface);
+	gui.imprimirTelaEscolha(opcoes, opcaoRealcarInterface);
 	do{
 		Sleep(50); //Movimento não muito rápido, permitindo melhor controle.
 		comandoUsuario = gui.esperarComandoUsuario();
 		if(comandoUsuario == COMANDO_PERCORRER_ALTERNATIVAS){
 			if(!usuarioEscolheuBrancas){
-				opcaoRealcarInterface = COMANDO_ESCOLHER_BRANCAS;
+				opcaoRealcarInterface = 0;
 				usuarioEscolheuBrancas = true;
 			} else {
-				opcaoRealcarInterface = COMANDO_ESCOLHER_PRETAS;
+				opcaoRealcarInterface = 1;
 				usuarioEscolheuBrancas = false;
 			}
 		}
-		gui.imprimirTelaInicio(opcaoRealcarInterface);
+		gui.imprimirTelaEscolha(opcoes, opcaoRealcarInterface);
 	} while(comandoUsuario != COMANDO_FECHAR and comandoUsuario != COMANDO_ESCOLHER);
 	return usuarioEscolheuBrancas;
 }
+
+/*
+* Gerencia a escolha do tipo de jogo que o usuário deseja.
+* Os tipos de jogos são definidos neste arquivo.
+* @return Booleano indicando se o usuário deve começar (se escolheu as brancas).
+*/
+/*int escolhaCorPecasUsuario(void){
+	vector<string> opcoes;
+	int opcaoRealcarInterface = 0;
+	char comandoUsuario;
+	bool usuarioEscolheuBrancas = true;
+	
+	opcoes.push_back("BRANCAS");
+	opcoes.push_back("PRETAS");
+	interface_gui gui = *(new interface_gui());
+	gui.imprimirTelaEscolha(opcoes, opcaoRealcarInterface);
+	do{
+		Sleep(50); //Movimento não muito rápido, permitindo melhor controle.
+		comandoUsuario = gui.esperarComandoUsuario();
+		if(comandoUsuario == COMANDO_PERCORRER_ALTERNATIVAS){
+			if(!usuarioEscolheuBrancas){
+				opcaoRealcarInterface = 0;
+				usuarioEscolheuBrancas = true;
+			} else {
+				opcaoRealcarInterface = 1;
+				usuarioEscolheuBrancas = false;
+			}
+		}
+		gui.imprimirTelaEscolha(opcoes, opcaoRealcarInterface);
+	} while(comandoUsuario != COMANDO_FECHAR and comandoUsuario != COMANDO_ESCOLHER);
+	return usuarioEscolheuBrancas;
+}*/
 
 /*
 * Deve ser chamada ao fim de uma jogada.
