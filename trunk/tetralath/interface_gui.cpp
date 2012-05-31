@@ -89,10 +89,11 @@ char interface_gui::esperarComandoUsuario(void){
 }
 
 /*
-* Imprime a tela inicial, que permite escolha da cor das peças do usuário.
-* @param opcao_realcar A opção COMANDO_ESCOLHER_BRANCAS ou COMANDO_ESCOLHER_PRETAS que deve ficar realçada.
+* Imprime uma tela que permite escolha entre várias opções.
+* @param _opcoes Array de opções que o usuário possui.
+* @param _opcaoEscolhida O índice, no array, da opção escolhida. Se exceder os limites do array, será realçada a última.
 */
-void interface_gui::imprimirTelaInicio(char opcao_realcar){
+void interface_gui::imprimirTelaEscolha(vector<string> _opcoes, int _opcaoEscolhida){
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
 	system("cls");
 	imprimirTextoCentralizado("BEM-VINDO AO TEXTLATH");
@@ -101,20 +102,19 @@ void interface_gui::imprimirTelaInicio(char opcao_realcar){
 	printf("\n");
 
 	printf("\n\n");
-	imprimirTextoCentralizado("Escolha a cor que deseja usar.");
+	imprimirTextoCentralizado("Escolha uma opcao.");
 	printf("\n\n");
-	if(opcao_realcar == COMANDO_ESCOLHER_BRANCAS){
-		printf("\t\t\t\t");imprimirComando("BRANCAS");printf("\n");
-		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
-		printf("\t\t\t\t[PRETAS]\n");
-	} else {
-		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
-		printf("\t\t\t\t[BRANCAS]\n");
-		printf("\t\t\t\t");imprimirComando("PRETAS");printf("\n");
+	
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
+	for (vector<string>::iterator iteradorOpcoes = _opcoes.begin(); iteradorOpcoes!=_opcoes.end(); ++iteradorOpcoes) {
+		if(iteradorOpcoes - _opcoes.begin() == _opcaoEscolhida){
+			printf("\t\t\t\t");imprimirComando(*iteradorOpcoes);printf("\n");
+		} else {
+			printf("\t\t\t\t[");printf("%s",iteradorOpcoes->c_str());printf("]\n");
+		}
 	}
 	printf("\n\n\n\n");
 
-	//printf(COR_AZUL_FRACA_LINUX);
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
 	imprimirComando("TAB");
 	printf(" PERCORRER ALTERNATIVAS\n");

@@ -5,6 +5,9 @@
  
 #endif
 
+#include <string>
+#include <vector>
+
 /*
 * Concentra todas funções da interface, isto é, a parte visual do jogo.
 */
@@ -47,10 +50,11 @@ class interface_gui{
 	*/
 	char esperarComandoUsuario(void);
 	/*
-	* Imprime a tela inicial, que permite escolha da cor das peças do usuário.
-	* @param opcao_realcar A opção COMANDO_ESCOLHER_BRANCAS ou COMANDO_ESCOLHER_PRETAS que deve ficar realçada.
+	* Imprime uma tela que permite escolha entre várias opções.
+	* @param _opcoes Array de opções que o usuário possui.
+	* @param _opcaoEscolhida O índice, no array, da opção escolhida. Se exceder os limites do array, será realçada a última.
 	*/
-	void imprimirTelaInicio(char opcao_realcar);
+	void imprimirTelaEscolha(vector<string> _opcoes, int _opcaoEscolhida);
 	/*
 	* Imprime a tela do jogo.
 	* @param casaAtual_param A casa em que está o cursor.

@@ -29,6 +29,12 @@ class ia{
 	static const int JOGADA_MAX = 1;
 	static const int JOGADA_MIN = 0;
 	
+	/*
+	* Indicam os algoritmos que esta classe oferece.
+	*/
+	static const int MINIMAX = 0;
+	static const int MINIMAX_PODA = 1;
+	
 	//métodos
 	/*
 	* Construtor. Não faz nada.
@@ -98,9 +104,8 @@ class ia{
 
 	/*
 	* Executa o algoritmo minimax com poda alfa beta. O caminhamento utilizado é progressivo em profundidade.
-	* @param estado_inicial_param Estado à partir do qual o grafo será expandido.
-	* @param resultado_parcial_param Ponteiro para variável em que será colocado o resultado parcial. Este resultado só tem utilidade
-	*								 caso corresponda a um objeto diretamente ligado ao objeto que deu início à primeira chamada desta função.
+	* Utiliza a variável de instância tabuleiro para dar início ao algoritmo. Todas jogadas são simuladas neste tabuleiro.
+	* O resultado é colocado em resultado_minimax.
 	* @param deve_parar_param Ponteiro para variável que indica se o minimax deve terminar sua execução e retornar o resultado parcial.
 	*		 Esta variável é constantemente checada para verificar se é necessário parar. Seus possíveis valores são CONTINUAR e PARAR,
 	*		 definidos nesta classe. Caso o valor não seja nenhum destes, o default assumido é continuar.
@@ -108,9 +113,9 @@ class ia{
 	* @param nivel_maximo_param Especifica quantos niveis (em profundidade) o grafo pode ser expandido.
 	* @param nivel_atual_param Define a distância (no grafo expandido) entre estado_inicial_param e o estado que iniciou esta função.
 	*						   Logicamente, na primeira chamada à função, deve conter 0.
-	* @return O melhor estado para o qual estado_inicial_param pode ir.
+	* @param cor_pecas_avaliacao_param Cor das peças para a qual as avaliações devem ser feitas.
+	* @return O melhor valor de avaliação encontrado em toda a subárvore do nodo estado_inicial_param.
 	*/
-	float minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param, tabuleiroTetralath* resultado_parcial_param, bool *deve_parar_param, 
-								 int tipo_jogada_param, int nivel_maximo_param, int nivel_atual_param, int cor_pecas_avaliacao_param);
+	float minimax_poda_alfa_beta(bool *deve_parar_param, int tipo_jogada_param, int nivel_maximo_param, int nivel_atual_param, int cor_pecas_avaliacao_param);
 
 };
