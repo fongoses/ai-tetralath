@@ -22,7 +22,7 @@ class jogadorHumano : public jogadorTetralath{
 	* @param _interfaceComunicacaoUsuario A interface pela qual será possível comunicar-se com o usuário.
 	* @param _corPecas Cor das peças deste jogador.
 	*/
-	jogadorHumano(interface_gui _interfaceComunicacaoUsuario, int _corPecas);
+	jogadorHumano(interface_gui *_interfaceComunicacaoUsuario, int _corPecas);
 
 	/*
 	* Nesta classe, esta função aguardará entrada do usuário e retornará a casa escolhida por ele, quando ele escolher uma casa válida.
@@ -30,11 +30,11 @@ class jogadorHumano : public jogadorTetralath{
 	* @param _tabuleiro O tabuleiro em que é feita a jogada.
 	* @return O índice da casa em que o jogador resolveu fazer sua jogada. Esta função é implementada somente nas herdeiras.
 	*/
-	int getIndiceCasaJogada(tabuleiroTetralath _tabuleiro);
+	int getIndiceCasaJogada(tabuleiroTetralath *_tabuleiro);
 
 	private:
 	/*
 	* A interface pela qual será possível comunicar-se com o usuário.
 	*/
-	interface_gui interfaceComunicacaoUsuario;
+	interface_gui *interfaceComunicacaoUsuario;
 };

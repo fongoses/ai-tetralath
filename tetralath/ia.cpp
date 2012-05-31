@@ -4,11 +4,52 @@
 * ATENÇÃO: À partir daqui, todos métodos são públicos
 *************************************************************************************/
 /*
-* Construtor. Não faz nada.
-* Só existe porque deixar os métodos estáticos estava dando erros demais.
+* Construtor base... Faz nada!
 */
-ia::ia(){}
+ia::ia(void){}
 
+/*
+* Construtor. 
+* @param _algoritmo O algoritmo que deve ser utilizado por esta ia. Definido nesta classe.
+*/
+ia::ia(int _algoritmo){
+	algoritmo = _algoritmo;
+}
+
+/*
+* Construtor de cópia.
+* @param _ia ia a ser copiada.
+*/
+ia::ia(ia *_ia){
+	algoritmo = _ia->algoritmo;
+}
+
+/*
+* Gerencia o uso do algoritmo escolhido até que a condição de parada seja satisfeita.
+* São feitas avaliações em grafos de profundidades crescentes.
+* @param estado_inicial_param Estado à partir do qual o grafo será expandido.
+* @param deve_parar_param Ponteiro para variável que indica se o minimax deve terminar sua execução e retornar o resultado parcial.
+*		 Esta variável é constantemente checada para verificar se é necessário parar. Seus possíveis valores são CONTINUAR e PARAR,
+*		 definidos nesta classe. Caso o valor não seja nenhum destes, o default assumido é continuar.
+* @param tipo_jogada_param O tipo de jogada (JOGADA_MAX ou JOGADA_MIN) que deve ser aplicado aos valores dos filhos de estado_inicial_param.
+* @return O nome da casa em que deve ser feita a jogada.
+*/
+int ia::comecar_avaliacao(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param){
+	int casaResultado = 0;
+	switch(algoritmo){
+		case ia::MINIMAX: casaResultado = comecar_minimax(estado_inicial_param, deve_parar_param, tipo_jogada_param, cor_pecas_avaliacao_param);
+			break;
+		case ia::MINIMAX_PODA: casaResultado = comecar_minimax_poda_alfa_beta(estado_inicial_param, deve_parar_param, tipo_jogada_param, cor_pecas_avaliacao_param);
+			break;
+	}
+	return casaResultado;
+}
+
+
+
+/*************************************************************************************
+* ATENÇÃO: À partir daqui, todos métodos são privados
+*************************************************************************************/
 
 /*
 * Gerencia o uso do minimax até que a condição de parada seja satisfeita.
@@ -52,7 +93,7 @@ int ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, bool *deve_para
 * @param cor_pecas_avaliacao_param Cor das peças para a qual as avaliações devem ser feitas.
 * @return O melhor estado encontrado para o qual estado_inicial_param pode ir.
 */
- tabuleiroTetralath ia::comecar_minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param){
+ int ia::comecar_minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param){
 	int MAXIMO_ITERACOES = estado_inicial_param.numeroDeCasasLivres();
 	int nivelMaximoSendoAvaliado = 1;
 	int casaMelhorJogada = 0;
@@ -71,12 +112,6 @@ int ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, bool *deve_para
 	}
 	return casaMelhorJogada;
 }
-
-
-
-/*************************************************************************************
-* ATENÇÃO: À partir daqui, todos métodos são privados
-*************************************************************************************/
 
 /*
 * Executa o algoritmo minimax. O caminhamento utilizado é progressivo em profundidade.

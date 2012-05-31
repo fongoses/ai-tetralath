@@ -20,11 +20,10 @@ using namespace std;
 */
 
 int escolhaCorPecasUsuario(void);
+int escolhaTipoJogoUsuario(void);
 
-void conferirFimDoJogo();
 void avisarAoFimDeCincoSegundos(bool *variavel_aviso_param);
 
-bool conferirFimDoJogo(tabuleiroTetralath *tabuleiro_param);
 bool fazerJogadaUsuario(tabuleiroTetralath *tabuleiro_param, int casaAtual_param, bool *ehVezDoUsuario_param);
 
 
@@ -42,11 +41,35 @@ interface_gui gui;
 int main(){
 	gui = (*new interface_gui());
 	
-	jogadorTetralath *jogadorUm = new jogadorHumano(gui, casaTabuleiroTetralath::PECAS_BRANCAS);
-	jogadorTetralath *jogadorDois = new jogadorMaquina(*(new ia()), casaTabuleiroTetralath::PECAS_PRETAS);
-	jogoTetralath jogo = *(new jogoTetralath(jogadorUm, jogadorDois));
+	jogadorTetralath *jogadorUm; 
+	jogadorTetralath *jogadorDois;
 	
+	int corPecasUsuario;
+	int tipoJogoUsuario = escolhaTipoJogoUsuario();
 	
+	switch(tipoJogoUsuario){
+		case jogoTetralath::JOGO_HUMANO_VS_PC:
+				corPecasUsuario = escolhaCorPecasUsuario();
+				if(corPecasUsuario == casaTabuleiroTetralath::PECAS_BRANCAS){
+					jogadorUm = new jogadorHumano(&gui, casaTabuleiroTetralath::PECAS_BRANCAS);
+					jogadorDois = new jogadorMaquina(*(new ia(ia::MINIMAX)), casaTabuleiroTetralath::PECAS_PRETAS);
+				} else {
+					jogadorUm = new jogadorMaquina(*(new ia(ia::MINIMAX)), casaTabuleiroTetralath::PECAS_BRANCAS);
+					jogadorDois = new jogadorHumano(&gui, casaTabuleiroTetralath::PECAS_PRETAS);
+				}
+			break;
+		case jogoTetralath::JOGO_HUMANO_VS_HUMANO:
+				jogadorUm = new jogadorHumano(&gui, casaTabuleiroTetralath::PECAS_BRANCAS);
+				jogadorDois = new jogadorHumano(&gui, casaTabuleiroTetralath::PECAS_PRETAS);
+			break;
+		case jogoTetralath::JOGO_PC_VS_PC:
+				jogadorUm = new jogadorMaquina(*(new ia(ia::MINIMAX)), casaTabuleiroTetralath::PECAS_BRANCAS);
+				jogadorDois = new jogadorMaquina(*(new ia(ia::MINIMAX)), casaTabuleiroTetralath::PECAS_PRETAS);
+			break;
+	}
+	
+	jogoTetralath jogo = *(new jogoTetralath(*(new tabuleiroTetralath(true)), jogadorUm, jogadorDois));
+	jogo.iniciarJogo(&gui);
 	
 	
 	/*int casaCursor = 0;
@@ -161,7 +184,7 @@ bool fazerJogadaUsuario(tabuleiroTetralath *tabuleiro_param, int casaAtual_param
 	conseguiuJogar = tabuleiro_param->jogar(casaAtual_param);
 	if(conseguiuJogar){
 		*ehVezDoUsuario_param = false;
-		jogoAcabou = conferirFimDoJogo(tabuleiro_param);
+		//jogoAcabou = conferirFimDoJogo(tabuleiro_param);
 	}
 
 	return jogoAcabou;
@@ -200,64 +223,44 @@ int escolhaCorPecasUsuario(void){
 
 /*
 * Gerencia a escolha do tipo de jogo que o usuário deseja.
-* Os tipos de jogos são definidos neste arquivo.
-* @return Booleano indicando se o usuário deve começar (se escolheu as brancas).
+* Os tipos de jogos são definidos em jogoTetralath.h.
+* @return Inteiro indicando o tipo de jogo que o usuário quer.
 */
-/*int escolhaCorPecasUsuario(void){
+int escolhaTipoJogoUsuario(void){
 	vector<string> opcoes;
 	int opcaoRealcarInterface = 0;
+	int opcaoEscolhida;
 	char comandoUsuario;
-	bool usuarioEscolheuBrancas = true;
 	
-	opcoes.push_back("BRANCAS");
-	opcoes.push_back("PRETAS");
+	opcoes.push_back("HUMANO vs MAQUINA");
+	opcoes.push_back("HUMANO vs HUMANO");
+	opcoes.push_back("MAQUINA vs MAQUINA");
 	interface_gui gui = *(new interface_gui());
 	gui.imprimirTelaEscolha(opcoes, opcaoRealcarInterface);
+	
+	printf("1");
 	do{
 		Sleep(50); //Movimento não muito rápido, permitindo melhor controle.
+		printf("2");
 		comandoUsuario = gui.esperarComandoUsuario();
+		printf("3");
 		if(comandoUsuario == COMANDO_PERCORRER_ALTERNATIVAS){
-			if(!usuarioEscolheuBrancas){
+			opcaoRealcarInterface++;
+			if(2 < opcaoRealcarInterface){
 				opcaoRealcarInterface = 0;
-				usuarioEscolheuBrancas = true;
-			} else {
-				opcaoRealcarInterface = 1;
-				usuarioEscolheuBrancas = false;
 			}
 		}
 		gui.imprimirTelaEscolha(opcoes, opcaoRealcarInterface);
+		printf("\n");
 	} while(comandoUsuario != COMANDO_FECHAR and comandoUsuario != COMANDO_ESCOLHER);
-	return usuarioEscolheuBrancas;
-}*/
-
-/*
-* Deve ser chamada ao fim de uma jogada.
-* Irá conferir se o jogo acabou e dirá de quem é a vitória.
-* Se o jogo acabou, já imprime a tela de resultado.
-* @param tabuleiro_param Tabuleiro do jogo.
-* @return Booleano indicando se o jogo acabou.
-*/
-bool conferirFimDoJogo(tabuleiroTetralath *tabuleiro_param){
-	int CASA_INEXISTENTE = -1;
-	bool jogoAcabou = false;
-	tabuleiro_param->pecasDaMesmaCorGanharam(tabuleiro_param->recuperarNomeCasaUltimaJogada());
-	bool brancasGanharam = (tabuleiro_param->pecasDaMesmaCorGanharam(tabuleiro_param->recuperarNomeCasaUltimaJogada())
-						   and tabuleiro_param->casaOcupadaPorPecaBranca(tabuleiro_param->recuperarNomeCasaUltimaJogada()))
-						   or (tabuleiro_param->pecasDaMesmaCorPerderam(tabuleiro_param->recuperarNomeCasaUltimaJogada()) 
-						   and !tabuleiro_param->casaOcupadaPorPecaBranca(tabuleiro_param->recuperarNomeCasaUltimaJogada()));
-	bool pretasGanharam = (tabuleiro_param->pecasDaMesmaCorGanharam(tabuleiro_param->recuperarNomeCasaUltimaJogada()) 
-						   and !tabuleiro_param->casaOcupadaPorPecaBranca(tabuleiro_param->recuperarNomeCasaUltimaJogada()))
-						   or (tabuleiro_param->pecasDaMesmaCorPerderam(tabuleiro_param->recuperarNomeCasaUltimaJogada()) 
-						   and tabuleiro_param->casaOcupadaPorPecaBranca(tabuleiro_param->recuperarNomeCasaUltimaJogada()));
-	if(brancasGanharam){
-		jogoAcabou = true;
-		gui.imprimirTelaResultado(casaTabuleiroTetralath::PECAS_BRANCAS, CASA_INEXISTENTE, tabuleiro_param);
-	} else if(pretasGanharam){
-		jogoAcabou = true;
-		gui.imprimirTelaResultado(casaTabuleiroTetralath::PECAS_PRETAS, CASA_INEXISTENTE, tabuleiro_param);
-	} else if(tabuleiro_param->houveEmpate()){
-		jogoAcabou = true;
-		gui.imprimirTelaResultado(casaTabuleiroTetralath::PECAS_PRETAS+casaTabuleiroTetralath::PECAS_BRANCAS+5, CASA_INEXISTENTE, tabuleiro_param);
+	switch(opcaoRealcarInterface){
+		case 0: opcaoEscolhida = jogoTetralath::JOGO_HUMANO_VS_PC;
+			break;
+		case 1: opcaoEscolhida = jogoTetralath::JOGO_HUMANO_VS_HUMANO;
+			break;
+		case 2: opcaoEscolhida = jogoTetralath::JOGO_PC_VS_PC;
+			break;
 	}
-	return jogoAcabou;
+	return opcaoEscolhida;
 }
+

@@ -22,7 +22,7 @@ class jogadorMaquina : public jogadorTetralath{
 	* @param _tabuleiro O tabuleiro em que é feita a jogada.
 	* @return O índice da casa em que o jogador resolveu fazer sua jogada. Esta função é implementada somente nas herdeiras.
 	*/
-	int getIndiceCasaJogada(tabuleiroTetralath _tabuleiro);
+	int getIndiceCasaJogada(tabuleiroTetralath *_tabuleiro);
 
 	private:
 	/*
