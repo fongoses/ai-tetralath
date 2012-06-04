@@ -34,33 +34,33 @@ interface_gui gui;
 */
 int main(){
 	gui = (*new interface_gui());
-	
+
 	jogadorTetralath *jogadorUm; 
 	jogadorTetralath *jogadorDois;
 
-	vector<vector<vector<string> > > menu;
-	vector<vector<string> > linhaUm;
-	vector<vector<string> > linhaDois;
+	menu menuInicioJogo;
+
 	vector<string> opcoesCores;
 	vector<string> opcoesJogadores;
-	
+	vector<string> nomesColunas;
+
 	opcoesCores.push_back("BRANCAS");
 	opcoesCores.push_back("PRETAS");
 	opcoesJogadores.push_back("HUMANO");
 	opcoesJogadores.push_back("MAQUINA");
-	
-	linhaUm.push_back(opcoesJogadores);
-	linhaUm.push_back(opcoesJogadores);
-	linhaDois.push_back(opcoesCores);
-	linhaDois.push_back(opcoesCores);
-	
-	menu.push_back(linhaUm);
-	menu.push_back(linhaDois);
-	
-	gui.imprimirTelaMenus(menu);
-	printf("\n");
-	system("pause");
-	
+
+	menuInicioJogo.criarNovaOpcao(opcoesJogadores);
+	menuInicioJogo.criarNovaOpcao(opcoesJogadores);
+	menuInicioJogo.criarNovaLinha();
+	menuInicioJogo.criarNovaOpcao(opcoesCores);
+	menuInicioJogo.criarNovaOpcao(opcoesCores);
+
+	nomesColunas.push_back("Jogador 1");
+	nomesColunas.push_back("Jogador 2");
+	menuInicioJogo.nomearColunas(nomesColunas);
+
+	gui.imprimirTelaMenus(&menuInicioJogo);
+
 	int corPecasUsuario;
 	int tipoJogoUsuario = escolhaTipoJogoUsuario();
 	

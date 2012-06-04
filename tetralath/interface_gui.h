@@ -1,12 +1,13 @@
+
+
+#include "menu.h"
+
 #ifndef TABULEIRO_TETRALATH
 #define TABULEIRO_TETRALATH
 
 #include "tabuleiroTetralath.h"
  
 #endif
-
-#include <string>
-#include <vector>
 
 /*
 * Concentra todas funções da interface, isto é, a parte visual do jogo.
@@ -59,13 +60,12 @@ class interface_gui{
 	* Imprime uma tela de escolha em que cada opção é um submenu que pode ser acessado com [ENTER].
 	* Recebe um objeto menu e nele define as opções selecionadas.
 	* @param _menu Vector de vectors. Cada vector é um submenu de opções, que são strings.
-	* @return Um vector em que cada elemento é a opção escolhida no correspondente índice do vector passado.
 	* Exemplo:
 	*	imprimirTelaMenus(vector(vector("brancas","pretas"), 
 								 vector("maquina", "humano"))) 
 			= vector("brancas", "maquina")
 	*/
-	vector<string> imprimirTelaMenus(vector<vector<vector<string> > > _menu);
+	void imprimirTelaMenus(menu *_menu);
 	/*
 	* Imprime a tela do jogo.
 	* @param casaAtual_param A casa em que está o cursor.

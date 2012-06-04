@@ -134,7 +134,6 @@ void interface_gui::imprimirTelaEscolha(vector<string> _opcoes, int _opcaoEscolh
 *			   Cada vector dentro de um vector é exibido em uma mesma linha. O vector seguinte é exibido em linha seguinte.
 *			   A primeira opção de um submenu é a escolhida por default e pode ser mudada utilizando [ENTER] + direcional.
 *			   Para selecionar a opção escolhida, utiliza-se novo [ENTER].
-* @return Um vector em que cada elemento é a opção escolhida no correspondente índice do vector passado.
 * Exemplo:
 *	imprimirTelaMenus(vector(
 *						vector(vector("maquina","humano"), vector("maquina", "humano")),
@@ -144,14 +143,9 @@ void interface_gui::imprimirTelaEscolha(vector<string> _opcoes, int _opcaoEscolh
 *	[maquina] [maquina]
 *	[brancas] [brancas]
 */
-vector<string> interface_gui::imprimirTelaMenus(vector<vector<vector<string> > > _menu){
-	int opcaoSelecionadaNoMenuAberto = 0;
-	int menuAberto = 0;
-	int totalOpcoes = 4;
-	int opcoesPorLinha = 2;
-	int numeroOpcoesMenuAberto = 2;
+void interface_gui::imprimirTelaMenus(menu *_menu){
 	char comandoUsuario;
-	
+
 	do{
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
 		system("cls");
@@ -159,31 +153,13 @@ vector<string> interface_gui::imprimirTelaMenus(vector<vector<vector<string> > >
 		printf("\n\n");
 		imprimirTextoCentralizado("O tetralath em modo texto!");
 		printf("\n");
-	
+
 		printf("\n\n");
 		imprimirTextoCentralizado("Escolha uma opcao.");
 		printf("\n\n");
 
-		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
-		for (vector<vector<vector<string> > >::iterator iteradorLinhas = _menu.begin(); iteradorLinhas!=_menu.end(); ++iteradorLinhas) {
-			for (vector<vector<string> >::iterator iteradorLinhaAtual = iteradorLinhas->begin(); iteradorLinhaAtual!=iteradorLinhas->end(); ++iteradorLinhaAtual) {
-				if((iteradorLinhas -  _menu.begin())*opcoesPorLinha + 
-				   (iteradorLinhaAtual - iteradorLinhas->begin()) == menuAberto){
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
-					printf("[");
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
-					printf("%s",iteradorLinhaAtual->at(opcaoSelecionadaNoMenuAberto).c_str());
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
-					printf("]");
-				} else {
-					printf("%s",iteradorLinhaAtual->at(0).c_str());
-				}
-				printf("\t");
-			}
-			printf("\n\n");
-		}
-		printf("\n\n\n\n");
-		
+		_menu->imprimir();
+
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
 		imprimirComando("DIRECIONAL");
 		printf(" ESCOLHER ALTERNATIVA\n");
@@ -195,23 +171,22 @@ vector<string> interface_gui::imprimirTelaMenus(vector<vector<vector<string> > >
 		printf(" SAIR\n");
 		
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
-	
+
 		Sleep(50); //Movimento não muito rápido, permitindo melhor controle.
 		comandoUsuario = esperarComandoUsuario();
-		
+
 		switch(comandoUsuario){
 			case COMANDO_PERCORRER_ALTERNATIVAS: 
-			case MOVIMENTO_DIREITA: if(totalOpcoes-1 <= menuAberto) {menuAberto = 0;} else {menuAberto++;}
+			case MOVIMENTO_DIREITA: _menu->selecionarOpcaoSeguinte();
 				break;
-			case MOVIMENTO_ESQUERDA: if(menuAberto <= 0) {menuAberto = totalOpcoes-1;} else {menuAberto--;}
+			case MOVIMENTO_ESQUERDA: _menu->selecionarOpcaoAnterior(); 
 				break;
-			case MOVIMENTO_CIMA: if(opcaoSelecionadaNoMenuAberto <= 0) {opcaoSelecionadaNoMenuAberto = numeroOpcoesMenuAberto-1;} else {opcaoSelecionadaNoMenuAberto--;}
+			case MOVIMENTO_CIMA: _menu->selecionarAlternativaSeguinte();
 				break;
-			case MOVIMENTO_BAIXO: if(numeroOpcoesMenuAberto-1 <= opcaoSelecionadaNoMenuAberto) {opcaoSelecionadaNoMenuAberto = 0;} else {opcaoSelecionadaNoMenuAberto++;}
+			case MOVIMENTO_BAIXO: _menu->selecionarAlternativaAnterior();
 				break;
 		}
 	}while(comandoUsuario != COMANDO_FECHAR and comandoUsuario != COMANDO_ESCOLHER);
-	return _menu[0][0];
 }
 
 /*
