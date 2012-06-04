@@ -32,6 +32,8 @@ jogadorTetralath* jogoTetralath::iniciarJogo(interface_gui *_interfaceUsuario){
 	int casaJogada;
 	int resultadoAtehAgora = jogoTetralath::NAO_TERMINOU;
 	
+	_interfaceUsuario->imprimirTelaTabuleiro(0, &tabuleiroJogo);
+	
 	while(resultadoAtehAgora == jogoTetralath::NAO_TERMINOU){
 		if(eh_vezDoJogadorUm){
 			jogadorAtual = jogadorUm;
@@ -42,6 +44,14 @@ jogadorTetralath* jogoTetralath::iniciarJogo(interface_gui *_interfaceUsuario){
 		tabuleiroJogo.jogar(casaJogada);
 		_interfaceUsuario->imprimirTelaTabuleiro(0, &tabuleiroJogo);
 		resultadoAtehAgora = conferirFimDoJogo();
+	}
+	
+	if(resultadoAtehAgora == EMPATE){
+		_interfaceUsuario->imprimirTelaResultado(500, casaJogada, &tabuleiroJogo);
+	} else if(resultadoAtehAgora == JOGADOR_UM_GANHOU){
+		_interfaceUsuario->imprimirTelaResultado(jogadorUm->getCorPecas(), casaJogada, &tabuleiroJogo);
+	} else if(resultadoAtehAgora == JOGADOR_DOIS_GANHOU){
+		_interfaceUsuario->imprimirTelaResultado(jogadorDois->getCorPecas(), casaJogada, &tabuleiroJogo);
 	}
 	
 	return jogadorAtual;

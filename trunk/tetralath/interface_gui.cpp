@@ -31,15 +31,17 @@ char interface_gui::esperarComandoUsuario(void){
 	SetConsoleMode( hstdin, 0 ); 						/* Set to no line-buffering, no echo, no special-key-processing */
 
 	while(comandoUsuario == COMANDO_SEM_ACAO){
+		
 		if (WaitForSingleObject( hstdin, 0 ) == WAIT_OBJECT_0){
 			DWORD count;  /* ignored */
 
 			ReadConsoleInput( hstdin, events, 128, &count );  /* Get the input event */
 			
+			haEventoAceitavel = false;
+			
 			if(0 < count){
-				haEventoAceitavel = false;
 				for(i=0; i<=count; i++){
-					if(events[i].EventType == KEY_EVENT &&  events[i].Event.KeyEvent.bKeyDown){
+					if(events[i].EventType == KEY_EVENT &&  !events[i].Event.KeyEvent.bKeyDown){
 						indice_evento_aceitavel = i;
 						haEventoAceitavel = true;
 					}
@@ -84,7 +86,6 @@ char interface_gui::esperarComandoUsuario(void){
 			}
 		}
 	}
-
 	return comandoUsuario;
 }
 
@@ -124,6 +125,93 @@ void interface_gui::imprimirTelaEscolha(vector<string> _opcoes, int _opcaoEscolh
 	printf(" SAIR\n");
 	
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
+}
+
+/*
+* Imprime uma tela de escolha em que cada opção é um submenu que pode ser acessado com [ENTER].
+* Recebe um objeto menu e nele define as opções selecionadas.
+* @param _menu Vector de vectors de vectors de strings. Cada vector dentro de um vector é um submenu de opções, as quais são strings.
+*			   Cada vector dentro de um vector é exibido em uma mesma linha. O vector seguinte é exibido em linha seguinte.
+*			   A primeira opção de um submenu é a escolhida por default e pode ser mudada utilizando [ENTER] + direcional.
+*			   Para selecionar a opção escolhida, utiliza-se novo [ENTER].
+* @return Um vector em que cada elemento é a opção escolhida no correspondente índice do vector passado.
+* Exemplo:
+*	imprimirTelaMenus(vector(
+*						vector(vector("maquina","humano"), vector("maquina", "humano")),
+*						vector(vector("brancas","pretas"), vector("brancas", "pretas"))) 
+*		= vector("brancas", "maquina")
+*	e é exibido como:
+*	[maquina] [maquina]
+*	[brancas] [brancas]
+*/
+vector<string> interface_gui::imprimirTelaMenus(vector<vector<vector<string> > > _menu){
+	int opcaoSelecionadaNoMenuAberto = 0;
+	int menuAberto = 0;
+	int totalOpcoes = 4;
+	int opcoesPorLinha = 2;
+	int numeroOpcoesMenuAberto = 2;
+	char comandoUsuario;
+	
+	do{
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
+		system("cls");
+		imprimirTextoCentralizado("BEM-VINDO AO TEXTLATH");
+		printf("\n\n");
+		imprimirTextoCentralizado("O tetralath em modo texto!");
+		printf("\n");
+	
+		printf("\n\n");
+		imprimirTextoCentralizado("Escolha uma opcao.");
+		printf("\n\n");
+
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
+		for (vector<vector<vector<string> > >::iterator iteradorLinhas = _menu.begin(); iteradorLinhas!=_menu.end(); ++iteradorLinhas) {
+			for (vector<vector<string> >::iterator iteradorLinhaAtual = iteradorLinhas->begin(); iteradorLinhaAtual!=iteradorLinhas->end(); ++iteradorLinhaAtual) {
+				if((iteradorLinhas -  _menu.begin())*opcoesPorLinha + 
+				   (iteradorLinhaAtual - iteradorLinhas->begin()) == menuAberto){
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
+					printf("[");
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
+					printf("%s",iteradorLinhaAtual->at(opcaoSelecionadaNoMenuAberto).c_str());
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
+					printf("]");
+				} else {
+					printf("%s",iteradorLinhaAtual->at(0).c_str());
+				}
+				printf("\t");
+			}
+			printf("\n\n");
+		}
+		printf("\n\n\n\n");
+		
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
+		imprimirComando("DIRECIONAL");
+		printf(" ESCOLHER ALTERNATIVA\n");
+		imprimirComando("ENTER");
+		printf(" FINALIZAR SELECAO\n");
+		imprimirComando("TAB");
+		printf(" NAVEGAR ENTRE OPCOES\n");
+		imprimirComando("Q");
+		printf(" SAIR\n");
+		
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
+	
+		Sleep(50); //Movimento não muito rápido, permitindo melhor controle.
+		comandoUsuario = esperarComandoUsuario();
+		
+		switch(comandoUsuario){
+			case COMANDO_PERCORRER_ALTERNATIVAS: 
+			case MOVIMENTO_DIREITA: if(totalOpcoes-1 <= menuAberto) {menuAberto = 0;} else {menuAberto++;}
+				break;
+			case MOVIMENTO_ESQUERDA: if(menuAberto <= 0) {menuAberto = totalOpcoes-1;} else {menuAberto--;}
+				break;
+			case MOVIMENTO_CIMA: if(opcaoSelecionadaNoMenuAberto <= 0) {opcaoSelecionadaNoMenuAberto = numeroOpcoesMenuAberto-1;} else {opcaoSelecionadaNoMenuAberto--;}
+				break;
+			case MOVIMENTO_BAIXO: if(numeroOpcoesMenuAberto-1 <= opcaoSelecionadaNoMenuAberto) {opcaoSelecionadaNoMenuAberto = 0;} else {opcaoSelecionadaNoMenuAberto++;}
+				break;
+		}
+	}while(comandoUsuario != COMANDO_FECHAR and comandoUsuario != COMANDO_ESCOLHER);
+	return _menu[0][0];
 }
 
 /*
