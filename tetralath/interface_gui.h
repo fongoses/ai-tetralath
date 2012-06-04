@@ -56,6 +56,17 @@ class interface_gui{
 	*/
 	void imprimirTelaEscolha(vector<string> _opcoes, int _opcaoEscolhida);
 	/*
+	* Imprime uma tela de escolha em que cada opção é um submenu que pode ser acessado com [ENTER].
+	* Recebe um objeto menu e nele define as opções selecionadas.
+	* @param _menu Vector de vectors. Cada vector é um submenu de opções, que são strings.
+	* @return Um vector em que cada elemento é a opção escolhida no correspondente índice do vector passado.
+	* Exemplo:
+	*	imprimirTelaMenus(vector(vector("brancas","pretas"), 
+								 vector("maquina", "humano"))) 
+			= vector("brancas", "maquina")
+	*/
+	vector<string> imprimirTelaMenus(vector<vector<vector<string> > > _menu);
+	/*
 	* Imprime a tela do jogo.
 	* @param casaAtual_param A casa em que está o cursor.
 	* @param tabuleiro_param O tabuleiro que será impresso.
