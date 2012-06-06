@@ -22,20 +22,13 @@ using namespace std;
 class jogoTetralath{
 	public:
 	/*
-	* Define os tipos de jogos.
-	*/
-	static const int JOGO_HUMANO_VS_PC = 0;
-	static const int JOGO_HUMANO_VS_HUMANO = 1;
-	static const int JOGO_PC_VS_PC = 2;
-	
-	/*
 	* Define os possíveis fins deste jogo.
 	*/
 	static const int EMPATE = 0; //se houve empate. 
 	static const int JOGADOR_UM_GANHOU = 1; //se o jogador um ganhou o jogo.
 	static const int JOGADOR_DOIS_GANHOU = 2; //se o jogador dois ganhou o jogo.
 	static const int NAO_TERMINOU = 3; //se o jogo ainda não terminou.
-		
+
 	/*
 	* Cria um novo jogo, com base no seu tipo, e o retorna.
 	* @param _tipoJogo Define o tipo de jogo, se entre dois humanos, humano e pc ou pc contra pc.

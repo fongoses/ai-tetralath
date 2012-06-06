@@ -125,10 +125,11 @@ vector<vector<string> > menu::getAlternativasSelecionadas(){
 		}
 		alternativas.push_back(alternativasLinha);
 	}
+
+	return alternativas;
 }
 
 void imprimirEspacos(int _quantidadeEspacos){
-	printf(" |");
 	for(int espacosImpressos=0; espacosImpressos<_quantidadeEspacos; espacosImpressos++){
 		printf(" ");
 	}
@@ -142,6 +143,7 @@ void menu::imprimir(){
 	int ESPACOS_CELULA = 20;
 	int linha;
 	int coluna;
+	char DIVISORIA = 186;
 	printf("\n\t\t\t");
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
 	for(int nomeColuna=0; nomeColuna<nomesColunas.size(); nomeColuna++){
