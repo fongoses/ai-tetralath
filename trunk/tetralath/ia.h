@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 
 #ifndef TABULEIRO_TETRALATH
 #define TABULEIRO_TETRALATH
@@ -35,6 +36,12 @@ class ia{
 	static const int MINIMAX = 0;
 	static const int MINIMAX_PODA = 1;
 	
+	/*
+	* Indicam as funcões de avaliação disponíveis.
+	*/
+	static const int AVALIACAO_SIMPLES = 0;
+	static const int AVALIACAO_MINUCIOSA = 1;
+	
 	//métodos
 	/*
 	* Construtor base... Faz nada!
@@ -44,8 +51,9 @@ class ia{
 	/*
 	* Construtor. 
 	* @param _algoritmo O algoritmo que deve ser utilizado por esta ia. Definido nesta classe.
+	* @param _avaliacao A função de avaliação que esta ia utilizará. Definido nesta classe.
 	*/
-	ia(int _algoritmo);
+	ia(int _algoritmo, int _avaliacao);
 
 	/*
 	* Construtor de cópia.
@@ -65,12 +73,22 @@ class ia{
 	*/
 	int comecar_avaliacao(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param);
 	
+	/*
+	* @return Char* indicando a estratégia utilizada.
+	*/
+	std::string toString();
+
 	private:
 	/*
 	* Algoritmo utilizado.
 	*/
 	int algoritmo;
-		
+	
+	/*
+	* Função de avaliação utilizada.
+	*/
+	int avaliacao;
+	
 	//dados
 	/*
 	* Na expansão do grafo do minimax, é o valor atribuído ao nível do estado_inicial passado à função comecar_(nome do algortimo).
@@ -96,9 +114,10 @@ class ia{
 	*		 Esta variável é constantemente checada para verificar se é necessário parar. Seus possíveis valores são CONTINUAR e PARAR,
 	*		 definidos nesta classe. Caso o valor não seja nenhum destes, o default assumido é continuar.
 	* @param tipo_jogada_param O tipo de jogada (JOGADA_MAX ou JOGADA_MIN) que deve ser aplicado aos valores dos filhos de estado_inicial_param.
+	* @param tipo_avaliacao O tipo da função de avaliação utilizado, definido nesta classe.
 	* @return O nome da casa em que deve ser feita a jogada.
 	*/
-	int comecar_minimax(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param);
+	int comecar_minimax(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param, int tipo_avaliacao);
 	
 	/*
 	* Gerencia o uso do minimax com poda alfa beta até que a condição de parada seja satisfeita.
@@ -108,9 +127,10 @@ class ia{
 	*		 Esta variável é constantemente checada para verificar se é necessário parar. Seus possíveis valores são CONTINUAR e PARAR,
 	*		 definidos nesta classe. Caso o valor não seja nenhum destes, o default assumido é continuar.
 	* @param tipo_jogada_param O tipo de jogada (JOGADA_MAX ou JOGADA_MIN) que deve ser aplicado aos valores dos filhos de estado_inicial_param.
+	* @param tipo_avaliacao O tipo da função de avaliação utilizado, definido nesta classe.
 	* @return O melhor estado encontrado para o qual estado_inicial_param pode ir.
 	*/
-	int comecar_minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param);
+	int comecar_minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param, int tipo_avaliacao);
 
 	/*
 	* Executa o algoritmo minimax. O caminhamento utilizado é progressivo em profundidade.
@@ -127,6 +147,8 @@ class ia{
 	* @return O melhor valor de avaliação encontrado em toda a subárvore do nodo estado_inicial_param.
 	*/
 	float minimax(bool *deve_parar_param, int tipo_jogada_param, int nivel_maximo_param, int nivel_atual_param, int cor_pecas_avaliacao_param);
+	//minimax com função de avaliação minuciosa
+	float minimax_minucioso(bool *deve_parar_param, int tipo_jogada_param, int nivel_maximo_param, int nivel_atual_param, int cor_pecas_avaliacao_param);
 
 	/*
 	* Executa o algoritmo minimax com poda alfa beta. O caminhamento utilizado é progressivo em profundidade.
@@ -143,5 +165,7 @@ class ia{
 	* @return O melhor valor de avaliação encontrado em toda a subárvore do nodo estado_inicial_param.
 	*/
 	float minimax_poda_alfa_beta(bool *deve_parar_param, int tipo_jogada_param, int nivel_maximo_param, int nivel_atual_param, int cor_pecas_avaliacao_param);
+	//minimax com função de avaliação minuciosa
+	float minimax_poda_alfa_beta_minucioso(bool *deve_parar_param, int tipo_jogada_param, int nivel_maximo_param, int nivel_atual_param, int cor_pecas_avaliacao_param);
 
 };

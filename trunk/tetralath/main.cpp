@@ -44,6 +44,8 @@ int main(){
 	menuSair.push_back("JOGAR NOVAMENTE");
 	menuSair.push_back("SAIR DO TEXTLATH");
 
+	ia *iaMaquinaUm;
+	ia *iaMaquinaDois;
 	jogadorTetralath *jogadorUm; 
 	jogadorTetralath *jogadorDois;
 	jogoTetralath jogo = *(new jogoTetralath(*(new tabuleiroTetralath(true)), jogadorUm, jogadorDois));
@@ -51,33 +53,61 @@ int main(){
 	menu menuInicioJogo;
 
 	vector<string> opcoesJogadores;
+	vector<string> opcoesAlgoritmos;
+	vector<string> opcoesAvaliacao;
 	vector<string> nomesColunas;
 
 	opcoesJogadores.push_back("HUMANO");
 	opcoesJogadores.push_back("MAQUINA");
 
+	opcoesAlgoritmos.push_back("MINIMAX");
+	opcoesAlgoritmos.push_back("PODA ALFA BETA");
+
+	opcoesAvaliacao.push_back("AVALIACAO SIMPLES");
+	opcoesAvaliacao.push_back("AVALIACAO MINUCIOSA");
+
 	menuInicioJogo.criarNovaOpcao(opcoesJogadores);
 	menuInicioJogo.criarNovaOpcao(opcoesJogadores);
+	menuInicioJogo.criarNovaLinha();
+	menuInicioJogo.criarNovaOpcao(opcoesAlgoritmos);
+	menuInicioJogo.criarNovaOpcao(opcoesAlgoritmos);
+	menuInicioJogo.criarNovaLinha();
+	menuInicioJogo.criarNovaOpcao(opcoesAvaliacao);
+	menuInicioJogo.criarNovaOpcao(opcoesAvaliacao);
+
+	menuInicioJogo.restringirExibicaoOpcao(1, 0, 1, 0, 0);
+	menuInicioJogo.restringirExibicaoOpcao(1, 1, 1, 0, 1);
+	menuInicioJogo.restringirExibicaoOpcao(2, 0, 1, 0, 0);
+	menuInicioJogo.restringirExibicaoOpcao(2, 1, 1, 0, 1);
 
 	nomesColunas.push_back("Jogador 1");
 	nomesColunas.push_back("Jogador 2");
 	menuInicioJogo.nomearColunas(nomesColunas);
 
+	int avaliacao;
+	int algoritmo;
 	usuarioDesejaTerminar = false;
 	do{
 		gui.imprimirTelaMenus(&menuInicioJogo);
+		vector<vector<string> > opcoesEscolhidas = menuInicioJogo.getAlternativasSelecionadas();
+
+		algoritmo = (opcoesEscolhidas.at(1).at(0)=="MINIMAX"? ia::MINIMAX : ia::MINIMAX_PODA);
+		avaliacao = (opcoesEscolhidas.at(2).at(0)=="AVALIACAO SIMPLES"? ia::AVALIACAO_SIMPLES : ia::AVALIACAO_MINUCIOSA);
+		iaMaquinaUm = new ia(algoritmo, avaliacao);
+		algoritmo = (opcoesEscolhidas.at(1).at(1)=="MINIMAX"? ia::MINIMAX : ia::MINIMAX_PODA);
+		avaliacao = (opcoesEscolhidas.at(2).at(1)=="AVALIACAO SIMPLES"? ia::AVALIACAO_SIMPLES : ia::AVALIACAO_MINUCIOSA);
+		iaMaquinaDois = new ia(algoritmo, avaliacao);
 
 		if(!gui.usuarioQuerFecharPrograma()){
-			vector<vector<string> > opcoesEscolhidas = menuInicioJogo.getAlternativasSelecionadas();
 			bool escolheu_opcoesValidas = false;
 
 			jogadorUm = (opcoesEscolhidas.at(0).at(0) == "HUMANO"? 
 							(jogadorTetralath*) (new jogadorHumano(&gui, casaTabuleiroTetralath::PECAS_BRANCAS)) : 
-							(jogadorTetralath*) (new jogadorMaquina(*(new ia(ia::MINIMAX)), casaTabuleiroTetralath::PECAS_BRANCAS)));
+							(jogadorTetralath*) (new jogadorMaquina(*iaMaquinaUm, casaTabuleiroTetralath::PECAS_BRANCAS)));
 
 			jogadorDois = (opcoesEscolhidas.at(0).at(1) == "HUMANO"? 
 								(jogadorTetralath*) (new jogadorHumano(&gui, casaTabuleiroTetralath::PECAS_PRETAS)) : 
-								(jogadorTetralath*) (new jogadorMaquina(*(new ia(ia::MINIMAX)), casaTabuleiroTetralath::PECAS_PRETAS)));
+								(jogadorTetralath*) (new jogadorMaquina(*iaMaquinaDois, casaTabuleiroTetralath::PECAS_PRETAS)));
 
 			jogo = *(new jogoTetralath(*(new tabuleiroTetralath(true)), jogadorUm, jogadorDois));
 			jogo.iniciarJogo(&gui);

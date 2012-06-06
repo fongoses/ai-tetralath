@@ -11,6 +11,14 @@
 
 using namespace std;
 
+struct restricaoLinha{
+	int linhaRestrita;
+	int colunaRestrita;
+	int alternativa;
+	int linhaOpcao;
+	int colunaOpcao;
+};
+
 class menu{
 	public:
 
@@ -74,6 +82,18 @@ class menu{
 	*/
 	void nomearColunas(vector<string> _nomesColunas);
 
+	/*
+	* Restringe a opção de (_linhaRestrita, _colunaRestrita) para aparecer/ser editável somente quando
+	* a alternativa _alternativa de (_linhaOpcao, _colunaOpcao) estiver selecionada.
+	* @param _linhaRestrita Índice em linhas do vetor que contém a opção que será restringida.
+	* @param _colunaRestritra Índice em elemento de linhas do vetor que contém a opção que será restringida.
+	* @param _alternativa Índice em elemento de elemento de linhas da alternativa a cuja seleção está atrelada a 
+	*					  exibição da opção restringida.
+	* @param _linhaOpcao Índice em linhas do vetor que contém a opção que contém _alternativa.
+	* @param _colunaOpcao Índice em elemento de linhas do vetor que contém a opção que contém _alternativa.
+	*/
+	void restringirExibicaoOpcao(int _linhaRestrita, int _colunaRestrita, int _alternativa, int _linhaOpcao, int _colunaOpcao);
+
 	private:
 	/*
 	* Vetor de linhas do menu. Cada linha é um vetor de vetores de strings.
@@ -114,6 +134,11 @@ class menu{
 	vector<string> nomesColunas;
 
 	/*
+	* Vetor que mapeia as restrições feitas com restringirExibicaoOpcao.
+	*/
+	vector<restricaoLinha> restricoesExibicaoOpcoes;
+
+	/*
 	* Modifica a alternativa selecionada da opção selecionada.
 	* @param _alternativa A alternativa que será selecionada.
 	* ATENÇÃO: a função não é robusta! Verifique os limites!!
@@ -127,4 +152,11 @@ class menu{
 	* ATENÇÃO: a função não é robusta! Verifique os limites!!
 	*/
 	string getNomeAlternativaSelecionadaOpcaoEm(int _linha, int _coluna);
+
+	/*
+	* @param _linha Índice do elemento que contém o elemento que contém a opção em linhas.
+	* @param _coluna Índice do elemento que contém a posição no elemento que o contém de linhas.
+	* @return Booleano indicando se a opção em _linha e _coluna deve aparecer.
+	*/
+	bool opcaoDeveAparecer(int _linha, int _coluna);
 };

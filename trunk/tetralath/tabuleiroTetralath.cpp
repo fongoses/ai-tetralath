@@ -206,6 +206,59 @@ float tabuleiroTetralath::avaliarParaPecasDaCor(int pecas_avaliacao_param){
 }
 
 /*
+* Avalia a utilidade deste tabuleiro para as peças de parâmetro, isto é, o quão favorável o tabuleiro está.
+* Esta avaliação é mais custosa e minuciosa.
+* @param pecas_avaliacao_param A cor das peças que será usada para avaliar o tabuleiro (PECAS_BRANCAS ou PECAS_PRETAS).
+* @return Um valor float entre -1 e 1. A interpretação é de -1 (PERDA) para perda, 0 (EMPATE) para 
+* 		  empate e 1 (VITORIA) para vitória. Número decimais SÃO permitidos.
+*/
+float tabuleiroTetralath::avaliarMinuciosamenteParaPecasDaCor(int pecas_avaliacao_param){
+	float AVALIACAO_INDEFINIDA = -5;
+	float avaliacao = AVALIACAO_INDEFINIDA;
+	
+	int nomeCasa = INDICE_PRIMEIRA_CASA;
+	
+	if(houveEmpate()){
+		avaliacao = EMPATE;
+	}
+	
+	while(nomeCasa <= INDICE_ULTIMA_CASA and avaliacao == AVALIACAO_INDEFINIDA){
+		if(casaOcupadaPorPecaBranca(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_BRANCAS){
+			if(pecasDaMesmaCorGanharam(nomeCasa)){
+				avaliacao = VITORIA;
+			} else if(pecasDaMesmaCorPerderam(nomeCasa)){
+				avaliacao = PERDA;
+			}
+		} else if(casaOcupadaPorPecaBranca(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_PRETAS){
+			if(pecasDaMesmaCorGanharam(nomeCasa)){
+				avaliacao = PERDA;
+			} else if(pecasDaMesmaCorPerderam(nomeCasa)){
+				avaliacao = VITORIA;
+			}
+		} else if(casaOcupada(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_PRETAS){
+			if(pecasDaMesmaCorGanharam(nomeCasa)){
+				avaliacao = VITORIA;
+			} else if(pecasDaMesmaCorPerderam(nomeCasa)){
+				avaliacao = PERDA;
+			}
+		}  else if(casaOcupada(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_BRANCAS){
+			if(pecasDaMesmaCorGanharam(nomeCasa)){
+				avaliacao = PERDA;
+			} else if(pecasDaMesmaCorPerderam(nomeCasa)){
+				avaliacao = VITORIA;
+			}
+		}
+		nomeCasa++;
+	}
+	
+	if(avaliacao == AVALIACAO_INDEFINIDA){
+		avaliacao = EMPATE;
+	}
+	
+	return avaliacao;
+}
+
+/*
 * Procura, em uma ordenação interna dos estados, algum que esteja na posição fornecida.
 * @param posicao_param A posição, na ordenação encapsulada desta classe, do estado.
 * @return Ponteiro para outro estado (atingível à partir do estado dado) ou NAO_HA_ESTADO_ATINGIVEL (definido nesta classe).
