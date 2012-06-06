@@ -1,13 +1,13 @@
-
-
-#include "menu.h"
-
-#ifndef TABULEIRO_TETRALATH
-#define TABULEIRO_TETRALATH
-
-#include "tabuleiroTetralath.h"
- 
+#ifndef STRING_E_VECTOR
+#define STRING_E_VECTOR
+	#include <string>
+	#include <vector>
 #endif
+
+class menu;
+class tabuleiroTetralath;
+
+using namespace std;
 
 /*
 * Concentra todas funções da interface, isto é, a parte visual do jogo.
@@ -42,20 +42,43 @@
 class interface_gui{
 	public:
 	/*
+	* Indicam as dimensões da linha de comando.
+	*/
+	static const int LINHAS = 40;
+	static const int COLUNAS = 150;
+
+	/*
 	* Construtor da classe.
 	*/
 	interface_gui();
 	/*
+	* Imprime um texto centralizado na tela.
+	* @param texto_param Texto a ser impresso.
+	*/
+	static void imprimirTextoCentralizado(string texto_param);
+	/*
+	* Imprime tantos espaços quanto for especificado.
+	* @param _quantidadeEspacos Quantidade de espaços que será impressa na tela.
+	*/
+	static void imprimirEspacos(int _quantidadeEspacos);
+	/*
 	* Espera por comando do usuário e o retorna, quando for feito.
+	* @param _possivelTerminar Booleano que liga/desliga a atribuição da flag que sinaliza a entrada de um COMANDO_FECHAR.
 	* @return O comando digitado pelo usuário. Não retorna comandos com CAPS, prefere sempre sua versão em lower case.
 	*/
-	char esperarComandoUsuario(void);
+	char esperarComandoUsuario(bool _possivelTerminar);
 	/*
 	* Imprime uma tela que permite escolha entre várias opções.
 	* @param _opcoes Array de opções que o usuário possui.
 	* @param _opcaoEscolhida O índice, no array, da opção escolhida. Se exceder os limites do array, será realçada a última.
 	*/
-	void imprimirTelaEscolha(vector<string> _opcoes, int _opcaoEscolhida);
+	void imprimirTelaEscolhaEstatica(vector<string> _opcoes, int _opcaoEscolhida);
+	/*
+	* Controla a impressão da tela de escolha com base em entrada do usuário.
+	* @param _opcoes Opções excludentes dentre as quais o usuário pode escolher.
+	* @return Opção que foi escolhida.
+	*/
+	int imprimirTelaEscolha(vector<string> _opcoes);
 	/*
 	* Imprime uma tela de escolha em que cada opção é um submenu que pode ser acessado com [ENTER].
 	* Recebe um objeto menu e nele define as opções selecionadas.
@@ -87,17 +110,32 @@ class interface_gui{
 	* Imprime todas as cores possíveis no prompt no windows (Só funciona no windows!!!!!!).
 	*/
 	void imprimirCoresWindows(void);
+	/*
+	* @return Booleano que indica se o usuário informou à esta gui que deseja terminar o programa.
+	*/
+	bool usuarioQuerFecharPrograma();
+	/*
+	* Redimensiona esta gui para as dimensões dadas.
+	* @param _numeroLinhas O número de linhas que a gui terá.
+	* @param _numeroColunas O número de colunas que a gui terá.
+	*/
+	void redimensionar(int _numeroLinhas, int _numeroColunas);
+	/*
+	* Gera string cujo único caractere tem o código ASCII passado.
+	* @param _codigoASCII Código ASCII do caractere que se quer na string.
+	* @return String cujo único caractere tem o código ASCII passado.
+	*/
+	static string getStringCaractereASCII(int _codigoASCII);
 
 	private:
+	/*
+	* Booleano que indica se o usuário informou à esta gui que deseja terminar o programa.
+	*/
+	bool deveTerminar;
 
 	/*
 	* Imprime um comando com letras brancas em colchetes.
 	* @param comando_param Comando a imprimir.
 	*/
 	void imprimirComando(string comando_param);
-	/*
-	* Imprime um texto centralizado na tela.
-	* @param texto_param Texto a ser impresso.
-	*/
-	void imprimirTextoCentralizado(string texto_param);
 };

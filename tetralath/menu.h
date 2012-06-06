@@ -2,12 +2,14 @@
 * Define um menu, que pode ter submenos e ser dividido em linhas.
 * Opções de um menu são sempre strings e podem estar selecionadas ou não.
 */
-#include <vector>
-#include <string>
-#include <iostream>
+
+#ifndef STRING_E_VECTOR
+#define STRING_E_VECTOR
+	#include <string>
+	#include <vector>
+#endif
 
 using namespace std;
-
 
 class menu{
 	public:

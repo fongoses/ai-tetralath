@@ -1,4 +1,5 @@
 #include "ia.h"
+#include <stdio.h>
 
 /*************************************************************************************
 * ATENÇÃO: À partir daqui, todos métodos são públicos
@@ -71,11 +72,14 @@ int ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, bool *deve_para
 
 	tabuleiro = *(new tabuleiroTetralath(&estado_inicial_param, true));
 
-	while(*deve_parar_param != PARAR and nivelMaximoSendoAvaliado <= MAXIMO_ITERACOES){
+	printf("Niveis que jah avaliou:\n");
+	while(*deve_parar_param != PARAR and nivelMaximoSendoAvaliado <= MAXIMO_ITERACOES 
+			and resultado_melhor_aplicacao_minimax != tabuleiroTetralath::VITORIA){
 		resultado_aplicacao_minimax = minimax(deve_parar_param, tipo_jogada_param, nivelMaximoSendoAvaliado, NIVEL_INICIAL, cor_pecas_avaliacao_param);
 		if(!(*deve_parar_param) && resultado_melhor_aplicacao_minimax <= resultado_aplicacao_minimax){
 			resultado_melhor_aplicacao_minimax = resultado_aplicacao_minimax;
 			casaMelhorJogada = resultado_minimax;
+			printf(" %d,",nivelMaximoSendoAvaliado);
 			nivelMaximoSendoAvaliado++;
 		}
 	}
@@ -102,11 +106,14 @@ int ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, bool *deve_para
 
 	tabuleiro = *(new tabuleiroTetralath(&estado_inicial_param, true));
 
-	while(*deve_parar_param != PARAR and nivelMaximoSendoAvaliado <= MAXIMO_ITERACOES){
+	printf("Niveis que jah avaliou: \n");
+	while(*deve_parar_param != PARAR and nivelMaximoSendoAvaliado <= MAXIMO_ITERACOES
+			and resultado_melhor_aplicacao_minimax != tabuleiroTetralath::VITORIA){
 		resultado_aplicacao_minimax = minimax_poda_alfa_beta(deve_parar_param, tipo_jogada_param, nivelMaximoSendoAvaliado, NIVEL_INICIAL, cor_pecas_avaliacao_param);
 		if(!(*deve_parar_param) && resultado_melhor_aplicacao_minimax <= resultado_aplicacao_minimax){
 			resultado_melhor_aplicacao_minimax = resultado_aplicacao_minimax;
 			casaMelhorJogada = resultado_minimax;
+			printf(" %d,",nivelMaximoSendoAvaliado);
 			nivelMaximoSendoAvaliado++;
 		}
 	}

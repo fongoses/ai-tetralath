@@ -1,6 +1,4 @@
-#include <iostream>
-#include <stdlib.h>
-#include "casaTabuleiroTetralath.h"
+class casaTabuleiroTetralath;
 
 #define COR_PRETA_LINUX "\033[22;30"
 #define COR_VERMELHA_LINUX "\033[22;31"

@@ -1,6 +1,9 @@
 #include "menu.h"
+#include "interface_gui.h"
 #include <windows.h>
 #include <stdio.h>
+#include <iostream>
+
 
 /*
 * Cria um novo menu, sem opções ainda.
@@ -129,39 +132,35 @@ vector<vector<string> > menu::getAlternativasSelecionadas(){
 	return alternativas;
 }
 
-void imprimirEspacos(int _quantidadeEspacos){
-	for(int espacosImpressos=0; espacosImpressos<_quantidadeEspacos; espacosImpressos++){
-		printf(" ");
-	}
-	
-}
-
 /*
 * Imprime este menu na tela, evidenciando a opção escolhida e suas alternativas.
 */
 void menu::imprimir(){
-	int ESPACOS_CELULA = 20;
+	int ESPACOS_CELULA = 30;
 	int linha;
 	int coluna;
 	char DIVISORIA = 186;
-	printf("\n\t\t\t");
+	printf("\n");
+	interface_gui::imprimirEspacos(interface_gui::COLUNAS/2 -nomesColunas.size()*ESPACOS_CELULA/2);
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
 	for(int nomeColuna=0; nomeColuna<nomesColunas.size(); nomeColuna++){
 		printf("%s",nomesColunas.at(nomeColuna).c_str());
-		imprimirEspacos(ESPACOS_CELULA - nomesColunas.at(nomeColuna).size());
+		interface_gui::imprimirEspacos(ESPACOS_CELULA - nomesColunas.at(nomeColuna).size());
 	}
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
-	printf("\n\t\t\t");
+	printf("\n");
+	interface_gui::imprimirEspacos(interface_gui::COLUNAS/2 -nomesColunas.size()*ESPACOS_CELULA/2);
 	for(linha=0; linha<linhas.size(); linha++){
 		if(linha == linhaOpcaoSelecionada){
-			for(int colunaAtual=0; colunaAtual<colunaOpcaoSelecionada; colunaAtual++){ imprimirEspacos(ESPACOS_CELULA); }
+			for(int colunaAtual=0; colunaAtual<colunaOpcaoSelecionada; colunaAtual++){ interface_gui::imprimirEspacos(ESPACOS_CELULA); }
 			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
 			selecionarAlternativaSeguinte();
 			printf(" %s", getNomeAlternativaSelecionadaOpcaoEm(linhaOpcaoSelecionada, colunaOpcaoSelecionada).c_str());
 			selecionarAlternativaAnterior();
 			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
 		}
-		printf("\n\t\t\t");
+		printf("\n");
+		interface_gui::imprimirEspacos(interface_gui::COLUNAS/2 -nomesColunas.size()*ESPACOS_CELULA/2);
 		for(coluna=0; coluna<linhas.at(linha).size(); coluna++){
 			if(linha == linhaOpcaoSelecionada && coluna == colunaOpcaoSelecionada){
 				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
@@ -170,15 +169,16 @@ void menu::imprimir(){
 				printf("%s",getNomeAlternativaSelecionadaOpcaoEm(linha, coluna).c_str());
 				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
 				printf("]");
-				imprimirEspacos(ESPACOS_CELULA - getNomeAlternativaSelecionadaOpcaoEm(linha, coluna).size() - 2);
+				interface_gui::imprimirEspacos(ESPACOS_CELULA - getNomeAlternativaSelecionadaOpcaoEm(linha, coluna).size() - 2);
 			} else {
 				printf("%s",getNomeAlternativaSelecionadaOpcaoEm(linha, coluna).c_str());
-				imprimirEspacos(ESPACOS_CELULA - getNomeAlternativaSelecionadaOpcaoEm(linha, coluna).size());
+				interface_gui::imprimirEspacos(ESPACOS_CELULA - getNomeAlternativaSelecionadaOpcaoEm(linha, coluna).size());
 			}
 		}
-		printf("\n\t\t\t");
+		printf("\n");
+		interface_gui::imprimirEspacos(interface_gui::COLUNAS/2 -nomesColunas.size()*ESPACOS_CELULA/2);
 		if(linha == linhaOpcaoSelecionada){
-			for(int colunaAtual=0; colunaAtual<colunaOpcaoSelecionada; colunaAtual++){ imprimirEspacos(ESPACOS_CELULA); }
+			for(int colunaAtual=0; colunaAtual<colunaOpcaoSelecionada; colunaAtual++){ interface_gui::imprimirEspacos(ESPACOS_CELULA); }
 			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
 			selecionarAlternativaAnterior();
 			printf(" %s", getNomeAlternativaSelecionadaOpcaoEm(linhaOpcaoSelecionada, colunaOpcaoSelecionada).c_str());

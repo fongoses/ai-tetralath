@@ -1,8 +1,8 @@
+#include "jogoTetralath.h"
+#include "casaTabuleiroTetralath.h"
 #include <iostream>
 
-#include "jogoTetralath.h"
 
-using namespace std;
 
 /*************************************************************************************
 * ATENÇÃO: À partir daqui, todos métodos são públicos
@@ -34,30 +34,30 @@ jogadorTetralath* jogoTetralath::iniciarJogo(interface_gui *_interfaceUsuario){
 
 	_interfaceUsuario->imprimirTelaTabuleiro(0, &tabuleiroJogo);
 
-	while(resultadoAtehAgora == jogoTetralath::NAO_TERMINOU){
-		if(eh_vezDoJogadorUm){
-			jogadorAtual = jogadorUm;
-		} else {
-			jogadorAtual = jogadorDois;
-		}
+	while(resultadoAtehAgora == jogoTetralath::NAO_TERMINOU
+			&& !_interfaceUsuario->usuarioQuerFecharPrograma()){
+		jogadorAtual = (eh_vezDoJogadorUm? jogadorUm : jogadorDois);
 		if(jogadorAtual->getTipoJogador() == jogadorTetralath::TIPO_MAQUINA){
 			_interfaceUsuario->imprimirTelaAguardarJogada();
 		}
 		do{
 			casaJogada = jogadorAtual->getIndiceCasaJogada(&tabuleiroJogo);
-		}while(tabuleiroJogo.casaOcupada(casaJogada));
+		}while(tabuleiroJogo.casaOcupada(casaJogada) && !_interfaceUsuario->usuarioQuerFecharPrograma());
 		tabuleiroJogo.jogar(casaJogada);
 		_interfaceUsuario->imprimirTelaTabuleiro(0, &tabuleiroJogo);
 		resultadoAtehAgora = conferirFimDoJogo();
 		eh_vezDoJogadorUm = !eh_vezDoJogadorUm;
 	}
 
-	if(resultadoAtehAgora == EMPATE){
-		_interfaceUsuario->imprimirTelaResultado(500, casaJogada, &tabuleiroJogo);
-	} else if(resultadoAtehAgora == JOGADOR_UM_GANHOU){
-		_interfaceUsuario->imprimirTelaResultado(jogadorUm->getCorPecas(), casaJogada, &tabuleiroJogo);
-	} else if(resultadoAtehAgora == JOGADOR_DOIS_GANHOU){
-		_interfaceUsuario->imprimirTelaResultado(jogadorDois->getCorPecas(), casaJogada, &tabuleiroJogo);
+	if(!_interfaceUsuario->usuarioQuerFecharPrograma()){
+		if(resultadoAtehAgora == EMPATE){
+			int NUMERO_QUE_SIGNIFICA_EMPATE = 500;
+			_interfaceUsuario->imprimirTelaResultado(NUMERO_QUE_SIGNIFICA_EMPATE, casaJogada, &tabuleiroJogo);
+		} else if(resultadoAtehAgora == JOGADOR_UM_GANHOU){
+			_interfaceUsuario->imprimirTelaResultado(jogadorUm->getCorPecas(), casaJogada, &tabuleiroJogo);
+		} else if(resultadoAtehAgora == JOGADOR_DOIS_GANHOU){
+			_interfaceUsuario->imprimirTelaResultado(jogadorDois->getCorPecas(), casaJogada, &tabuleiroJogo);
+		}
 	}
 
 	return jogadorAtual;
