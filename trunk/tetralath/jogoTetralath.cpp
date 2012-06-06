@@ -31,21 +31,27 @@ jogadorTetralath* jogoTetralath::iniciarJogo(interface_gui *_interfaceUsuario){
 	bool eh_vezDoJogadorUm = true;
 	int casaJogada;
 	int resultadoAtehAgora = jogoTetralath::NAO_TERMINOU;
-	
+
 	_interfaceUsuario->imprimirTelaTabuleiro(0, &tabuleiroJogo);
-	
+
 	while(resultadoAtehAgora == jogoTetralath::NAO_TERMINOU){
 		if(eh_vezDoJogadorUm){
 			jogadorAtual = jogadorUm;
 		} else {
 			jogadorAtual = jogadorDois;
 		}
-		casaJogada = jogadorAtual->getIndiceCasaJogada(&tabuleiroJogo);
+		if(jogadorAtual->getTipoJogador() == jogadorTetralath::TIPO_MAQUINA){
+			_interfaceUsuario->imprimirTelaAguardarJogada();
+		}
+		do{
+			casaJogada = jogadorAtual->getIndiceCasaJogada(&tabuleiroJogo);
+		}while(tabuleiroJogo.casaOcupada(casaJogada));
 		tabuleiroJogo.jogar(casaJogada);
 		_interfaceUsuario->imprimirTelaTabuleiro(0, &tabuleiroJogo);
 		resultadoAtehAgora = conferirFimDoJogo();
+		eh_vezDoJogadorUm = !eh_vezDoJogadorUm;
 	}
-	
+
 	if(resultadoAtehAgora == EMPATE){
 		_interfaceUsuario->imprimirTelaResultado(500, casaJogada, &tabuleiroJogo);
 	} else if(resultadoAtehAgora == JOGADOR_UM_GANHOU){
@@ -53,7 +59,7 @@ jogadorTetralath* jogoTetralath::iniciarJogo(interface_gui *_interfaceUsuario){
 	} else if(resultadoAtehAgora == JOGADOR_DOIS_GANHOU){
 		_interfaceUsuario->imprimirTelaResultado(jogadorDois->getCorPecas(), casaJogada, &tabuleiroJogo);
 	}
-	
+
 	return jogadorAtual;
 }
 

@@ -145,6 +145,9 @@ void interface_gui::imprimirTelaEscolha(vector<string> _opcoes, int _opcaoEscolh
 */
 void interface_gui::imprimirTelaMenus(menu *_menu){
 	char comandoUsuario;
+	char* comando = new char[1];
+	string comandoString;
+
 
 	do{
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
@@ -161,11 +164,21 @@ void interface_gui::imprimirTelaMenus(menu *_menu){
 		_menu->imprimir();
 
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
-		imprimirComando("DIRECIONAL");
+		comando[0]=30;comando[1]='\0';comandoString = *(new string(comando));
+		imprimirComando(comandoString);
+		printf(" ou ");
+		comando[0]=31;comando[1]='\0';comandoString = *(new string(comando));
+		imprimirComando(comandoString);
 		printf(" ESCOLHER ALTERNATIVA\n");
 		imprimirComando("ENTER");
 		printf(" FINALIZAR SELECAO\n");
 		imprimirComando("TAB");
+		printf(" ou ");
+		comando[0]=16;comando[1]='\0';comandoString = *(new string(comando));
+		imprimirComando(comandoString);
+		printf(" ou ");
+		comando[0]=17;comando[1]='\0';comandoString = *(new string(comando));
+		imprimirComando(comandoString);
 		printf(" NAVEGAR ENTRE OPCOES\n");
 		imprimirComando("Q");
 		printf(" SAIR\n");
@@ -195,6 +208,9 @@ void interface_gui::imprimirTelaMenus(menu *_menu){
 * @param tabuleiro_param O tabuleiro que será impresso.
 */
 void interface_gui::imprimirTelaTabuleiro(int casaAtual_param, tabuleiroTetralath *tabuleiro_param){
+	char* comando = new char[1];
+	string comandoString;
+
 	//printf(COR_BRANCA_LINUX);	
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
 	system("cls");
@@ -219,22 +235,26 @@ void interface_gui::imprimirTelaTabuleiro(int casaAtual_param, tabuleiroTetralat
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
 	imprimirComando("W");
 	printf(" ou ");
-	imprimirComando("SETA CIMA");
+	comando[0]=30;comando[1]='\0';comandoString = *(new string(comando));
+	imprimirComando(comandoString);
 	printf(" MOVER PARA CASA NA DIAGONAL ESQUERDA SUPERIOR (CIMA)\n");
 
 	imprimirComando("S");
 	printf(" ou ");
-	imprimirComando("SETA BAIXO");
+	comando[0]=31;comando[1]='\0';comandoString = *(new string(comando));
+	imprimirComando(comandoString);
 	printf(" MOVER PARA CASA NA DIAGONAL DIREITA INFEROR (BAIXO)\n");
 
 	imprimirComando("A");
 	printf(" ou ");
-	imprimirComando("SETA ESQUERDA");
+	comando[0]=17;comando[1]='\0';comandoString = *(new string(comando));
+	imprimirComando(comandoString);
 	printf(" MOVER PARA CASA A ESQUERDA\n");
 	
 	imprimirComando("D");
 	printf(" ou ");
-	imprimirComando("SETA DIREITA");
+	comando[0]=16;comando[1]='\0';comandoString = *(new string(comando));
+	imprimirComando(comandoString);
 	printf(" MOVER PARA CASA A DIREITA\n");
 
 	imprimirComando("J");
@@ -291,6 +311,7 @@ void interface_gui::imprimirTelaResultado(int cor_pecas_ganhadoras_param, int ca
 	printf("[Q] SAIR\n");
 	//printf(COR_BRANCA_LINUX);
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
+	system("pause>>nul");
 }
 
 /*
