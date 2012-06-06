@@ -1,5 +1,8 @@
 #include "ia.h"
+#include "interface_gui.h"
 #include <stdio.h>
+#include <ctime>
+
 
 /*************************************************************************************
 * ATENÇÃO: À partir daqui, todos métodos são públicos
@@ -12,9 +15,11 @@ ia::ia(void){}
 /*
 * Construtor. 
 * @param _algoritmo O algoritmo que deve ser utilizado por esta ia. Definido nesta classe.
+* @param _avaliacao A função de avaliação que esta ia utilizará. Definido nesta classe.
 */
-ia::ia(int _algoritmo){
+ia::ia(int _algoritmo, int _avaliacao){
 	algoritmo = _algoritmo;
+	avaliacao = _avaliacao;
 }
 
 /*
@@ -23,6 +28,7 @@ ia::ia(int _algoritmo){
 */
 ia::ia(ia *_ia){
 	algoritmo = _ia->algoritmo;
+	avaliacao = _ia->avaliacao;
 }
 
 /*
@@ -38,14 +44,34 @@ ia::ia(ia *_ia){
 int ia::comecar_avaliacao(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param){
 	int casaResultado = 0;
 	switch(algoritmo){
-		case ia::MINIMAX: casaResultado = comecar_minimax(estado_inicial_param, deve_parar_param, tipo_jogada_param, cor_pecas_avaliacao_param);
+		case ia::MINIMAX: casaResultado = comecar_minimax(estado_inicial_param, deve_parar_param, tipo_jogada_param, cor_pecas_avaliacao_param, avaliacao);
 			break;
-		case ia::MINIMAX_PODA: casaResultado = comecar_minimax_poda_alfa_beta(estado_inicial_param, deve_parar_param, tipo_jogada_param, cor_pecas_avaliacao_param);
+		case ia::MINIMAX_PODA: casaResultado = comecar_minimax_poda_alfa_beta(estado_inicial_param, deve_parar_param, tipo_jogada_param, cor_pecas_avaliacao_param, avaliacao);
 			break;
 	}
 	return casaResultado;
 }
 
+/*
+* @return Char* indicando a estratégia utilizada.
+*/
+std::string ia::toString(){
+	std::string stringIA;
+	switch(algoritmo){
+		case ia::MINIMAX: stringIA = "MINIMAX";
+			break;
+		case ia::MINIMAX_PODA: stringIA = "PODA ALFA BETA";
+			break;
+	}
+	switch(avaliacao){
+		case ia::AVALIACAO_SIMPLES: stringIA += " com AVALIACAO SIMPLES";
+			break;
+		case ia::AVALIACAO_MINUCIOSA: stringIA += " com AVALIACAO MINUCIOSA";
+			break;
+	}
+	stringIA+="\n";
+	return stringIA;
+}
 
 
 /*************************************************************************************
@@ -61,25 +87,36 @@ int ia::comecar_avaliacao(tabuleiroTetralath estado_inicial_param, bool *deve_pa
 *		 definidos nesta classe. Caso o valor não seja nenhum destes, o default assumido é CONTINUAR.
 * @param tipo_jogada_param O tipo de jogada (JOGADA_MAX ou JOGADA_MIN) que deve ser aplicado aos valores dos filhos de estado_inicial_param.
 * @param cor_pecas_avaliacao_param Cor das peças para a qual as avaliações devem ser feitas.
+* @param tipo_avaliacao O tipo da função de avaliação utilizado, definido nesta classe.
 * @return O nome da casa em que deve ser feita a jogada.
 */
-int ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param){
+int ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param, int tipo_avaliacao){
 	int MAXIMO_ITERACOES = estado_inicial_param.numeroDeCasasLivres();
 	int nivelMaximoSendoAvaliado = 1;
 	int casaMelhorJogada = 0;
 	float resultado_melhor_aplicacao_minimax = tabuleiroTetralath::PERDA;
 	float resultado_aplicacao_minimax = tabuleiroTetralath::PERDA;
+	unsigned milissegundosInicioIteracao;
 
 	tabuleiro = *(new tabuleiroTetralath(&estado_inicial_param, true));
 
-	printf("Niveis que jah avaliou:\n");
+	interface_gui::imprimirTextoCentralizado(toString());
+	printf("Niveis que jah avaliou e tempo que avaliacao levou em milissegundos: ");
 	while(*deve_parar_param != PARAR and nivelMaximoSendoAvaliado <= MAXIMO_ITERACOES 
 			and resultado_melhor_aplicacao_minimax != tabuleiroTetralath::VITORIA){
-		resultado_aplicacao_minimax = minimax(deve_parar_param, tipo_jogada_param, nivelMaximoSendoAvaliado, NIVEL_INICIAL, cor_pecas_avaliacao_param);
+		milissegundosInicioIteracao = clock();
+		switch(tipo_avaliacao){
+			case ia::AVALIACAO_SIMPLES: 
+					resultado_aplicacao_minimax = minimax(deve_parar_param, tipo_jogada_param, nivelMaximoSendoAvaliado, NIVEL_INICIAL, cor_pecas_avaliacao_param);
+				break;
+			case ia::AVALIACAO_MINUCIOSA: 
+					resultado_aplicacao_minimax = minimax_minucioso(deve_parar_param, tipo_jogada_param, nivelMaximoSendoAvaliado, NIVEL_INICIAL, cor_pecas_avaliacao_param);
+				break;
+		}
 		if(!(*deve_parar_param) && resultado_melhor_aplicacao_minimax <= resultado_aplicacao_minimax){
 			resultado_melhor_aplicacao_minimax = resultado_aplicacao_minimax;
 			casaMelhorJogada = resultado_minimax;
-			printf(" %d,",nivelMaximoSendoAvaliado);
+			printf(" %d em %ld,",nivelMaximoSendoAvaliado, clock()-milissegundosInicioIteracao);
 			nivelMaximoSendoAvaliado++;
 		}
 	}
@@ -95,25 +132,36 @@ int ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, bool *deve_para
 *		 definidos nesta classe. Caso o valor não seja nenhum destes, o default assumido é CONTINUAR.
 * @param tipo_jogada_param O tipo de jogada (JOGADA_MAX ou JOGADA_MIN) que deve ser aplicado aos valores dos filhos de estado_inicial_param.
 * @param cor_pecas_avaliacao_param Cor das peças para a qual as avaliações devem ser feitas.
+* @param tipo_avaliacao O tipo da função de avaliação utilizado, definido nesta classe.
 * @return O melhor estado encontrado para o qual estado_inicial_param pode ir.
 */
- int ia::comecar_minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param){
+ int ia::comecar_minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param, int tipo_avaliacao){
 	int MAXIMO_ITERACOES = estado_inicial_param.numeroDeCasasLivres();
 	int nivelMaximoSendoAvaliado = 1;
 	int casaMelhorJogada = 0;
 	float resultado_melhor_aplicacao_minimax = tabuleiroTetralath::PERDA;
 	float resultado_aplicacao_minimax = tabuleiroTetralath::PERDA;
+	unsigned milissegundosInicioIteracao;
 
 	tabuleiro = *(new tabuleiroTetralath(&estado_inicial_param, true));
 
-	printf("Niveis que jah avaliou: \n");
+	interface_gui::imprimirTextoCentralizado(toString());
+	printf("Niveis que jah avaliou e tempo que avaliacao levou em milissegundos: ");
 	while(*deve_parar_param != PARAR and nivelMaximoSendoAvaliado <= MAXIMO_ITERACOES
 			and resultado_melhor_aplicacao_minimax != tabuleiroTetralath::VITORIA){
-		resultado_aplicacao_minimax = minimax_poda_alfa_beta(deve_parar_param, tipo_jogada_param, nivelMaximoSendoAvaliado, NIVEL_INICIAL, cor_pecas_avaliacao_param);
+		milissegundosInicioIteracao = clock();
+		switch(tipo_avaliacao){
+			case ia::AVALIACAO_SIMPLES: 
+					resultado_aplicacao_minimax = minimax_poda_alfa_beta(deve_parar_param, tipo_jogada_param, nivelMaximoSendoAvaliado, NIVEL_INICIAL, cor_pecas_avaliacao_param);
+				break;
+			case ia::AVALIACAO_MINUCIOSA: 
+					resultado_aplicacao_minimax = minimax_poda_alfa_beta_minucioso(deve_parar_param, tipo_jogada_param, nivelMaximoSendoAvaliado, NIVEL_INICIAL, cor_pecas_avaliacao_param);
+				break;
+		}
 		if(!(*deve_parar_param) && resultado_melhor_aplicacao_minimax <= resultado_aplicacao_minimax){
 			resultado_melhor_aplicacao_minimax = resultado_aplicacao_minimax;
 			casaMelhorJogada = resultado_minimax;
-			printf(" %d,",nivelMaximoSendoAvaliado);
+			printf(" %d em %ld,",nivelMaximoSendoAvaliado, clock()-milissegundosInicioIteracao);
 			nivelMaximoSendoAvaliado++;
 		}
 	}
@@ -212,6 +260,84 @@ float ia::minimax(bool *deve_parar_param, int tipo_jogada_param, int nivel_maxim
 
 	return valorMelhorJogada;
 }
+float ia::minimax_minucioso(bool *deve_parar_param, int tipo_jogada_param, int nivel_maximo_param, int nivel_atual_param, int cor_pecas_avaliacao_param){
+	int jogadaAtual;
+	int valorJogada;
+	int tipoJogadaFilho = (tipo_jogada_param == (int) JOGADA_MIN? (int) JOGADA_MAX : (int) JOGADA_MIN);
+	int casaMelhorJogada;
+
+	bool valor_deveSerMaximizado = (tipo_jogada_param == JOGADA_MAX);
+	bool estado_ehFolha = (tabuleiro.calcularNumeroMovimentosLegais() == 0);
+	bool estado_jahAtingiuNivelMaximo = (nivel_atual_param == nivel_maximo_param);
+
+	float valorMelhorJogada;
+
+	if(estado_ehFolha or estado_jahAtingiuNivelMaximo){
+		valorMelhorJogada = tabuleiro.avaliarMinuciosamenteParaPecasDaCor(cor_pecas_avaliacao_param);
+	} else {
+		if(nivel_atual_param == NIVEL_INICIAL){ //Necessário saber qual a casa de melhor jogada.
+			casaMelhorJogada = 0;
+			jogadaAtual=0;
+			if(valor_deveSerMaximizado){
+				valorMelhorJogada = tabuleiroTetralath::PERDA;
+				while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS){
+					if(tabuleiro.jogar(jogadaAtual)){
+						valorJogada = minimax(deve_parar_param, tipoJogadaFilho, nivel_maximo_param, nivel_atual_param+1, cor_pecas_avaliacao_param);
+						tabuleiro.desfazerUltimaJogada();
+						if(valorMelhorJogada <= valorJogada){
+							casaMelhorJogada = jogadaAtual;
+							valorMelhorJogada = valorJogada;
+						}
+					}
+					jogadaAtual++;
+				}
+			} else {
+				valorMelhorJogada = tabuleiroTetralath::VITORIA;
+				while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS){
+					if(tabuleiro.jogar(jogadaAtual)){
+						valorJogada = minimax(deve_parar_param, tipoJogadaFilho, nivel_maximo_param, nivel_atual_param+1, cor_pecas_avaliacao_param);
+						tabuleiro.desfazerUltimaJogada();
+						if(valorJogada <= valorMelhorJogada){
+							casaMelhorJogada = jogadaAtual;
+							valorMelhorJogada = valorJogada;
+						}
+					}
+					jogadaAtual++;
+				}
+			}
+			resultado_minimax = casaMelhorJogada;
+		} else { //Não é necessário saber a casa de melhor jogada, só seu valor.
+			jogadaAtual=0;
+			if(valor_deveSerMaximizado){
+				valorMelhorJogada = tabuleiroTetralath::PERDA;
+				while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS){
+					if(tabuleiro.jogar(jogadaAtual)){
+						valorJogada = minimax(deve_parar_param, tipoJogadaFilho, nivel_maximo_param, nivel_atual_param+1, cor_pecas_avaliacao_param);
+						tabuleiro.desfazerUltimaJogada();
+						if(valorMelhorJogada <= valorJogada){
+							valorMelhorJogada = valorJogada;
+						}
+					}
+					jogadaAtual++;
+				}
+			} else {
+				valorMelhorJogada = tabuleiroTetralath::VITORIA;
+				while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS){
+					if(tabuleiro.jogar(jogadaAtual)){
+						valorJogada = minimax(deve_parar_param, tipoJogadaFilho, nivel_maximo_param, nivel_atual_param+1, cor_pecas_avaliacao_param);
+						tabuleiro.desfazerUltimaJogada();
+						if(valorJogada <= valorMelhorJogada){
+							valorMelhorJogada = valorJogada;
+						}
+					}
+					jogadaAtual++;
+				}
+			}
+		}
+	}
+
+	return valorMelhorJogada;
+}
 
 /*
 * Executa o algoritmo minimax com poda alfa beta. O caminhamento utilizado é progressivo em profundidade.
@@ -242,6 +368,90 @@ float ia::minimax_poda_alfa_beta(bool *deve_parar_param, int tipo_jogada_param, 
 
 	if(estado_ehFolha or estado_jahAtingiuNivelMaximo){
 		valorMelhorJogada = tabuleiro.avaliarParaPecasDaCor(cor_pecas_avaliacao_param);
+	} else {
+		if(nivel_atual_param == NIVEL_INICIAL){ //Necessário saber qual a casa de melhor jogada.
+			casaMelhorJogada = 0;
+			jogadaAtual=0;
+			if(valor_deveSerMaximizado){
+				valorMelhorJogada = tabuleiroTetralath::PERDA;
+				
+				while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS and !realizarPoda){
+					if(tabuleiro.jogar(jogadaAtual)){
+						valorJogada = minimax_poda_alfa_beta(deve_parar_param, tipoJogadaFilho, nivel_maximo_param, nivel_atual_param+1, cor_pecas_avaliacao_param);
+						tabuleiro.desfazerUltimaJogada();
+						if(valorMelhorJogada <= valorJogada){
+							casaMelhorJogada = jogadaAtual;
+							valorMelhorJogada = valorJogada;
+							realizarPoda = (valorMelhorJogada == tabuleiroTetralath::VITORIA);
+						}
+					}
+					jogadaAtual++;
+				}
+			} else {
+				valorMelhorJogada = tabuleiroTetralath::VITORIA;
+				while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS and !realizarPoda){
+					if(tabuleiro.jogar(jogadaAtual)){
+						valorJogada = minimax_poda_alfa_beta(deve_parar_param, tipoJogadaFilho, nivel_maximo_param, nivel_atual_param+1, cor_pecas_avaliacao_param);
+						tabuleiro.desfazerUltimaJogada();
+						if(valorJogada <= valorMelhorJogada){
+							casaMelhorJogada = jogadaAtual;
+							valorMelhorJogada = valorJogada;
+							realizarPoda = (valorMelhorJogada == tabuleiroTetralath::PERDA);
+						}
+					}
+					jogadaAtual++;
+				}
+			}
+			resultado_minimax = casaMelhorJogada;
+		} else { //Não é necessário saber a casa de melhor jogada, só seu valor.
+			jogadaAtual=0;
+			if(valor_deveSerMaximizado){
+				valorMelhorJogada = tabuleiroTetralath::PERDA;
+				while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS and !realizarPoda){
+					if(tabuleiro.jogar(jogadaAtual)){
+						valorJogada = minimax_poda_alfa_beta(deve_parar_param, tipoJogadaFilho, nivel_maximo_param, nivel_atual_param+1, cor_pecas_avaliacao_param);
+						tabuleiro.desfazerUltimaJogada();
+						if(valorMelhorJogada <= valorJogada){
+							valorMelhorJogada = valorJogada;
+							realizarPoda = (valorMelhorJogada == tabuleiroTetralath::VITORIA);
+						}
+					}
+					jogadaAtual++;
+				}
+			} else {
+				valorMelhorJogada = tabuleiroTetralath::VITORIA;
+				while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS and !realizarPoda){
+					if(tabuleiro.jogar(jogadaAtual)){
+						valorJogada = minimax_poda_alfa_beta(deve_parar_param, tipoJogadaFilho, nivel_maximo_param, nivel_atual_param+1, cor_pecas_avaliacao_param);
+						tabuleiro.desfazerUltimaJogada();
+						if(valorJogada <= valorMelhorJogada){
+							valorMelhorJogada = valorJogada;
+							realizarPoda = (valorMelhorJogada == tabuleiroTetralath::PERDA);
+						}
+					}
+					jogadaAtual++;
+				}
+			}
+		}
+	}
+
+	return valorMelhorJogada;
+}
+float ia::minimax_poda_alfa_beta_minucioso(bool *deve_parar_param, int tipo_jogada_param, int nivel_maximo_param, int nivel_atual_param, int cor_pecas_avaliacao_param){
+	int jogadaAtual;
+	int valorJogada;
+	int tipoJogadaFilho = (tipo_jogada_param == (int) JOGADA_MIN? (int) JOGADA_MAX : (int) JOGADA_MIN);
+	int casaMelhorJogada;
+
+	bool valor_deveSerMaximizado = (tipo_jogada_param == JOGADA_MAX);
+	bool estado_ehFolha = (tabuleiro.calcularNumeroMovimentosLegais() == 0);
+	bool estado_jahAtingiuNivelMaximo = (nivel_atual_param == nivel_maximo_param);
+	bool realizarPoda = false;
+
+	float valorMelhorJogada;
+
+	if(estado_ehFolha or estado_jahAtingiuNivelMaximo){
+		valorMelhorJogada = tabuleiro.avaliarMinuciosamenteParaPecasDaCor(cor_pecas_avaliacao_param);
 	} else {
 		if(nivel_atual_param == NIVEL_INICIAL){ //Necessário saber qual a casa de melhor jogada.
 			casaMelhorJogada = 0;

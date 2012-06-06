@@ -56,6 +56,10 @@ void menu::selecionarOpcaoSeguinte(){
 	} else {
 		colunaOpcaoSelecionada++;
 	}
+
+	if(!opcaoDeveAparecer(linhaOpcaoSelecionada, colunaOpcaoSelecionada)){
+		selecionarOpcaoSeguinte();
+	}
 }
 
 /*
@@ -78,7 +82,10 @@ void menu::selecionarOpcaoAnterior(){
 	} else {
 		colunaOpcaoSelecionada--;
 	}
-	
+
+	if(!opcaoDeveAparecer(linhaOpcaoSelecionada, colunaOpcaoSelecionada)){
+		selecionarOpcaoAnterior();
+	}
 }
 
 /*
@@ -139,7 +146,9 @@ void menu::imprimir(){
 	int ESPACOS_CELULA = 30;
 	int linha;
 	int coluna;
+
 	char DIVISORIA = 186;
+
 	printf("\n");
 	interface_gui::imprimirEspacos(interface_gui::COLUNAS/2 -nomesColunas.size()*ESPACOS_CELULA/2);
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
@@ -155,7 +164,9 @@ void menu::imprimir(){
 			for(int colunaAtual=0; colunaAtual<colunaOpcaoSelecionada; colunaAtual++){ interface_gui::imprimirEspacos(ESPACOS_CELULA); }
 			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
 			selecionarAlternativaSeguinte();
-			printf(" %s", getNomeAlternativaSelecionadaOpcaoEm(linhaOpcaoSelecionada, colunaOpcaoSelecionada).c_str());
+			if(opcaoDeveAparecer(linhaOpcaoSelecionada, colunaOpcaoSelecionada)){
+				printf(" %s", getNomeAlternativaSelecionadaOpcaoEm(linhaOpcaoSelecionada, colunaOpcaoSelecionada).c_str());
+			}
 			selecionarAlternativaAnterior();
 			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
 		}
@@ -171,7 +182,11 @@ void menu::imprimir(){
 				printf("]");
 				interface_gui::imprimirEspacos(ESPACOS_CELULA - getNomeAlternativaSelecionadaOpcaoEm(linha, coluna).size() - 2);
 			} else {
-				printf("%s",getNomeAlternativaSelecionadaOpcaoEm(linha, coluna).c_str());
+				if(opcaoDeveAparecer(linha, coluna)){
+					printf("%s",getNomeAlternativaSelecionadaOpcaoEm(linha, coluna).c_str());
+				} else {
+					interface_gui::imprimirEspacos(getNomeAlternativaSelecionadaOpcaoEm(linha, coluna).size());
+				}
 				interface_gui::imprimirEspacos(ESPACOS_CELULA - getNomeAlternativaSelecionadaOpcaoEm(linha, coluna).size());
 			}
 		}
@@ -181,7 +196,9 @@ void menu::imprimir(){
 			for(int colunaAtual=0; colunaAtual<colunaOpcaoSelecionada; colunaAtual++){ interface_gui::imprimirEspacos(ESPACOS_CELULA); }
 			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
 			selecionarAlternativaAnterior();
-			printf(" %s", getNomeAlternativaSelecionadaOpcaoEm(linhaOpcaoSelecionada, colunaOpcaoSelecionada).c_str());
+			if(opcaoDeveAparecer(linhaOpcaoSelecionada, colunaOpcaoSelecionada)){
+				printf(" %s", getNomeAlternativaSelecionadaOpcaoEm(linhaOpcaoSelecionada, colunaOpcaoSelecionada).c_str());
+			}
 			selecionarAlternativaSeguinte();
 			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
 		}
@@ -197,6 +214,30 @@ void menu::imprimir(){
 void menu::nomearColunas(vector<string> _nomesColunas){
 	nomesColunas = _nomesColunas;
 }
+
+/*
+* Restringe a opção de (_linhaRestrita, _colunaRestrita) para aparecer/ser editável somente quando
+* a alternativa _alternativa de (_linhaOpcao, _colunaOpcao) estiver selecionada.
+* @param _linhaRestrita Índice em linhas do vetor que contém a opção que será restringida.
+* @param _colunaRestritra Índice em elemento de linhas do vetor que contém a opção que será restringida.
+* @param _alternativa Índice em elemento de elemento de linhas da alternativa a cuja seleção está atrelada a 
+*					  exibição da opção restringida.
+* @param _linhaOpcao Índice em linhas do vetor que contém a opção que contém _alternativa.
+* @param _colunaOpcao Índice em elemento de linhas do vetor que contém a opção que contém _alternativa.
+*/
+void menu::restringirExibicaoOpcao(int _linhaRestrita, int _colunaRestrita, int _alternativa, int _linhaOpcao, int _colunaOpcao){
+	struct restricaoLinha restricao;
+	restricao.linhaRestrita = _linhaRestrita;
+	restricao.colunaRestrita = _colunaRestrita;
+	restricao.alternativa = _alternativa;
+	restricao.linhaOpcao = _linhaOpcao;
+	restricao.colunaOpcao = _colunaOpcao;
+	restricoesExibicaoOpcoes.push_back(restricao);
+}
+
+/*********************************************************************************************************************
+*									Daqui em diante, todos os métodos são PRIVADOS
+**********************************************************************************************************************/
 
 /*
 * @return O número de alternativas da opção selecionada.
@@ -231,7 +272,31 @@ string menu::getNomeAlternativaSelecionadaOpcaoEm(int _linha, int _coluna){
 	return linhas.at(_linha).at(_coluna).at(alternativasSelecionadas.at(_linha).at(_coluna));
 }
 
-
+/*
+* @param _linha Índice do elemento que contém o elemento que contém a opção em linhas.
+* @param _coluna Índice do elemento que contém a posição no elemento que o contém de linhas.
+* @return Booleano indicando se a opção em _linha e _coluna deve aparecer.
+*/
+bool menu::opcaoDeveAparecer(int _linha, int _coluna){
+	int indice=0;
+	int linhaRestrita;
+	int colunaRestrita;
+	int linhaOpcao;
+	int colunaOpcao;
+	bool deveAparecer = true;
+	while(deveAparecer && indice<restricoesExibicaoOpcoes.size()){
+		linhaRestrita = restricoesExibicaoOpcoes.at(indice).linhaRestrita;
+		colunaRestrita = restricoesExibicaoOpcoes.at(indice).colunaRestrita;
+		linhaOpcao = restricoesExibicaoOpcoes.at(indice).linhaOpcao;
+		colunaOpcao = restricoesExibicaoOpcoes.at(indice).colunaOpcao;
+		if(linhaRestrita == _linha and colunaRestrita == _coluna
+			and alternativasSelecionadas.at(linhaOpcao).at(colunaOpcao) != restricoesExibicaoOpcoes.at(indice).alternativa){
+			deveAparecer = false;
+		}
+		indice++;
+	}
+	return deveAparecer;
+}
 
 
 
