@@ -168,8 +168,9 @@ float tabuleiroTetralath::avaliarParaPecasDaCor(int pecas_avaliacao_param){
 	if(houveEmpate()){
 		avaliacao = EMPATE;
 	}
-	
-	while(nomeCasa <= INDICE_ULTIMA_CASA and avaliacao == AVALIACAO_INDEFINIDA){
+
+	nomeCasa = casaUltimaJogada;
+	//while(nomeCasa <= INDICE_ULTIMA_CASA and avaliacao == AVALIACAO_INDEFINIDA){
 		if(casaOcupadaPorPecaBranca(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_BRANCAS){
 			if(pecasDaMesmaCorGanharam(nomeCasa)){
 				avaliacao = VITORIA;
@@ -195,8 +196,8 @@ float tabuleiroTetralath::avaliarParaPecasDaCor(int pecas_avaliacao_param){
 				avaliacao = VITORIA;
 			}
 		}
-		nomeCasa++;
-	}
+		//nomeCasa++;
+	//}
 	
 	if(avaliacao == AVALIACAO_INDEFINIDA){
 		avaliacao = EMPATE;
@@ -221,7 +222,7 @@ float tabuleiroTetralath::avaliarMinuciosamenteParaPecasDaCor(int pecas_avaliaca
 	if(houveEmpate()){
 		avaliacao = EMPATE;
 	}
-	
+
 	while(nomeCasa <= INDICE_ULTIMA_CASA and avaliacao == AVALIACAO_INDEFINIDA){
 		if(casaOcupadaPorPecaBranca(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_BRANCAS){
 			if(pecasDaMesmaCorGanharam(nomeCasa)){
@@ -241,7 +242,7 @@ float tabuleiroTetralath::avaliarMinuciosamenteParaPecasDaCor(int pecas_avaliaca
 			} else if(pecasDaMesmaCorPerderam(nomeCasa)){
 				avaliacao = PERDA;
 			}
-		}  else if(casaOcupada(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_BRANCAS){
+		} else if(casaOcupada(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_BRANCAS){
 			if(pecasDaMesmaCorGanharam(nomeCasa)){
 				avaliacao = PERDA;
 			} else if(pecasDaMesmaCorPerderam(nomeCasa)){

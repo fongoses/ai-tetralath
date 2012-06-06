@@ -114,10 +114,9 @@ class ia{
 	*		 Esta variável é constantemente checada para verificar se é necessário parar. Seus possíveis valores são CONTINUAR e PARAR,
 	*		 definidos nesta classe. Caso o valor não seja nenhum destes, o default assumido é continuar.
 	* @param tipo_jogada_param O tipo de jogada (JOGADA_MAX ou JOGADA_MIN) que deve ser aplicado aos valores dos filhos de estado_inicial_param.
-	* @param tipo_avaliacao O tipo da função de avaliação utilizado, definido nesta classe.
 	* @return O nome da casa em que deve ser feita a jogada.
 	*/
-	int comecar_minimax(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param, int tipo_avaliacao);
+	int comecar_minimax(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param);
 	
 	/*
 	* Gerencia o uso do minimax com poda alfa beta até que a condição de parada seja satisfeita.
@@ -127,10 +126,9 @@ class ia{
 	*		 Esta variável é constantemente checada para verificar se é necessário parar. Seus possíveis valores são CONTINUAR e PARAR,
 	*		 definidos nesta classe. Caso o valor não seja nenhum destes, o default assumido é continuar.
 	* @param tipo_jogada_param O tipo de jogada (JOGADA_MAX ou JOGADA_MIN) que deve ser aplicado aos valores dos filhos de estado_inicial_param.
-	* @param tipo_avaliacao O tipo da função de avaliação utilizado, definido nesta classe.
 	* @return O melhor estado encontrado para o qual estado_inicial_param pode ir.
 	*/
-	int comecar_minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param, int tipo_avaliacao);
+	int comecar_minimax_poda_alfa_beta(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param);
 
 	/*
 	* Executa o algoritmo minimax. O caminhamento utilizado é progressivo em profundidade.
