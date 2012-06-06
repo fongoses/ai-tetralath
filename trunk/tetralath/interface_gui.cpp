@@ -1,7 +1,11 @@
 #include "interface_gui.h"
+#include "menu.h"
+#include "tabuleiroTetralath.h"
+#include "casaTabuleiroTetralath.h"
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 /*************************************************************
 * À partir daqui, todos os métodos são PÚBLICOS
@@ -10,15 +14,45 @@
 * Construtor da classe.
 */
 interface_gui::interface_gui(){
+	deveTerminar = false;
+}
+
+/*
+* Imprime um texto centralizado na tela.
+* @param texto_param Texto a ser impresso.
+*/
+void interface_gui::imprimirTextoCentralizado(string texto_param){
+	int numeroEspacos;
+	int i;
+	if(texto_param.length() <= COLUNAS){
+		numeroEspacos = floor((COLUNAS - texto_param.length())/2);
+		for(i=0; i<numeroEspacos; i++){
+			printf(" ");
+		}
+		printf(texto_param.data());
+	} else {
+		printf(texto_param.data());
+	}
+}
+
+/*
+* Imprime tantos espaços quanto for especificado.
+* @param _quantidadeEspacos Quantidade de espaços que será impressa na tela.
+*/
+void interface_gui::imprimirEspacos(int _quantidadeEspacos){
+	for(int espacosImpressos=0; espacosImpressos<_quantidadeEspacos; espacosImpressos++){
+		printf(" ");
+	}
 }
 
 /*
 * Espera por comando do usuário e o retorna, quando for feito.
+* @param _possivelTerminar Booleano que liga/desliga a atribuição da flag que sinaliza a entrada de um COMANDO_FECHAR.
 * @return O comando digitado pelo usuário. Não retorna comandos com CAPS, prefere sempre sua versão em lower case.
 * Obs.: Código encontrado em http://www.cplusplus.com/forum/windows/6632/
 *		A forma usada anteriormente (GetAsyncKeyState) causava erros.
 */
-char interface_gui::esperarComandoUsuario(void){
+char interface_gui::esperarComandoUsuario(bool _possivelTerminar){
 	DWORD mode;											/* Preserved console mode */
 	INPUT_RECORD events[128];							/* Input event */
 	HANDLE hstdin = GetStdHandle( STD_INPUT_HANDLE );	/* Get the console input handle */
@@ -76,6 +110,7 @@ char interface_gui::esperarComandoUsuario(void){
 						break;
 					case COMANDO_FECHAR:
 					case COMANDO_FECHAR_CAPS: comandoUsuario = COMANDO_FECHAR;
+											  if(_possivelTerminar){ deveTerminar=true; }
 						break;
 					case COMANDO_DESFAZER_JOGADA:
 					case COMANDO_DESFAZER_JOGADA_CAPS: comandoUsuario = COMANDO_DESFAZER_JOGADA;
@@ -94,7 +129,9 @@ char interface_gui::esperarComandoUsuario(void){
 * @param _opcoes Array de opções que o usuário possui.
 * @param _opcaoEscolhida O índice, no array, da opção escolhida. Se exceder os limites do array, será realçada a última.
 */
-void interface_gui::imprimirTelaEscolha(vector<string> _opcoes, int _opcaoEscolhida){
+void interface_gui::imprimirTelaEscolhaEstatica(vector<string> _opcoes, int _opcaoEscolhida){
+	char comandoUsuario;
+
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
 	system("cls");
 	imprimirTextoCentralizado("BEM-VINDO AO TEXTLATH");
@@ -109,15 +146,19 @@ void interface_gui::imprimirTelaEscolha(vector<string> _opcoes, int _opcaoEscolh
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
 	for (vector<string>::iterator iteradorOpcoes = _opcoes.begin(); iteradorOpcoes!=_opcoes.end(); ++iteradorOpcoes) {
 		if(iteradorOpcoes - _opcoes.begin() == _opcaoEscolhida){
-			printf("\t\t\t\t");imprimirComando(*iteradorOpcoes);printf("\n");
+			imprimirEspacos(COLUNAS/2-((*iteradorOpcoes).size()+1)/2-1);imprimirComando(*iteradorOpcoes);printf("\n");
 		} else {
-			printf("\t\t\t\t[");printf("%s",iteradorOpcoes->c_str());printf("]\n");
+			imprimirEspacos(COLUNAS/2-((*iteradorOpcoes).size()+1)/2-1);printf("[");printf("%s",iteradorOpcoes->c_str());printf("]\n");
 		}
 	}
 	printf("\n\n\n\n");
 
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
 	imprimirComando("TAB");
+	printf(" ou ");
+	imprimirComando(getStringCaractereASCII(30));
+	printf(" ou ");
+	imprimirComando(getStringCaractereASCII(31));
 	printf(" PERCORRER ALTERNATIVAS\n");
 	imprimirComando("ENTER");
 	printf(" ESCOLHER\n");
@@ -125,6 +166,34 @@ void interface_gui::imprimirTelaEscolha(vector<string> _opcoes, int _opcaoEscolh
 	printf(" SAIR\n");
 	
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
+}
+
+/*
+* Controla a impressão da tela de escolha com base em entrada do usuário.
+* @param _opcoes Opções excludentes dentre as quais o usuário pode escolher.
+* @return Índice no array dado da opção escolhida.
+*/
+int interface_gui::imprimirTelaEscolha(vector<string> _opcoes){
+	int opcaoEscolhida = 0;
+	char comandoUsuario;
+
+	do{
+		imprimirTelaEscolhaEstatica(_opcoes, opcaoEscolhida);
+		comandoUsuario = esperarComandoUsuario(false);
+		switch(comandoUsuario){
+			case COMANDO_PERCORRER_ALTERNATIVAS:
+			case MOVIMENTO_BAIXO: opcaoEscolhida = (_opcoes.size()-1 <= opcaoEscolhida ? 0 : opcaoEscolhida+1);
+				break;
+			case MOVIMENTO_CIMA: opcaoEscolhida = (opcaoEscolhida <= 0 ? _opcoes.size()-1 : opcaoEscolhida-1);
+				break;
+		}
+	}while(comandoUsuario!=COMANDO_FECHAR and comandoUsuario!=COMANDO_ESCOLHER);
+
+	if(comandoUsuario == COMANDO_FECHAR){
+		deveTerminar = true;
+	}
+
+	return opcaoEscolhida;
 }
 
 /*
@@ -145,9 +214,6 @@ void interface_gui::imprimirTelaEscolha(vector<string> _opcoes, int _opcaoEscolh
 */
 void interface_gui::imprimirTelaMenus(menu *_menu){
 	char comandoUsuario;
-	char* comando = new char[1];
-	string comandoString;
-
 
 	do{
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
@@ -164,29 +230,25 @@ void interface_gui::imprimirTelaMenus(menu *_menu){
 		_menu->imprimir();
 
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
-		comando[0]=30;comando[1]='\0';comandoString = *(new string(comando));
-		imprimirComando(comandoString);
+		imprimirComando(getStringCaractereASCII(30));
 		printf(" ou ");
-		comando[0]=31;comando[1]='\0';comandoString = *(new string(comando));
-		imprimirComando(comandoString);
+		imprimirComando(getStringCaractereASCII(30));
 		printf(" ESCOLHER ALTERNATIVA\n");
 		imprimirComando("ENTER");
 		printf(" FINALIZAR SELECAO\n");
 		imprimirComando("TAB");
 		printf(" ou ");
-		comando[0]=16;comando[1]='\0';comandoString = *(new string(comando));
-		imprimirComando(comandoString);
+		imprimirComando(getStringCaractereASCII(16));
 		printf(" ou ");
-		comando[0]=17;comando[1]='\0';comandoString = *(new string(comando));
-		imprimirComando(comandoString);
-		printf(" NAVEGAR ENTRE OPCOES\n");
+		imprimirComando(getStringCaractereASCII(17));
+		printf(" PERCORRER OPCOES\n");
 		imprimirComando("Q");
 		printf(" SAIR\n");
 		
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
 
 		Sleep(50); //Movimento não muito rápido, permitindo melhor controle.
-		comandoUsuario = esperarComandoUsuario();
+		comandoUsuario = esperarComandoUsuario(false);
 
 		switch(comandoUsuario){
 			case COMANDO_PERCORRER_ALTERNATIVAS: 
@@ -200,6 +262,10 @@ void interface_gui::imprimirTelaMenus(menu *_menu){
 				break;
 		}
 	}while(comandoUsuario != COMANDO_FECHAR and comandoUsuario != COMANDO_ESCOLHER);
+
+	if(comandoUsuario == COMANDO_FECHAR){
+		deveTerminar = true;
+	}
 }
 
 /*
@@ -208,9 +274,6 @@ void interface_gui::imprimirTelaMenus(menu *_menu){
 * @param tabuleiro_param O tabuleiro que será impresso.
 */
 void interface_gui::imprimirTelaTabuleiro(int casaAtual_param, tabuleiroTetralath *tabuleiro_param){
-	char* comando = new char[1];
-	string comandoString;
-
 	//printf(COR_BRANCA_LINUX);	
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
 	system("cls");
@@ -235,26 +298,22 @@ void interface_gui::imprimirTelaTabuleiro(int casaAtual_param, tabuleiroTetralat
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
 	imprimirComando("W");
 	printf(" ou ");
-	comando[0]=30;comando[1]='\0';comandoString = *(new string(comando));
-	imprimirComando(comandoString);
+	imprimirComando(getStringCaractereASCII(30));
 	printf(" MOVER PARA CASA NA DIAGONAL ESQUERDA SUPERIOR (CIMA)\n");
 
 	imprimirComando("S");
 	printf(" ou ");
-	comando[0]=31;comando[1]='\0';comandoString = *(new string(comando));
-	imprimirComando(comandoString);
+	imprimirComando(getStringCaractereASCII(31));
 	printf(" MOVER PARA CASA NA DIAGONAL DIREITA INFEROR (BAIXO)\n");
 
 	imprimirComando("A");
 	printf(" ou ");
-	comando[0]=17;comando[1]='\0';comandoString = *(new string(comando));
-	imprimirComando(comandoString);
+	imprimirComando(getStringCaractereASCII(17));
 	printf(" MOVER PARA CASA A ESQUERDA\n");
 	
 	imprimirComando("D");
 	printf(" ou ");
-	comando[0]=16;comando[1]='\0';comandoString = *(new string(comando));
-	imprimirComando(comandoString);
+	imprimirComando(getStringCaractereASCII(16));
 	printf(" MOVER PARA CASA A DIREITA\n");
 
 	imprimirComando("J");
@@ -307,25 +366,16 @@ void interface_gui::imprimirTelaResultado(int cor_pecas_ganhadoras_param, int ca
 	printf("\n\n\n\n");
 
 	//printf(COR_AZUL_FRACA_LINUX);
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
-	printf("[Q] SAIR\n");
-	//printf(COR_BRANCA_LINUX);
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
-	system("pause>>nul");
+	system("pause");
 }
 
 /*
 * Imprime a tela que informa ao usuário para aguardar a jogada da inteligência artificial.
 */
 void interface_gui::imprimirTelaAguardarJogada(){
-	system("cls");
 	//printf(COR_BRANCA_LINUX);
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
-	imprimirTextoCentralizado("TEXTLATH");
-	printf("\n\n");
-	imprimirTextoCentralizado("O tetralath em modo texto!");
-	printf("\n\n\n");
-	imprimirTextoCentralizado("Favor aguardar enquanto a IA estah rodando...\n\n\n");
+	imprimirTextoCentralizado("Favor aguardar enquanto a IA estah rodando...\n");
 }
 
 /*
@@ -393,6 +443,42 @@ void interface_gui::imprimirCoresWindows(void){
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 }
 
+/*
+* @return Booleano que indica se o usuário informou à esta gui que deseja terminar o programa.
+*/
+bool interface_gui::usuarioQuerFecharPrograma(){
+	return deveTerminar;
+}
+
+/*
+* Redimensiona esta gui para as dimensões dadas.
+* @param _numeroLinhas O número de linhas que a gui terá.
+* @param _numeroColunas O número de colunas que a gui terá.
+*/
+void interface_gui::redimensionar(int _numeroLinhas, int _numeroColunas){
+	string stringBuffer;
+	char buffer[100];
+	string comandoRedimensionar = *(new string("mode "));
+	itoa(_numeroColunas, buffer, 10);stringBuffer = *(new string(buffer));
+	comandoRedimensionar+=stringBuffer+",";
+	itoa(_numeroLinhas, buffer, 10);stringBuffer = *(new string(buffer));
+	comandoRedimensionar+=stringBuffer;
+	system(comandoRedimensionar.c_str());
+}
+
+/*
+* Gera string cujo único caractere tem o código ASCII passado.
+* @param _codigoASCII Código ASCII do caractere que se quer na string.
+* @return String cujo único caractere tem o código ASCII passado.
+*/
+string interface_gui::getStringCaractereASCII(int _codigoASCII){
+	char* comando = new char[1];
+	string comandoString;
+	comando[0]=_codigoASCII;comando[1]='\0';
+	comandoString = *(new string(comando));
+	return comandoString;
+}
+
 /*************************************************************
 * À partir daqui, todos os métodos são PRIVADOS
 **************************************************************/
@@ -410,21 +496,5 @@ void interface_gui::imprimirComando(string comando_param){
 	printf("]");
 }
 
-/*
-* Imprime um texto centralizado na tela.
-* @param texto_param Texto a ser impresso.
-*/
-void interface_gui::imprimirTextoCentralizado(string texto_param){
-	int CARACTERES_LINHA_CONSOLE = 80;
-	int numeroEspacos;
-	int i;
-	if(texto_param.length() <= CARACTERES_LINHA_CONSOLE){
-		numeroEspacos = floor((CARACTERES_LINHA_CONSOLE - texto_param.length())/2);
-		for(i=0; i<numeroEspacos; i++){
-			printf(" ");
-		}
-		printf(texto_param.data());
-	} else {
-		printf(texto_param.data());
-	}
-}
+
+

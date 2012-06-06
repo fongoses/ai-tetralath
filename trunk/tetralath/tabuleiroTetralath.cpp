@@ -1,12 +1,10 @@
+#include "tabuleiroTetralath.h"
+#include "interface_gui.h"
+#include "casaTabuleiroTetralath.h"
 #include <stdio.h>
 #include <windows.h>
-#ifndef TABULEIRO_TETRALATH
-#define TABULEIRO_TETRALATH
-
-#include "tabuleiroTetralath.h"
- 
-#endif
-#include "interface_gui.h"
+#include <iostream>
+#include <stdlib.h>
 
 /*
 * Classe que implementa um tabuleiro do jogo Tetralath.
@@ -402,56 +400,110 @@ void tabuleiroTetralath::imprimir(int casa_selecionada_param){
 	//printf(COR_BRANCA_LINUX);
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_BLUE | BACKGROUND_GREEN);
 
-	printf("\t\t\t+-----------------------+\n");
-	printf("\t\t\t| X 12345678901234567 X |\n");
-	
+	interface_gui::imprimirEspacos(interface_gui::COLUNAS/2 - 13);
+	printf("%s",interface_gui::getStringCaractereASCII(201).c_str());
+	for(int i=0; i<23; i++){printf("%s",interface_gui::getStringCaractereASCII(205).c_str());}
+	printf("%s",interface_gui::getStringCaractereASCII(187).c_str());
+	printf("\n");
+
+	interface_gui::imprimirEspacos(interface_gui::COLUNAS/2 - 13);
+	printf("%s",interface_gui::getStringCaractereASCII(186).c_str());
+	printf(" X 12345678901234567 X ");
+	printf("%s",interface_gui::getStringCaractereASCII(186).c_str());
+	printf("\n");
+
 	//linha 1
-	printf("\t\t\t| 1     ");
+	interface_gui::imprimirEspacos(interface_gui::COLUNAS/2 - 13);
+	printf("%s",interface_gui::getStringCaractereASCII(186).c_str());
+	printf(" 1     ");
 	imprimirDeCasaAtehCasa(INDICE_PRIMEIRA_CASA, 4, casa_selecionada_param);
-	printf("    1 |\n");
-	
+	printf("    1 ");
+	printf("%s",interface_gui::getStringCaractereASCII(186).c_str());
+	printf("\n");
+
 	//linha 2
-	printf("\t\t\t| 2    ");
+	interface_gui::imprimirEspacos(interface_gui::COLUNAS/2 - 13);
+	printf("%s",interface_gui::getStringCaractereASCII(186).c_str());
+	printf(" 2    ");
 	imprimirDeCasaAtehCasa(5, 10, casa_selecionada_param);
-	printf("   2 |\n");
-	
+	printf("   2 ");
+	printf("%s",interface_gui::getStringCaractereASCII(186).c_str());
+	printf("\n");
+
 	//linha 3
-	printf("\t\t\t| 3   ");
+	interface_gui::imprimirEspacos(interface_gui::COLUNAS/2 - 13);
+	printf("%s",interface_gui::getStringCaractereASCII(186).c_str());
+	printf(" 3   ");
 	imprimirDeCasaAtehCasa(11, 17, casa_selecionada_param);
-	printf("  3 |\n");
-	
+	printf("  3 ");
+	printf("%s",interface_gui::getStringCaractereASCII(186).c_str());
+	printf("\n");
+
 	//linha 4
-	printf("\t\t\t| 4  ");
+	interface_gui::imprimirEspacos(interface_gui::COLUNAS/2 - 13);
+	printf("%s",interface_gui::getStringCaractereASCII(186).c_str());
+	printf(" 4  ");
 	imprimirDeCasaAtehCasa(18, 25, casa_selecionada_param);
-	printf(" 4 |\n");
-	
+	printf(" 4 ");
+	printf("%s",interface_gui::getStringCaractereASCII(186).c_str());
+	printf("\n");
+
 	//linha 5
-	printf("\t\t\t| 5 ");
+	interface_gui::imprimirEspacos(interface_gui::COLUNAS/2 - 13);
+	printf("%s",interface_gui::getStringCaractereASCII(186).c_str());
+	printf(" 5 ");
 	imprimirDeCasaAtehCasa(26, 34, casa_selecionada_param);
-	printf("5 |\n");
-	
+	printf("5 ");
+	printf("%s",interface_gui::getStringCaractereASCII(186).c_str());
+	printf("\n");
+
 	//linha 6
-	printf("\t\t\t| 6  ");
+	interface_gui::imprimirEspacos(interface_gui::COLUNAS/2 - 13);
+	printf("%s",interface_gui::getStringCaractereASCII(186).c_str());
+	printf(" 6  ");
 	imprimirDeCasaAtehCasa(35, 42, casa_selecionada_param);
-	printf(" 6 |\n");
-	
+	printf(" 6 ");
+	printf("%s",interface_gui::getStringCaractereASCII(186).c_str());
+	printf("\n");
+
 	//linha 7
-	printf("\t\t\t| 7   ");
+	interface_gui::imprimirEspacos(interface_gui::COLUNAS/2 - 13);
+	printf("%s",interface_gui::getStringCaractereASCII(186).c_str());
+	printf(" 7   ");
 	imprimirDeCasaAtehCasa(43, 49, casa_selecionada_param);
-	printf("  7 |\n");
-	
+	printf("  7 ");
+	printf("%s",interface_gui::getStringCaractereASCII(186).c_str());
+	printf("\n");
+
 	//linha 8
-	printf("\t\t\t| 8    ");
+	interface_gui::imprimirEspacos(interface_gui::COLUNAS/2 - 13);
+	printf("%s",interface_gui::getStringCaractereASCII(186).c_str());
+	printf(" 8    ");
 	imprimirDeCasaAtehCasa(50, 55, casa_selecionada_param);
-	printf("   8 |\n");
-	
+	printf("   8 ");
+	printf("%s",interface_gui::getStringCaractereASCII(186).c_str());
+	printf("\n");
+
 	//linha 9
-	printf("\t\t\t| 9     ");
+	interface_gui::imprimirEspacos(interface_gui::COLUNAS/2 - 13);
+	printf("%s",interface_gui::getStringCaractereASCII(186).c_str());
+	printf(" 9     ");
 	imprimirDeCasaAtehCasa(56, 60, casa_selecionada_param);
-	printf("    9 |\n");
-	
-	printf("\t\t\t| X 12345678901234567 X |\n");
-	printf("\t\t\t+-----------------------+\n");
+	printf("    9 ");
+	printf("%s",interface_gui::getStringCaractereASCII(186).c_str());
+	printf("\n");
+
+	interface_gui::imprimirEspacos(interface_gui::COLUNAS/2 - 13);
+	printf("%s",interface_gui::getStringCaractereASCII(186).c_str());
+	printf(" X 12345678901234567 X ");
+	printf("%s",interface_gui::getStringCaractereASCII(186).c_str());
+	printf("\n");
+
+	interface_gui::imprimirEspacos(interface_gui::COLUNAS/2 - 13);
+	printf("%s",interface_gui::getStringCaractereASCII(200).c_str());
+	for(int i=0; i<23; i++){printf("%s",interface_gui::getStringCaractereASCII(205).c_str());}
+	printf("%s",interface_gui::getStringCaractereASCII(188).c_str());
+	printf("\n");
 }
 
 

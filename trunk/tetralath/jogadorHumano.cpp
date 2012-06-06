@@ -20,16 +20,16 @@ jogadorHumano::jogadorHumano(interface_gui *_interfaceComunicacaoUsuario, int _c
 int jogadorHumano::getIndiceCasaJogada(tabuleiroTetralath *_tabuleiro){
 	int casaCursor = 0;
 	int casaEscolhida = 0;
-	
+
 	char comandoUsuario = COMANDO_SEM_ACAO;
 	char movimentoUsuario = COMANDO_SEM_ACAO;
-	
+
 	bool escolheuJogada = false;
-	
+
 	while(comandoUsuario != COMANDO_FECHAR and !escolheuJogada){
 		Sleep(50); //Movimento não muito rápido, permitindo melhor controle.
 
-		comandoUsuario = interfaceComunicacaoUsuario->esperarComandoUsuario();
+		comandoUsuario = interfaceComunicacaoUsuario->esperarComandoUsuario(true);
 
 		if(comandoUsuario == COMANDO_JOGAR){
 			escolheuJogada = true;
@@ -44,7 +44,7 @@ int jogadorHumano::getIndiceCasaJogada(tabuleiroTetralath *_tabuleiro){
 			interfaceComunicacaoUsuario->imprimirTelaTabuleiro(casaCursor, _tabuleiro);
 		}
 	}
-	
+
 	return casaEscolhida;
 }
 
