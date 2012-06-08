@@ -1,5 +1,7 @@
 #include "ia.h"
 #include "interface_gui.h"
+#include "abertura.h"
+#include "casaTabuleiroTetralath.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctime>
@@ -21,6 +23,20 @@ ia::ia(void){}
 ia::ia(int _algoritmo, int _avaliacao){
 	algoritmo = _algoritmo;
 	avaliacao = _avaliacao;
+	utilizaAbertura = false;
+}
+
+/*
+* Construtor. 
+* @param _algoritmo O algoritmo que deve ser utilizado por esta ia. Definido nesta classe.
+* @param _avaliacao A função de avaliação que esta ia utilizará. Definido nesta classe.
+* @param _abertura A abertura que esta ia utilizará.
+*/
+ia::ia(int _algoritmo, int _avaliacao, abertura *_abertura){
+	algoritmo = _algoritmo;
+	avaliacao = _avaliacao;
+	utilizaAbertura = true;
+	aberturaUtilizada = _abertura;
 }
 
 /*
@@ -44,12 +60,48 @@ ia::ia(ia *_ia){
 */
 int ia::comecar_avaliacao(tabuleiroTetralath estado_inicial_param, bool *deve_parar_param, int tipo_jogada_param, int cor_pecas_avaliacao_param){
 	int casaResultado = 0;
-	switch(algoritmo){
-		case ia::MINIMAX: casaResultado = comecar_minimax(estado_inicial_param, deve_parar_param, tipo_jogada_param, cor_pecas_avaliacao_param);
-			break;
-		case ia::MINIMAX_PODA: casaResultado = comecar_minimax_poda_alfa_beta(estado_inicial_param, deve_parar_param, tipo_jogada_param, cor_pecas_avaliacao_param);
-			break;
+	bool utilizouAbertura = false;
+
+	if(utilizaAbertura and aberturaUtilizada->aplicavelAoTabuleiro(&estado_inicial_param)){
+		utilizouAbertura = true;
+		casaResultado = aberturaUtilizada->getNomeProximaJogada();
+		tabuleiro = *(new tabuleiroTetralath(&estado_inicial_param, true));
+		tabuleiro.jogar(casaResultado);
+		bool variavelComFalse = false;
+		int corPecasAvaliacao = (cor_pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_BRANCAS?
+					casaTabuleiroTetralath::PECAS_PRETAS : casaTabuleiroTetralath::PECAS_BRANCAS);
+		
+		float avaliacaoJogada = minimax(&variavelComFalse, tipo_jogada_param, 1, NIVEL_INICIAL, corPecasAvaliacao);
+		
+		if(tabuleiroTetralath::EMPATE < avaliacaoJogada){
+			utilizouAbertura = false;
+		} else {
+			tabuleiro = *(new tabuleiroTetralath(&estado_inicial_param, true));
+			avaliacaoJogada = minimax(&variavelComFalse, tipo_jogada_param, 1, NIVEL_INICIAL, cor_pecas_avaliacao_param);
+			if(avaliacaoJogada == tabuleiroTetralath::VITORIA){
+				utilizouAbertura = false;
+			} else {
+				aberturaUtilizada->jogar();
+				interface_gui::imprimirTextoCentralizado(toString());
+				printf("Utilizou movimento de abertura.");
+			}
+		}
+	} else {
+		utilizouAbertura = false;
 	}
+
+	if(!utilizouAbertura){
+		switch(algoritmo){
+			case ia::MINIMAX: 
+					casaResultado = comecar_minimax(estado_inicial_param, deve_parar_param, tipo_jogada_param, cor_pecas_avaliacao_param);
+				break;
+			case ia::MINIMAX_PODA: 
+					casaResultado = comecar_minimax_poda_alfa_beta(estado_inicial_param, deve_parar_param, 
+												tipo_jogada_param, cor_pecas_avaliacao_param);
+				break;
+		}
+	}
+
 	return casaResultado;
 }
 
@@ -101,7 +153,7 @@ int ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, bool *deve_para
 	tabuleiro = *(new tabuleiroTetralath(&estado_inicial_param, true));
 
 	interface_gui::imprimirTextoCentralizado(toString());
-	printf("Niveis que jah avaliou e tempo que avaliacao levou em milissegundos: ");
+	printf("Niveis que jah avaliou: ");
 	while(*deve_parar_param != PARAR and nivelMaximoSendoAvaliado <= MAXIMO_ITERACOES 
 			and resultado_melhor_aplicacao_minimax != tabuleiroTetralath::VITORIA){
 		milissegundosInicioIteracao = clock();
@@ -117,7 +169,7 @@ int ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, bool *deve_para
 		if(!(*deve_parar_param) && resultado_melhor_aplicacao_minimax <= resultado_aplicacao_minimax){
 			resultado_melhor_aplicacao_minimax = resultado_aplicacao_minimax;
 			casaMelhorJogada = resultado_minimax;
-			printf(" %d em %ld,",nivelMaximoSendoAvaliado, clock()-milissegundosInicioIteracao);
+			printf(" %d em %ldms,",nivelMaximoSendoAvaliado, clock()-milissegundosInicioIteracao);
 			nivelMaximoSendoAvaliado++;
 		}
 	}
@@ -146,7 +198,7 @@ int ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, bool *deve_para
 	tabuleiro = *(new tabuleiroTetralath(&estado_inicial_param, true));
 
 	interface_gui::imprimirTextoCentralizado(toString());
-	printf("Niveis que jah avaliou e tempo que avaliacao levou em milissegundos: ");
+	printf("Niveis que jah avaliou: ");
 	while(*deve_parar_param != PARAR and nivelMaximoSendoAvaliado <= MAXIMO_ITERACOES
 			and resultado_melhor_aplicacao_minimax != tabuleiroTetralath::VITORIA){
 		milissegundosInicioIteracao = clock();
@@ -161,7 +213,7 @@ int ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, bool *deve_para
 		if(!(*deve_parar_param) && resultado_melhor_aplicacao_minimax <= resultado_aplicacao_minimax){
 			resultado_melhor_aplicacao_minimax = resultado_aplicacao_minimax;
 			casaMelhorJogada = resultado_minimax;
-			printf(" %d em %ld,",nivelMaximoSendoAvaliado, clock()-milissegundosInicioIteracao);
+			printf(" %d em %ldms,",nivelMaximoSendoAvaliado, clock()-milissegundosInicioIteracao);
 			nivelMaximoSendoAvaliado++;
 		}
 	}
