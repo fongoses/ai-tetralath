@@ -45,7 +45,7 @@ class interface_gui{
 	* Indicam as dimensões da linha de comando.
 	*/
 	static const int LINHAS = 40;
-	static const int COLUNAS = 150;
+	static const int COLUNAS = 120;
 
 	/*
 	* Construtor da classe.

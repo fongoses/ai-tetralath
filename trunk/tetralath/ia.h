@@ -8,6 +8,8 @@
  
 #endif
 
+class abertura;
+
 /*
 * Classe para inteligência artificial.
 * Encapsula o algoritmo e permite acesso a resultado parcial em qualquer momento após início da computação.
@@ -54,6 +56,14 @@ class ia{
 	* @param _avaliacao A função de avaliação que esta ia utilizará. Definido nesta classe.
 	*/
 	ia(int _algoritmo, int _avaliacao);
+	
+	/*
+	* Construtor. 
+	* @param _algoritmo O algoritmo que deve ser utilizado por esta ia. Definido nesta classe.
+	* @param _avaliacao A função de avaliação que esta ia utilizará. Definido nesta classe.
+	* @param _abertura A abertura que esta ia utilizará.
+	*/
+	ia(int _algoritmo, int _avaliacao, abertura *_abertura);
 
 	/*
 	* Construtor de cópia.
@@ -88,6 +98,16 @@ class ia{
 	* Função de avaliação utilizada.
 	*/
 	int avaliacao;
+	
+	/*
+	* Indica se a ia utilizada alguma abertura.
+	*/
+	bool utilizaAbertura;
+	
+	/*
+	* Abertura utilizada.
+	*/
+	abertura *aberturaUtilizada;
 	
 	//dados
 	/*

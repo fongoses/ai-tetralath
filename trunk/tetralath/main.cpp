@@ -4,6 +4,7 @@
 #include "jogadorHumano.h"
 #include "menu.h"
 #include "casaTabuleiroTetralath.h"
+#include "abertura.h"
 #include <stdlib.h>
 
 using namespace std;
@@ -52,6 +53,7 @@ int main(){
 
 	menu menuInicioJogo;
 
+	vector<string> opcoesAberturas;
 	vector<string> opcoesJogadores;
 	vector<string> opcoesAlgoritmos;
 	vector<string> opcoesAvaliacao;
@@ -66,6 +68,10 @@ int main(){
 	opcoesAvaliacao.push_back("AVALIACAO SIMPLES");
 	opcoesAvaliacao.push_back("AVALIACAO MINUCIOSA");
 
+	opcoesAberturas.push_back("SEM ABERTURA");
+	opcoesAberturas.push_back("ABERTURA DUPLA");
+	opcoesAberturas.push_back("ABERTURA TRIANGULO AGRESSIVO");
+
 	menuInicioJogo.criarNovaOpcao(opcoesJogadores);
 	menuInicioJogo.criarNovaOpcao(opcoesJogadores);
 	menuInicioJogo.criarNovaLinha();
@@ -74,11 +80,16 @@ int main(){
 	menuInicioJogo.criarNovaLinha();
 	menuInicioJogo.criarNovaOpcao(opcoesAvaliacao);
 	menuInicioJogo.criarNovaOpcao(opcoesAvaliacao);
+	menuInicioJogo.criarNovaLinha();
+	menuInicioJogo.criarNovaOpcao(opcoesAberturas);
+	menuInicioJogo.criarNovaOpcao(opcoesAberturas);
 
 	menuInicioJogo.restringirExibicaoOpcao(1, 0, 1, 0, 0);
 	menuInicioJogo.restringirExibicaoOpcao(1, 1, 1, 0, 1);
 	menuInicioJogo.restringirExibicaoOpcao(2, 0, 1, 0, 0);
 	menuInicioJogo.restringirExibicaoOpcao(2, 1, 1, 0, 1);
+	menuInicioJogo.restringirExibicaoOpcao(3, 0, 1, 0, 0);
+	menuInicioJogo.restringirExibicaoOpcao(3, 1, 1, 0, 1);
 
 	nomesColunas.push_back("Jogador 1");
 	nomesColunas.push_back("Jogador 2");
@@ -86,6 +97,7 @@ int main(){
 
 	int avaliacao;
 	int algoritmo;
+	int aberturaUtilizada;
 	usuarioDesejaTerminar = false;
 	do{
 		gui.imprimirTelaMenus(&menuInicioJogo);
@@ -93,10 +105,28 @@ int main(){
 
 		algoritmo = (opcoesEscolhidas.at(1).at(0)=="MINIMAX"? ia::MINIMAX : ia::MINIMAX_PODA);
 		avaliacao = (opcoesEscolhidas.at(2).at(0)=="AVALIACAO SIMPLES"? ia::AVALIACAO_SIMPLES : ia::AVALIACAO_MINUCIOSA);
-		iaMaquinaUm = new ia(algoritmo, avaliacao);
+		if(opcoesEscolhidas.at(3).at(0) == "SEM ABERTURA"){
+			aberturaUtilizada = abertura::SEM_ABERTURA;
+		} else if(opcoesEscolhidas.at(3).at(0) == "ABERTURA DUPLA"){
+			aberturaUtilizada = abertura::ABERTURA_DUPLA;
+		} else if(opcoesEscolhidas.at(3).at(0) == "ABERTURA TRIANGULO AGRESSIVO"){
+			aberturaUtilizada = abertura::ABERTURA_TRIANGULO_AGRESSIVO;
+		}
+		iaMaquinaUm = (aberturaUtilizada == abertura::SEM_ABERTURA? 
+					new ia(algoritmo, avaliacao) : 
+					new ia(algoritmo, avaliacao, new abertura(aberturaUtilizada)));
 		algoritmo = (opcoesEscolhidas.at(1).at(1)=="MINIMAX"? ia::MINIMAX : ia::MINIMAX_PODA);
 		avaliacao = (opcoesEscolhidas.at(2).at(1)=="AVALIACAO SIMPLES"? ia::AVALIACAO_SIMPLES : ia::AVALIACAO_MINUCIOSA);
-		iaMaquinaDois = new ia(algoritmo, avaliacao);
+		if(opcoesEscolhidas.at(3).at(1) == "SEM ABERTURA"){
+			aberturaUtilizada = abertura::SEM_ABERTURA;
+		} else if(opcoesEscolhidas.at(3).at(1) == "ABERTURA DUPLA"){
+			aberturaUtilizada = abertura::ABERTURA_DUPLA;
+		} else if(opcoesEscolhidas.at(3).at(1) == "ABERTURA TRIANGULO AGRESSIVO"){
+			aberturaUtilizada = abertura::ABERTURA_TRIANGULO_AGRESSIVO;
+		}
+		iaMaquinaDois = (aberturaUtilizada == abertura::SEM_ABERTURA? 
+					new ia(algoritmo, avaliacao) : 
+					new ia(algoritmo, avaliacao, new abertura(aberturaUtilizada)));
 
 		if(!gui.usuarioQuerFecharPrograma()){
 			bool escolheu_opcoesValidas = false;
