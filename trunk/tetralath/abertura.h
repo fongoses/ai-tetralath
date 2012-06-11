@@ -29,6 +29,7 @@ class abertura{
 	static const int SEM_ABERTURA = 0;
 	static const int ABERTURA_DUPLA = 1;
 	static const int ABERTURA_TRIANGULO_AGRESSIVO = 2;
+	static const int ABERTURA_DUPLA_FILEIRA_AGRESSIVA = 3;
 
 	/*
 	* Aberturas existentes. Todas definidas no fim do arquivo, após a definição desta classe.

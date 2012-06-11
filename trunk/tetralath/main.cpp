@@ -72,6 +72,7 @@ int main(){
 	opcoesAberturas.push_back("SEM ABERTURA");
 	opcoesAberturas.push_back("ABERTURA DUPLA");
 	opcoesAberturas.push_back("ABERTURA TRIANGULO AGRESSIVO");
+	opcoesAberturas.push_back("ABERTURA DUPLA FILEIRA AGRESSIVA");
 
 	menuInicioJogo.criarNovaOpcao(opcoesJogadores);
 	menuInicioJogo.criarNovaOpcao(opcoesJogadores);
@@ -118,6 +119,8 @@ int main(){
 			aberturaUtilizada = abertura::ABERTURA_DUPLA;
 		} else if(opcoesEscolhidas.at(3).at(0) == "ABERTURA TRIANGULO AGRESSIVO"){
 			aberturaUtilizada = abertura::ABERTURA_TRIANGULO_AGRESSIVO;
+		} else if(opcoesEscolhidas.at(3).at(0) == "ABERTURA DUPLA FILEIRA AGRESSIVA"){
+			aberturaUtilizada = abertura::ABERTURA_DUPLA_FILEIRA_AGRESSIVA;
 		}
 		iaMaquinaUm = (aberturaUtilizada == abertura::SEM_ABERTURA? 
 					new ia(algoritmo, avaliacao) : 
@@ -136,6 +139,8 @@ int main(){
 			aberturaUtilizada = abertura::ABERTURA_DUPLA;
 		} else if(opcoesEscolhidas.at(3).at(1) == "ABERTURA TRIANGULO AGRESSIVO"){
 			aberturaUtilizada = abertura::ABERTURA_TRIANGULO_AGRESSIVO;
+		} else if(opcoesEscolhidas.at(3).at(1) == "ABERTURA DUPLA FILEIRA AGRESSIVA"){
+			aberturaUtilizada = abertura::ABERTURA_DUPLA_FILEIRA_AGRESSIVA;
 		}
 		iaMaquinaDois = (aberturaUtilizada == abertura::SEM_ABERTURA? 
 					new ia(algoritmo, avaliacao) : 
