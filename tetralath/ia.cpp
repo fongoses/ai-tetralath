@@ -191,8 +191,8 @@ int ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, bool *deve_para
 		if(!(*deve_parar_param) && resultado_melhor_aplicacao_minimax <= resultado_aplicacao_minimax){
 			resultado_melhor_aplicacao_minimax = resultado_aplicacao_minimax;
 			casaMelhorJogada = resultado_minimax;
-			nivelMaximoSendoAvaliado++;
 		}
+		nivelMaximoSendoAvaliado++;
 	}
 
 	return casaMelhorJogada;
@@ -244,8 +244,8 @@ int ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, bool *deve_para
 		if(!(*deve_parar_param) && resultado_melhor_aplicacao_minimax <= resultado_aplicacao_minimax){
 			resultado_melhor_aplicacao_minimax = resultado_aplicacao_minimax;
 			casaMelhorJogada = resultado_minimax;
-			nivelMaximoSendoAvaliado++;
 		}
+		nivelMaximoSendoAvaliado++;
 	}
 	return casaMelhorJogada;
 }

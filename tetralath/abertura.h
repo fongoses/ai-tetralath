@@ -36,6 +36,7 @@ class abertura{
 	*/
 	static int DUPLA[];
 	static int TRIANGULO_AGRESSIVO[];
+	static int DUPLA_FILEIRA_AGRESSIVA[];
 
 	/*
 	* Cria nova abertura.

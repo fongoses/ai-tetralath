@@ -9,6 +9,8 @@
 	#include <vector>
 #endif
 
+#include <map>
+
 using namespace std;
 
 struct restricaoLinha{
@@ -31,8 +33,10 @@ class menu{
 	* Cria uma nova opção no menu, com as alternativas de argumento.
 	* @param _alternativas Vector de strings em que cada elemento é uma alternativa da nova opção.
 	*						A nova opção é sempre inserida na linha corrente.
+	* @param _legendas Vector de strings em que cada elemento é uma legenda que aparece quando a correspondente alternativa
+	*				   em _alternativas estiver selecionada.
 	*/
-	void criarNovaOpcao(vector<string> _alternativas);
+	void criarNovaOpcao(vector<string> _alternativas, vector<string> _legendas);
 
 	/*
 	* Cria uma nova linha. Depois desta chamada e até a próxima chamada todas novas opções são inseridas nesta linha.
@@ -75,6 +79,11 @@ class menu{
 	* Imprime este menu na tela, evidenciando a opção escolhida e suas alternativas.
 	*/
 	void imprimir();
+
+	/*
+	* Imprime a legenda da alternativa selecionada da opção selecionada.
+	*/
+	void imprimirLegendaAlternativaSelecionada();
 
 	/*
 	* Dá nomes às colunas do menu.
@@ -132,6 +141,11 @@ class menu{
 	* Nomes exibidos sobre as colunas, caso haja.
 	*/
 	vector<string> nomesColunas;
+
+	/*
+	* Relaciona nomes de alternativas com suas legendas.
+	*/
+	map<string,string> legendas;
 
 	/*
 	* Vetor que mapeia as restrições feitas com restringirExibicaoOpcao.
