@@ -113,6 +113,14 @@ class tabuleiroTetralath{
 		* Avalia a utilidade deste tabuleiro para as peças de parâmetro, isto é, o quão favorável o tabuleiro está.
 		* @param pecas_avaliacao_param A cor das peças que será usada para avaliar o tabuleiro (PECAS_BRANCAS ou PECAS_PRETAS).
 		* @return Um valor float entre -1 e 1. A interpretação é de -1 (PERDA) para perda, 0 (EMPATE) para 
+		* 		  empate e 1 (VITORIA) para vitória. Número decimais são permitidos.
+		* Esta avaliação é preguiçosa e só testará a vizinhança da penúltima jogada feita.
+		*/
+		float avaliarPreguicosamenteParaPecasDaCor(int pecas_avaliacao_param);
+		/*
+		* Avalia a utilidade deste tabuleiro para as peças de parâmetro, isto é, o quão favorável o tabuleiro está.
+		* @param pecas_avaliacao_param A cor das peças que será usada para avaliar o tabuleiro (PECAS_BRANCAS ou PECAS_PRETAS).
+		* @return Um valor float entre -1 e 1. A interpretação é de -1 (PERDA) para perda, 0 (EMPATE) para 
 		* 		  empate e 1 (VITORIA) para vitória. Número decimais NÃO SÃO permitidos.
 		*/
 		float avaliarParaPecasDaCor(int pecas_avaliacao_param);

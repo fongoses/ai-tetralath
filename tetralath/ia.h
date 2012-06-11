@@ -43,6 +43,7 @@ class ia{
 	*/
 	static const int AVALIACAO_SIMPLES = 0;
 	static const int AVALIACAO_MINUCIOSA = 1;
+	static const int AVALIACAO_PREGUICOSA = 2;
 	
 	//métodos
 	/*
@@ -167,6 +168,8 @@ class ia{
 	float minimax(bool *deve_parar_param, int tipo_jogada_param, int nivel_maximo_param, int nivel_atual_param, int cor_pecas_avaliacao_param);
 	//minimax com função de avaliação minuciosa
 	float minimax_minucioso(bool *deve_parar_param, int tipo_jogada_param, int nivel_maximo_param, int nivel_atual_param, int cor_pecas_avaliacao_param);
+	//minimax com função de avaliação preguiçosa
+	float minimax_preguicoso(bool *deve_parar_param, int tipo_jogada_param, int nivel_maximo_param, int nivel_atual_param, int cor_pecas_avaliacao_param);
 
 	/*
 	* Executa o algoritmo minimax com poda alfa beta. O caminhamento utilizado é progressivo em profundidade.

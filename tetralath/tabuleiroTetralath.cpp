@@ -5,6 +5,7 @@
 #include <windows.h>
 #include <iostream>
 #include <stdlib.h>
+#include <ctime>
 
 /*
 * Classe que implementa um tabuleiro do jogo Tetralath.
@@ -116,15 +117,14 @@ bool tabuleiroTetralath::pecasDaMesmaCorPerderam(int nomeCasaReferencia_param){
 * 	Atenção: false como retorno indica apenas que não houve empate, nada diz sobre ganhadores ou perdedores.
 */
 bool tabuleiroTetralath::houveEmpate(void){
-	int indiceCasa=0;
+	int indiceCasa=NUMERO_CASAS-1;
 	bool encontrouCasaDesocupada = false;
-	while(!encontrouCasaDesocupada and indiceCasa<NUMERO_CASAS){
+	while(!encontrouCasaDesocupada and 0<=indiceCasa){
 		encontrouCasaDesocupada = !tabuleiro[indiceCasa].estahOcupada();
-		indiceCasa++;
+		indiceCasa--;
 	}
 	return !encontrouCasaDesocupada;
 }
-
 
 /*
 * Torna o objeto no qual é invocado uma cópia do objeto que é passado como parâmetro. As cópias ocupam posições diferentes de memória.
@@ -151,6 +151,56 @@ void tabuleiroTetralath::copiarDe(tabuleiroTetralath *modelo_param){
 	}
 	casaUltimaJogada = modelo_param->recuperarNomeCasaUltimaJogada();
 	corUltimaJogada = modelo_param->recuperarCorPecasUltimaJogada();
+}
+
+/*
+* Avalia a utilidade deste tabuleiro para as peças de parâmetro, isto é, o quão favorável o tabuleiro está.
+* @param pecas_avaliacao_param A cor das peças que será usada para avaliar o tabuleiro (PECAS_BRANCAS ou PECAS_PRETAS).
+* @return Um valor float entre -1 e 1. A interpretação é de -1 (PERDA) para perda, 0 (EMPATE) para 
+* 		  empate e 1 (VITORIA) para vitória. Número decimais são permitidos.
+* Esta avaliação é preguiçosa e só testará a vizinhança da penúltima jogada feita.
+*/
+float tabuleiroTetralath::avaliarPreguicosamenteParaPecasDaCor(int pecas_avaliacao_param){
+	float AVALIACAO_INDEFINIDA = -5;
+	float avaliacao = AVALIACAO_INDEFINIDA;
+
+	int nomeCasa = casaUltimaJogada;
+
+	if(houveEmpate()){
+		avaliacao = EMPATE;
+	}
+
+	if(casaOcupadaPorPecaBranca(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_BRANCAS){
+		if(pecasDaMesmaCorGanharam(nomeCasa)){
+			avaliacao = VITORIA;
+		} else if(pecasDaMesmaCorPerderam(nomeCasa)){
+			avaliacao = PERDA;
+		}
+	} else if(casaOcupadaPorPecaBranca(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_PRETAS){
+		if(pecasDaMesmaCorGanharam(nomeCasa)){
+			avaliacao = PERDA;
+		} else if(pecasDaMesmaCorPerderam(nomeCasa)){
+			avaliacao = VITORIA;
+		}
+	} else if(casaOcupada(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_PRETAS){
+		if(pecasDaMesmaCorGanharam(nomeCasa)){
+			avaliacao = VITORIA;
+		} else if(pecasDaMesmaCorPerderam(nomeCasa)){
+			avaliacao = PERDA;
+		}
+	} else if(casaOcupada(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_BRANCAS){
+		if(pecasDaMesmaCorGanharam(nomeCasa)){
+			avaliacao = PERDA;
+		} else if(pecasDaMesmaCorPerderam(nomeCasa)){
+			avaliacao = VITORIA;
+		}
+	}
+
+	if(avaliacao == AVALIACAO_INDEFINIDA){
+		avaliacao = EMPATE;
+	}
+
+	return avaliacao;
 }
 
 /*
@@ -197,7 +247,7 @@ float tabuleiroTetralath::avaliarParaPecasDaCor(int pecas_avaliacao_param){
 		}
 		nomeCasa++;
 	}
-	
+
 	if(avaliacao == AVALIACAO_INDEFINIDA){
 		avaliacao = EMPATE;
 	}

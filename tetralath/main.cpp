@@ -65,8 +65,9 @@ int main(){
 	opcoesAlgoritmos.push_back("MINIMAX");
 	opcoesAlgoritmos.push_back("PODA ALFA BETA");
 
-	opcoesAvaliacao.push_back("AVALIACAO SIMPLES");
+	opcoesAvaliacao.push_back("AVALIACAO INGENUA");
 	opcoesAvaliacao.push_back("AVALIACAO MINUCIOSA");
+	opcoesAvaliacao.push_back("AVALIACAO PREGUICOSA");
 
 	opcoesAberturas.push_back("SEM ABERTURA");
 	opcoesAberturas.push_back("ABERTURA DUPLA");
@@ -104,7 +105,13 @@ int main(){
 		vector<vector<string> > opcoesEscolhidas = menuInicioJogo.getAlternativasSelecionadas();
 
 		algoritmo = (opcoesEscolhidas.at(1).at(0)=="MINIMAX"? ia::MINIMAX : ia::MINIMAX_PODA);
-		avaliacao = (opcoesEscolhidas.at(2).at(0)=="AVALIACAO SIMPLES"? ia::AVALIACAO_SIMPLES : ia::AVALIACAO_MINUCIOSA);
+		if(opcoesEscolhidas.at(2).at(0)=="AVALIACAO INGENUA"){
+			avaliacao = ia::AVALIACAO_SIMPLES;
+		} else if(opcoesEscolhidas.at(2).at(0)=="AVALIACAO MINUCIOSA"){
+			avaliacao = ia::AVALIACAO_MINUCIOSA;
+		} else if(opcoesEscolhidas.at(2).at(0)=="AVALIACAO PREGUICOSA"){
+			avaliacao = ia::AVALIACAO_PREGUICOSA;
+		}
 		if(opcoesEscolhidas.at(3).at(0) == "SEM ABERTURA"){
 			aberturaUtilizada = abertura::SEM_ABERTURA;
 		} else if(opcoesEscolhidas.at(3).at(0) == "ABERTURA DUPLA"){
@@ -116,7 +123,13 @@ int main(){
 					new ia(algoritmo, avaliacao) : 
 					new ia(algoritmo, avaliacao, new abertura(aberturaUtilizada)));
 		algoritmo = (opcoesEscolhidas.at(1).at(1)=="MINIMAX"? ia::MINIMAX : ia::MINIMAX_PODA);
-		avaliacao = (opcoesEscolhidas.at(2).at(1)=="AVALIACAO SIMPLES"? ia::AVALIACAO_SIMPLES : ia::AVALIACAO_MINUCIOSA);
+		if(opcoesEscolhidas.at(2).at(1)=="AVALIACAO INGENUA"){
+			avaliacao = ia::AVALIACAO_SIMPLES;
+		} else if(opcoesEscolhidas.at(2).at(1)=="AVALIACAO MINUCIOSA"){
+			avaliacao = ia::AVALIACAO_MINUCIOSA;
+		} else if(opcoesEscolhidas.at(2).at(1)=="AVALIACAO PREGUICOSA"){
+			avaliacao = ia::AVALIACAO_PREGUICOSA;
+		}
 		if(opcoesEscolhidas.at(3).at(1) == "SEM ABERTURA"){
 			aberturaUtilizada = abertura::SEM_ABERTURA;
 		} else if(opcoesEscolhidas.at(3).at(1) == "ABERTURA DUPLA"){
