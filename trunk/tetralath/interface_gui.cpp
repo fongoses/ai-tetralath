@@ -244,7 +244,11 @@ void interface_gui::imprimirTelaMenus(menu *_menu){
 		printf(" PERCORRER OPCOES\n");
 		imprimirComando("Q");
 		printf(" SAIR\n");
-		
+
+		printf("\n\n\n");
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN | FOREGROUND_INTENSITY);
+		_menu->imprimirLegendaAlternativaSelecionada();
+
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_BLUE | BACKGROUND_GREEN);
 
 		Sleep(50); //Movimento não muito rápido, permitindo melhor controle.

@@ -18,12 +18,18 @@ menu::menu(){
 * Cria uma nova opção no menu, com as alternativas de argumento.
 * @param _alternativas Vector de strings em que cada elemento é uma alternativa da nova opção.
 *						A nova opção é sempre inserida na linha corrente.
+* @param _legendas Vector de strings em que cada elemento é uma legenda que aparece quando a correspondente alternativa
+*				   em _alternativas estiver selecionada.
 */
-void menu::criarNovaOpcao(vector<string> _alternativas){
+void menu::criarNovaOpcao(vector<string> _alternativas, vector<string> _legendas){
 	int linha = linhas.size() - 1;
 
 	linhas.at(linha).push_back(_alternativas);
 	alternativasSelecionadas.at(linha).push_back(0);
+
+	for(int indice=0; indice<_alternativas.size() && indice<_legendas.size(); indice++){
+		legendas.insert(pair<string,string>(_alternativas.at(indice),_legendas.at(indice)));
+	}
 }
 
 /*
@@ -206,6 +212,14 @@ void menu::imprimir(){
 	printf("\n\n\n\n");
 }
 
+/*
+* Imprime a legenda da alternativa selecionada da opção selecionada.
+*/
+void menu::imprimirLegendaAlternativaSelecionada(){
+	string nomeAlternativaSelecionada = getNomeAlternativaSelecionadaOpcaoEm(linhaOpcaoSelecionada, colunaOpcaoSelecionada);
+	string legenda = legendas[nomeAlternativaSelecionada];
+	printf("\t%s",legenda.c_str());
+}
 
 /*
 * Dá nomes às colunas do menu.
