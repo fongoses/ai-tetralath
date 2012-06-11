@@ -46,6 +46,7 @@ ia::ia(int _algoritmo, int _avaliacao, abertura *_abertura){
 ia::ia(ia *_ia){
 	algoritmo = _ia->algoritmo;
 	avaliacao = _ia->avaliacao;
+	aberturaUtilizada = _ia->aberturaUtilizada;
 }
 
 /*
@@ -75,19 +76,24 @@ int ia::comecar_avaliacao(tabuleiroTetralath estado_inicial_param, bool *deve_pa
 		
 		if(tabuleiroTetralath::EMPATE < avaliacaoJogada){
 			utilizouAbertura = false;
+			printf("Abertura falhou, pois inimigo pode ganhar na prohxima.\n");
 		} else {
 			tabuleiro = *(new tabuleiroTetralath(&estado_inicial_param, true));
 			avaliacaoJogada = minimax(&variavelComFalse, tipo_jogada_param, 1, NIVEL_INICIAL, cor_pecas_avaliacao_param);
 			if(avaliacaoJogada == tabuleiroTetralath::VITORIA){
 				utilizouAbertura = false;
+				printf("Abertura falhou, pois eh possivel ganhar agora.\n");
 			} else {
 				aberturaUtilizada->jogar();
 				interface_gui::imprimirTextoCentralizado(toString());
-				printf("Utilizou movimento de abertura.");
+				printf("Utilizou movimento de abertura.\n");
 			}
 		}
 	} else {
 		utilizouAbertura = false;
+		if(utilizaAbertura){
+			printf("Abertura falhou, pois nao eh aplicavel.\n");
+		}
 	}
 
 	if(!utilizouAbertura){
@@ -121,6 +127,11 @@ std::string ia::toString(){
 			break;
 		case ia::AVALIACAO_MINUCIOSA: stringIA += " com AVALIACAO MINUCIOSA";
 			break;
+	}
+	if(utilizaAbertura){
+		stringIA += " com ABERTURA";
+	} else {
+		stringIA += " sem ABERTURA";
 	}
 	stringIA+="\n";
 	return stringIA;
@@ -166,13 +177,19 @@ int ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, bool *deve_para
 					resultado_aplicacao_minimax = minimax_minucioso(deve_parar_param, tipo_jogada_param, nivelMaximoSendoAvaliado, NIVEL_INICIAL, cor_pecas_avaliacao_param);
 				break;
 		}
+		if(!(*deve_parar_param)){
+			printf("\n\t\t\t\t%d em %ldms com valor %.1f para casa %d,",nivelMaximoSendoAvaliado, 
+				clock()-milissegundosInicioIteracao, 
+				resultado_aplicacao_minimax,
+				resultado_minimax);
+		}
 		if(!(*deve_parar_param) && resultado_melhor_aplicacao_minimax <= resultado_aplicacao_minimax){
 			resultado_melhor_aplicacao_minimax = resultado_aplicacao_minimax;
 			casaMelhorJogada = resultado_minimax;
-			printf(" %d em %ldms,",nivelMaximoSendoAvaliado, clock()-milissegundosInicioIteracao);
 			nivelMaximoSendoAvaliado++;
 		}
 	}
+
 	return casaMelhorJogada;
 }
 
@@ -210,10 +227,15 @@ int ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, bool *deve_para
 					resultado_aplicacao_minimax = minimax_poda_alfa_beta_minucioso(deve_parar_param, tipo_jogada_param, nivelMaximoSendoAvaliado, NIVEL_INICIAL, cor_pecas_avaliacao_param);
 				break;
 		}
+		if(!(*deve_parar_param)){
+			printf("\n\t\t\t\t%d em %ldms com valor %.1f para casa %d,",nivelMaximoSendoAvaliado, 
+				clock()-milissegundosInicioIteracao, 
+				resultado_aplicacao_minimax,
+				resultado_minimax);
+		}
 		if(!(*deve_parar_param) && resultado_melhor_aplicacao_minimax <= resultado_aplicacao_minimax){
 			resultado_melhor_aplicacao_minimax = resultado_aplicacao_minimax;
 			casaMelhorJogada = resultado_minimax;
-			printf(" %d em %ldms,",nivelMaximoSendoAvaliado, clock()-milissegundosInicioIteracao);
 			nivelMaximoSendoAvaliado++;
 		}
 	}
@@ -240,72 +262,72 @@ float ia::minimax(bool *deve_parar_param, int tipo_jogada_param, int nivel_maxim
 	int tipoJogadaFilho = (tipo_jogada_param == (int) JOGADA_MIN? (int) JOGADA_MAX : (int) JOGADA_MIN);
 	int casaMelhorJogada;
 
+	float valorMelhorJogada = tabuleiro.avaliarParaPecasDaCor(cor_pecas_avaliacao_param);
+
 	bool valor_deveSerMaximizado = (tipo_jogada_param == JOGADA_MAX);
-	bool estado_ehFolha = (tabuleiro.calcularNumeroMovimentosLegais() == 0);
+	bool estado_ehFolha = (/*tabuleiro.calcularNumeroMovimentosLegais() == 0
+							||*/ (!valor_deveSerMaximizado and valorMelhorJogada == tabuleiroTetralath::VITORIA)
+							|| (valor_deveSerMaximizado and valorMelhorJogada == tabuleiroTetralath::PERDA));
 	bool estado_jahAtingiuNivelMaximo = (nivel_atual_param == nivel_maximo_param);
 
-	float valorMelhorJogada;
-
-	if(estado_ehFolha or estado_jahAtingiuNivelMaximo){
-		valorMelhorJogada = tabuleiro.avaliarParaPecasDaCor(cor_pecas_avaliacao_param);
-	} else {
+	if(!estado_ehFolha and !estado_jahAtingiuNivelMaximo) {
 		if(nivel_atual_param == NIVEL_INICIAL){ //Necessário saber qual a casa de melhor jogada.
 			casaMelhorJogada = 0;
 			jogadaAtual=0;
 			if(valor_deveSerMaximizado){
-				valorMelhorJogada = tabuleiroTetralath::PERDA;
-				while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS){
+				valorMelhorJogada = tabuleiroTetralath::PERDA-1;
+				do{
 					if(tabuleiro.jogar(jogadaAtual)){
 						valorJogada = minimax(deve_parar_param, tipoJogadaFilho, nivel_maximo_param, nivel_atual_param+1, cor_pecas_avaliacao_param);
 						tabuleiro.desfazerUltimaJogada();
-						if(valorMelhorJogada <= valorJogada){
+						if(valorMelhorJogada < valorJogada){
 							casaMelhorJogada = jogadaAtual;
 							valorMelhorJogada = valorJogada;
 						}
 					}
 					jogadaAtual++;
-				}
+				}while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS);
 			} else {
-				valorMelhorJogada = tabuleiroTetralath::VITORIA;
-				while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS){
+				valorMelhorJogada = tabuleiroTetralath::VITORIA+1;
+				do{
 					if(tabuleiro.jogar(jogadaAtual)){
 						valorJogada = minimax(deve_parar_param, tipoJogadaFilho, nivel_maximo_param, nivel_atual_param+1, cor_pecas_avaliacao_param);
 						tabuleiro.desfazerUltimaJogada();
-						if(valorJogada <= valorMelhorJogada){
+						if(valorJogada < valorMelhorJogada){
 							casaMelhorJogada = jogadaAtual;
 							valorMelhorJogada = valorJogada;
 						}
 					}
 					jogadaAtual++;
-				}
+				}while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS);
 			}
 			resultado_minimax = casaMelhorJogada;
 		} else { //Não é necessário saber a casa de melhor jogada, só seu valor.
 			jogadaAtual=0;
 			if(valor_deveSerMaximizado){
-				valorMelhorJogada = tabuleiroTetralath::PERDA;
-				while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS){
+				valorMelhorJogada = tabuleiroTetralath::PERDA-1;
+				do{
 					if(tabuleiro.jogar(jogadaAtual)){
 						valorJogada = minimax(deve_parar_param, tipoJogadaFilho, nivel_maximo_param, nivel_atual_param+1, cor_pecas_avaliacao_param);
 						tabuleiro.desfazerUltimaJogada();
-						if(valorMelhorJogada <= valorJogada){
+						if(valorMelhorJogada < valorJogada){
 							valorMelhorJogada = valorJogada;
 						}
 					}
 					jogadaAtual++;
-				}
+				}while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS);
 			} else {
-				valorMelhorJogada = tabuleiroTetralath::VITORIA;
-				while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS){
+				valorMelhorJogada = tabuleiroTetralath::VITORIA+1;
+				do{
 					if(tabuleiro.jogar(jogadaAtual)){
 						valorJogada = minimax(deve_parar_param, tipoJogadaFilho, nivel_maximo_param, nivel_atual_param+1, cor_pecas_avaliacao_param);
 						tabuleiro.desfazerUltimaJogada();
-						if(valorJogada <= valorMelhorJogada){
+						if(valorJogada < valorMelhorJogada){
 							valorMelhorJogada = valorJogada;
 						}
 					}
 					jogadaAtual++;
-				}
+				}while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS);
 			}
 		}
 	}
