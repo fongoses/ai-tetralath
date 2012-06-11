@@ -143,7 +143,7 @@ vector<vector<string> > menu::getAlternativasSelecionadas(){
 * Imprime este menu na tela, evidenciando a opção escolhida e suas alternativas.
 */
 void menu::imprimir(){
-	int ESPACOS_CELULA = 30;
+	int ESPACOS_CELULA = 40;
 	int linha;
 	int coluna;
 

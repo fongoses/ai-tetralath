@@ -7,7 +7,9 @@
 * Definições de aberturas.
 */
 int abertura::DUPLA[] = {26, 27, 30, 32, 29};
-int abertura::TRIANGULO_AGRESSIVO[] = {23, 39, 41, 55, 46, 49, 47};
+int abertura::TRIANGULO_AGRESSIVO[] = {23, 39, 46, 47, 49, 42, 41};
+int abertura::DUPLA_FILEIRA_AGRESSIVA[] = {22, 23, 39, 46, 47, 53, 32, 49};
+
 
 /*************************************************************
 * À partir daqui, todos os métodos são PÚBLICOS
@@ -23,7 +25,9 @@ abertura::abertura(int _tipo){
 	switch(tipo){
 		case ABERTURA_DUPLA: casas.assign(DUPLA, DUPLA+5);
 			break;
-		case ABERTURA_TRIANGULO_AGRESSIVO: casas.assign(TRIANGULO_AGRESSIVO, TRIANGULO_AGRESSIVO+6);
+		case ABERTURA_TRIANGULO_AGRESSIVO: casas.assign(TRIANGULO_AGRESSIVO, TRIANGULO_AGRESSIVO+7);
+			break;
+		case ABERTURA_DUPLA_FILEIRA_AGRESSIVA: casas.assign(DUPLA_FILEIRA_AGRESSIVA, DUPLA_FILEIRA_AGRESSIVA+8);
 			break;
 	}
 }
