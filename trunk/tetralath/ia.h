@@ -125,6 +125,12 @@ class ia{
 	* Contem o nome da casa em que deve ser feita a jogada, apos execucao do minimax.
 	*/
 	int resultado_minimax;
+	
+	/*
+	* Menor (alfa) e maior (beta) valor encontrado em direção a um MAX ou MIN, respectivamente, na poda alfa-beta.
+	*/
+	float alfa;
+	float beta;
 
 	//métodos
 	/*

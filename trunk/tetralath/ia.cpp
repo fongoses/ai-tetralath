@@ -5,7 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctime>
-
+#include <windows.h>
+#include <process.h>
 
 /*************************************************************************************
 * ATENÇÃO: À partir daqui, todos métodos são públicos
@@ -224,6 +225,8 @@ int ia::comecar_minimax(tabuleiroTetralath estado_inicial_param, bool *deve_para
 	while(*deve_parar_param != PARAR and nivelMaximoSendoAvaliado <= MAXIMO_ITERACOES
 			and resultado_melhor_aplicacao_minimax != tabuleiroTetralath::VITORIA){
 		milissegundosInicioIteracao = clock();
+		alfa = tabuleiroTetralath::PERDA-100;
+		beta = tabuleiroTetralath::VITORIA+100;
 		switch(avaliacao){
 			case ia::AVALIACAO_SIMPLES: 
 					resultado_aplicacao_minimax = minimax_poda_alfa_beta(deve_parar_param, tipo_jogada_param, nivelMaximoSendoAvaliado, NIVEL_INICIAL, cor_pecas_avaliacao_param);
@@ -527,31 +530,37 @@ float ia::minimax_poda_alfa_beta(bool *deve_parar_param, int tipo_jogada_param, 
 			if(valor_deveSerMaximizado){
 				valorMelhorJogada = tabuleiroTetralath::PERDA-1;
 				
-				while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS and !realizarPoda){
+				do{
 					if(tabuleiro.jogar(jogadaAtual)){
 						valorJogada = minimax_poda_alfa_beta(deve_parar_param, tipoJogadaFilho, nivel_maximo_param, nivel_atual_param+1, cor_pecas_avaliacao_param);
 						tabuleiro.desfazerUltimaJogada();
 						if(valorMelhorJogada < valorJogada){
 							casaMelhorJogada = jogadaAtual;
 							valorMelhorJogada = valorJogada;
-							realizarPoda = (valorMelhorJogada == tabuleiroTetralath::VITORIA);
+							realizarPoda = (beta <= valorMelhorJogada);
 						}
 					}
 					jogadaAtual++;
+				}while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS and !realizarPoda);
+				if(valorMelhorJogada < beta){
+					alfa = (alfa < valorMelhorJogada? valorMelhorJogada : alfa);
 				}
 			} else {
 				valorMelhorJogada = tabuleiroTetralath::VITORIA+1;
-				while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS and !realizarPoda){
+				do{
 					if(tabuleiro.jogar(jogadaAtual)){
 						valorJogada = minimax_poda_alfa_beta(deve_parar_param, tipoJogadaFilho, nivel_maximo_param, nivel_atual_param+1, cor_pecas_avaliacao_param);
 						tabuleiro.desfazerUltimaJogada();
 						if(valorJogada < valorMelhorJogada){
 							casaMelhorJogada = jogadaAtual;
 							valorMelhorJogada = valorJogada;
-							realizarPoda = (valorMelhorJogada == tabuleiroTetralath::PERDA);
+							realizarPoda = (valorMelhorJogada <= alfa);
 						}
 					}
 					jogadaAtual++;
+				}while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS and !realizarPoda);
+				if(alfa < valorMelhorJogada){
+					beta = (valorMelhorJogada < beta? valorMelhorJogada : beta);
 				}
 			}
 			resultado_minimax = casaMelhorJogada;
@@ -559,29 +568,35 @@ float ia::minimax_poda_alfa_beta(bool *deve_parar_param, int tipo_jogada_param, 
 			jogadaAtual=0;
 			if(valor_deveSerMaximizado){
 				valorMelhorJogada = tabuleiroTetralath::PERDA-1;
-				while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS and !realizarPoda){
+				do{
 					if(tabuleiro.jogar(jogadaAtual)){
 						valorJogada = minimax_poda_alfa_beta(deve_parar_param, tipoJogadaFilho, nivel_maximo_param, nivel_atual_param+1, cor_pecas_avaliacao_param);
 						tabuleiro.desfazerUltimaJogada();
 						if(valorMelhorJogada < valorJogada){
 							valorMelhorJogada = valorJogada;
-							realizarPoda = (valorMelhorJogada == tabuleiroTetralath::VITORIA);
+							realizarPoda = (beta <= valorMelhorJogada);
 						}
 					}
 					jogadaAtual++;
+				}while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS and !realizarPoda);
+				if(valorMelhorJogada < beta){
+					alfa = (alfa < valorMelhorJogada? valorMelhorJogada : alfa);
 				}
 			} else {
 				valorMelhorJogada = tabuleiroTetralath::VITORIA+1;
-				while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS and !realizarPoda){
+				do{
 					if(tabuleiro.jogar(jogadaAtual)){
 						valorJogada = minimax_poda_alfa_beta(deve_parar_param, tipoJogadaFilho, nivel_maximo_param, nivel_atual_param+1, cor_pecas_avaliacao_param);
 						tabuleiro.desfazerUltimaJogada();
 						if(valorJogada < valorMelhorJogada){
 							valorMelhorJogada = valorJogada;
-							realizarPoda = (valorMelhorJogada == tabuleiroTetralath::PERDA);
+							realizarPoda = (valorMelhorJogada <= alfa);
 						}
 					}
 					jogadaAtual++;
+				}while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS and !realizarPoda);
+				if(alfa < valorMelhorJogada){
+					beta = (valorMelhorJogada < beta? valorMelhorJogada : beta);
 				}
 			}
 		}
@@ -609,31 +624,37 @@ float ia::minimax_poda_alfa_beta_minucioso(bool *deve_parar_param, int tipo_joga
 			if(valor_deveSerMaximizado){
 				valorMelhorJogada = tabuleiroTetralath::PERDA-1;
 				
-				while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS and !realizarPoda){
+				do{
 					if(tabuleiro.jogar(jogadaAtual)){
 						valorJogada = minimax_poda_alfa_beta_minucioso(deve_parar_param, tipoJogadaFilho, nivel_maximo_param, nivel_atual_param+1, cor_pecas_avaliacao_param);
 						tabuleiro.desfazerUltimaJogada();
 						if(valorMelhorJogada < valorJogada){
 							casaMelhorJogada = jogadaAtual;
 							valorMelhorJogada = valorJogada;
-							realizarPoda = (valorMelhorJogada == tabuleiroTetralath::VITORIA);
+							realizarPoda = (beta <= valorMelhorJogada);
 						}
 					}
 					jogadaAtual++;
+				}while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS and !realizarPoda);
+				if(valorMelhorJogada < beta){
+					alfa = (alfa < valorMelhorJogada? valorMelhorJogada : alfa);
 				}
 			} else {
 				valorMelhorJogada = tabuleiroTetralath::VITORIA+1;
-				while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS and !realizarPoda){
+				do{
 					if(tabuleiro.jogar(jogadaAtual)){
 						valorJogada = minimax_poda_alfa_beta_minucioso(deve_parar_param, tipoJogadaFilho, nivel_maximo_param, nivel_atual_param+1, cor_pecas_avaliacao_param);
 						tabuleiro.desfazerUltimaJogada();
 						if(valorJogada < valorMelhorJogada){
 							casaMelhorJogada = jogadaAtual;
 							valorMelhorJogada = valorJogada;
-							realizarPoda = (valorMelhorJogada == tabuleiroTetralath::PERDA);
+							realizarPoda = (valorMelhorJogada <= alfa);
 						}
 					}
 					jogadaAtual++;
+				}while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS and !realizarPoda);
+				if(alfa < valorMelhorJogada){
+					beta = (valorMelhorJogada < beta? valorMelhorJogada : beta);
 				}
 			}
 			resultado_minimax = casaMelhorJogada;
@@ -641,29 +662,35 @@ float ia::minimax_poda_alfa_beta_minucioso(bool *deve_parar_param, int tipo_joga
 			jogadaAtual=0;
 			if(valor_deveSerMaximizado){
 				valorMelhorJogada = tabuleiroTetralath::PERDA-1;
-				while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS and !realizarPoda){
+				do{
 					if(tabuleiro.jogar(jogadaAtual)){
 						valorJogada = minimax_poda_alfa_beta_minucioso(deve_parar_param, tipoJogadaFilho, nivel_maximo_param, nivel_atual_param+1, cor_pecas_avaliacao_param);
 						tabuleiro.desfazerUltimaJogada();
 						if(valorMelhorJogada < valorJogada){
 							valorMelhorJogada = valorJogada;
-							realizarPoda = (valorMelhorJogada == tabuleiroTetralath::VITORIA);
+							realizarPoda = (beta <= valorMelhorJogada);
 						}
 					}
 					jogadaAtual++;
+				}while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS and !realizarPoda);
+				if(valorMelhorJogada < beta){
+					alfa = (alfa < valorMelhorJogada? valorMelhorJogada : alfa);
 				}
 			} else {
 				valorMelhorJogada = tabuleiroTetralath::VITORIA+1;
-				while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS and !realizarPoda){
+				do{
 					if(tabuleiro.jogar(jogadaAtual)){
 						valorJogada = minimax_poda_alfa_beta_minucioso(deve_parar_param, tipoJogadaFilho, nivel_maximo_param, nivel_atual_param+1, cor_pecas_avaliacao_param);
 						tabuleiro.desfazerUltimaJogada();
 						if(valorJogada < valorMelhorJogada){
 							valorMelhorJogada = valorJogada;
-							realizarPoda = (valorMelhorJogada == tabuleiroTetralath::PERDA);
+							realizarPoda = (valorMelhorJogada <= alfa);
 						}
 					}
 					jogadaAtual++;
+				}while(!(*deve_parar_param) and jogadaAtual < tabuleiroTetralath::NUMERO_CASAS and !realizarPoda);
+				if(alfa < valorMelhorJogada){
+					beta = (valorMelhorJogada < beta? valorMelhorJogada : beta);
 				}
 			}
 		}
