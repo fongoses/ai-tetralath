@@ -425,7 +425,7 @@ float ia::minimax_minucioso(bool *deve_parar_param, int tipo_jogada_param, int n
 	int tipoJogadaFilho = (tipo_jogada_param == (int) JOGADA_MIN? (int) JOGADA_MAX : (int) JOGADA_MIN);
 	int casaMelhorJogada;
 
-	float valorMelhorJogada = tabuleiro.avaliarParaPecasDaCor(cor_pecas_avaliacao_param);
+	float valorMelhorJogada = tabuleiro.avaliarMinuciosamenteParaPecasDaCor(cor_pecas_avaliacao_param);
 
 	bool valor_deveSerMaximizado = (tipo_jogada_param == JOGADA_MAX);
 	bool estado_ehFolha = (valorMelhorJogada == tabuleiroTetralath::VITORIA || valorMelhorJogada == tabuleiroTetralath::PERDA);

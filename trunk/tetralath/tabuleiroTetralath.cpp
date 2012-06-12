@@ -6,7 +6,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <ctime>
-#include <math>
+#include <math.h>
 
 /*
 * Classe que implementa um tabuleiro do jogo Tetralath.
@@ -87,17 +87,6 @@ bool tabuleiroTetralath::jogar(int nomeCasa_param){
 		numeroJogadasFeitas++;
 	}
 	return conseguiu;
-}
-
-/*
-* Realiza uma jogada das peças passadas como parâmetro.
-* A jogada é guardada na forma de bitstream.
-* @param nomeCasa_param Casa a jogar.
-* @return Booleano indicando se foi possível realizar a jogada.
-*/
-bool tabuleiroTetralath::jogarBitstream(int nomeCasa_param){
-	
-
 }
 
 /*
@@ -281,47 +270,281 @@ float tabuleiroTetralath::avaliarParaPecasDaCor(int pecas_avaliacao_param){
 float tabuleiroTetralath::avaliarMinuciosamenteParaPecasDaCor(int pecas_avaliacao_param){
 	float AVALIACAO_INDEFINIDA = -5;
 	float avaliacao = AVALIACAO_INDEFINIDA;
+
+	int nomeCasa;
+
+	if(0 < numeroJogadasFeitas){
+		nomeCasa = casaUltimaJogada;
+
+		if(houveEmpate()){
+			avaliacao = EMPATE;
+		}
 	
-	int nomeCasa = casaUltimaJogada;
-	
-	if(houveEmpate()){
-		avaliacao = EMPATE;
+		if(casaOcupadaPorPecaBranca(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_BRANCAS){
+			if(pecasDaMesmaCorGanharam(nomeCasa)){
+				avaliacao = VITORIA;
+			} else if(pecasDaMesmaCorPerderam(nomeCasa)){
+				avaliacao = PERDA;
+			}
+		} else if(casaOcupadaPorPecaBranca(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_PRETAS){
+			if(pecasDaMesmaCorGanharam(nomeCasa)){
+				avaliacao = PERDA;
+			} else if(pecasDaMesmaCorPerderam(nomeCasa)){
+				avaliacao = VITORIA;
+			}
+		} else if(casaOcupada(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_PRETAS){
+			if(pecasDaMesmaCorGanharam(nomeCasa)){
+				avaliacao = VITORIA;
+			} else if(pecasDaMesmaCorPerderam(nomeCasa)){
+				avaliacao = PERDA;
+			}
+		} else if(casaOcupada(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_BRANCAS){
+			if(pecasDaMesmaCorGanharam(nomeCasa)){
+				avaliacao = PERDA;
+			} else if(pecasDaMesmaCorPerderam(nomeCasa)){
+				avaliacao = VITORIA;
+			}
+		}
 	}
 
-	if(casaOcupadaPorPecaBranca(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_BRANCAS){
-		if(pecasDaMesmaCorGanharam(nomeCasa)){
-			avaliacao = VITORIA;
-		} else if(pecasDaMesmaCorPerderam(nomeCasa)){
-			avaliacao = PERDA;
-		}
-	} else if(casaOcupadaPorPecaBranca(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_PRETAS){
-		if(pecasDaMesmaCorGanharam(nomeCasa)){
-			avaliacao = PERDA;
-		} else if(pecasDaMesmaCorPerderam(nomeCasa)){
-			avaliacao = VITORIA;
-		}
-	} else if(casaOcupada(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_PRETAS){
-		if(pecasDaMesmaCorGanharam(nomeCasa)){
-			avaliacao = VITORIA;
-		} else if(pecasDaMesmaCorPerderam(nomeCasa)){
-			avaliacao = PERDA;
-		}
-	} else if(casaOcupada(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_BRANCAS){
-		if(pecasDaMesmaCorGanharam(nomeCasa)){
-			avaliacao = PERDA;
-		} else if(pecasDaMesmaCorPerderam(nomeCasa)){
-			avaliacao = VITORIA;
-		}
-	}
+	casaTabuleiroTetralath* casaDistanciaUm;
+	casaTabuleiroTetralath* casaDistanciaDois;
+	casaTabuleiroTetralath* casaDistanciaTres;
 
+	bool forma_sequenciaUM_ZERO_UM_UM = false;
+	bool forma_sequenciaUM_UM_ZERO_UM = false;
+
+	int numeroArmadilhasInimigo=0; //Uma armadilha é uma seqüência do tipo 1011 ou 1101.
+	int numeroArmadilhasJogador=0; //Uma armadilha é uma seqüência do tipo 1011 ou 1101.
 	if(avaliacao == AVALIACAO_INDEFINIDA){
 		if(pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_BRANCAS){
-			
+			for(nomeCasa=0;nomeCasa<INDICE_ULTIMA_CASA;nomeCasa++){
+				if(casaOcupadaPorPecaBranca(nomeCasa)){
+					casaDistanciaUm = tabuleiro[nomeCasa].getCasaDistanciaDesta(1, LINHA_HORIZONTAL);
+					casaDistanciaDois = tabuleiro[nomeCasa].getCasaDistanciaDesta(2, LINHA_HORIZONTAL);
+					casaDistanciaTres = tabuleiro[nomeCasa].getCasaDistanciaDesta(3, LINHA_HORIZONTAL);
+					if(casaDistanciaUm != VIZINHO_INEXISTENTE and casaDistanciaDois != VIZINHO_INEXISTENTE and casaDistanciaTres != VIZINHO_INEXISTENTE){
+						forma_sequenciaUM_ZERO_UM_UM = !casaDistanciaUm->estahOcupada() and casaDistanciaDois->estahOcupadaPorPecaBranca() and casaDistanciaTres->estahOcupadaPorPecaBranca();
+						forma_sequenciaUM_UM_ZERO_UM = casaDistanciaUm->estahOcupadaPorPecaBranca() and !casaDistanciaDois->estahOcupada() and casaDistanciaTres->estahOcupadaPorPecaBranca();
+						numeroArmadilhasInimigo = (forma_sequenciaUM_ZERO_UM_UM or forma_sequenciaUM_UM_ZERO_UM? numeroArmadilhasInimigo+1: numeroArmadilhasInimigo);
+					}
+					
+					casaDistanciaUm = tabuleiro[nomeCasa].getCasaDistanciaDesta(-1, LINHA_HORIZONTAL);
+					casaDistanciaDois = tabuleiro[nomeCasa].getCasaDistanciaDesta(-2, LINHA_HORIZONTAL);
+					casaDistanciaTres = tabuleiro[nomeCasa].getCasaDistanciaDesta(-3, LINHA_HORIZONTAL);
+					if(casaDistanciaUm != VIZINHO_INEXISTENTE and casaDistanciaDois != VIZINHO_INEXISTENTE and casaDistanciaTres != VIZINHO_INEXISTENTE){
+						forma_sequenciaUM_ZERO_UM_UM = !casaDistanciaUm->estahOcupada() and casaDistanciaDois->estahOcupadaPorPecaBranca() and casaDistanciaTres->estahOcupadaPorPecaBranca();
+						forma_sequenciaUM_UM_ZERO_UM = casaDistanciaUm->estahOcupadaPorPecaBranca() and !casaDistanciaDois->estahOcupada() and casaDistanciaTres->estahOcupadaPorPecaBranca();
+						numeroArmadilhasInimigo = (forma_sequenciaUM_ZERO_UM_UM or forma_sequenciaUM_UM_ZERO_UM? numeroArmadilhasInimigo+1: numeroArmadilhasInimigo);
+					}
+					
+					casaDistanciaUm = tabuleiro[nomeCasa].getCasaDistanciaDesta(1, LINHA_DIAGONAL_DECRESCENTE);
+					casaDistanciaDois = tabuleiro[nomeCasa].getCasaDistanciaDesta(2, LINHA_DIAGONAL_DECRESCENTE);
+					casaDistanciaTres = tabuleiro[nomeCasa].getCasaDistanciaDesta(3, LINHA_DIAGONAL_DECRESCENTE);
+					if(casaDistanciaUm != VIZINHO_INEXISTENTE and casaDistanciaDois != VIZINHO_INEXISTENTE and casaDistanciaTres != VIZINHO_INEXISTENTE){
+						forma_sequenciaUM_ZERO_UM_UM = !casaDistanciaUm->estahOcupada() and casaDistanciaDois->estahOcupadaPorPecaBranca() and casaDistanciaTres->estahOcupadaPorPecaBranca();
+						forma_sequenciaUM_UM_ZERO_UM = casaDistanciaUm->estahOcupadaPorPecaBranca() and !casaDistanciaDois->estahOcupada() and casaDistanciaTres->estahOcupadaPorPecaBranca();
+						numeroArmadilhasInimigo = (forma_sequenciaUM_ZERO_UM_UM or forma_sequenciaUM_UM_ZERO_UM? numeroArmadilhasInimigo+1: numeroArmadilhasInimigo);
+					}
+					
+					casaDistanciaUm = tabuleiro[nomeCasa].getCasaDistanciaDesta(-1, LINHA_DIAGONAL_DECRESCENTE);
+					casaDistanciaDois = tabuleiro[nomeCasa].getCasaDistanciaDesta(-2, LINHA_DIAGONAL_DECRESCENTE);
+					casaDistanciaTres = tabuleiro[nomeCasa].getCasaDistanciaDesta(-3, LINHA_DIAGONAL_DECRESCENTE);
+					if(casaDistanciaUm != VIZINHO_INEXISTENTE and casaDistanciaDois != VIZINHO_INEXISTENTE and casaDistanciaTres != VIZINHO_INEXISTENTE){
+						forma_sequenciaUM_ZERO_UM_UM = !casaDistanciaUm->estahOcupada() and casaDistanciaDois->estahOcupadaPorPecaBranca() and casaDistanciaTres->estahOcupadaPorPecaBranca();
+						forma_sequenciaUM_UM_ZERO_UM = casaDistanciaUm->estahOcupadaPorPecaBranca() and !casaDistanciaDois->estahOcupada() and casaDistanciaTres->estahOcupadaPorPecaBranca();
+						numeroArmadilhasInimigo = (forma_sequenciaUM_ZERO_UM_UM or forma_sequenciaUM_UM_ZERO_UM? numeroArmadilhasInimigo+1: numeroArmadilhasInimigo);
+					}
+					
+					casaDistanciaUm = tabuleiro[nomeCasa].getCasaDistanciaDesta(1, LINHA_DIAGONAL_CRESCENTE);
+					casaDistanciaDois = tabuleiro[nomeCasa].getCasaDistanciaDesta(2, LINHA_DIAGONAL_CRESCENTE);
+					casaDistanciaTres = tabuleiro[nomeCasa].getCasaDistanciaDesta(3, LINHA_DIAGONAL_CRESCENTE);
+					if(casaDistanciaUm != VIZINHO_INEXISTENTE and casaDistanciaDois != VIZINHO_INEXISTENTE and casaDistanciaTres != VIZINHO_INEXISTENTE){
+						forma_sequenciaUM_ZERO_UM_UM = !casaDistanciaUm->estahOcupada() and casaDistanciaDois->estahOcupadaPorPecaBranca() and casaDistanciaTres->estahOcupadaPorPecaBranca();
+						forma_sequenciaUM_UM_ZERO_UM = casaDistanciaUm->estahOcupadaPorPecaBranca() and !casaDistanciaDois->estahOcupada() and casaDistanciaTres->estahOcupadaPorPecaBranca();
+						numeroArmadilhasInimigo = (forma_sequenciaUM_ZERO_UM_UM or forma_sequenciaUM_UM_ZERO_UM? numeroArmadilhasInimigo+1: numeroArmadilhasInimigo);
+					}
+					
+					casaDistanciaUm = tabuleiro[nomeCasa].getCasaDistanciaDesta(-1, LINHA_DIAGONAL_CRESCENTE);
+					casaDistanciaDois = tabuleiro[nomeCasa].getCasaDistanciaDesta(-2, LINHA_DIAGONAL_CRESCENTE);
+					casaDistanciaTres = tabuleiro[nomeCasa].getCasaDistanciaDesta(-3, LINHA_DIAGONAL_CRESCENTE);
+					if(casaDistanciaUm != VIZINHO_INEXISTENTE and casaDistanciaDois != VIZINHO_INEXISTENTE and casaDistanciaTres != VIZINHO_INEXISTENTE){
+						forma_sequenciaUM_ZERO_UM_UM = !casaDistanciaUm->estahOcupada() and casaDistanciaDois->estahOcupadaPorPecaBranca() and casaDistanciaTres->estahOcupadaPorPecaBranca();
+						forma_sequenciaUM_UM_ZERO_UM = casaDistanciaUm->estahOcupadaPorPecaBranca() and !casaDistanciaDois->estahOcupada() and casaDistanciaTres->estahOcupadaPorPecaBranca();
+						numeroArmadilhasInimigo = (forma_sequenciaUM_ZERO_UM_UM or forma_sequenciaUM_UM_ZERO_UM? numeroArmadilhasInimigo+1: numeroArmadilhasInimigo);
+					}
+				} else if(casaOcupada(nomeCasa)){
+					casaDistanciaUm = tabuleiro[nomeCasa].getCasaDistanciaDesta(1, LINHA_HORIZONTAL);
+					casaDistanciaDois = tabuleiro[nomeCasa].getCasaDistanciaDesta(2, LINHA_HORIZONTAL);
+					casaDistanciaTres = tabuleiro[nomeCasa].getCasaDistanciaDesta(3, LINHA_HORIZONTAL);
+					if(casaDistanciaUm != VIZINHO_INEXISTENTE and casaDistanciaDois != VIZINHO_INEXISTENTE and casaDistanciaTres != VIZINHO_INEXISTENTE){
+						forma_sequenciaUM_ZERO_UM_UM = !casaDistanciaUm->estahOcupada() and casaDistanciaDois->estahOcupadaPorPecaPreta() and casaDistanciaTres->estahOcupadaPorPecaPreta();
+						forma_sequenciaUM_UM_ZERO_UM = casaDistanciaUm->estahOcupadaPorPecaPreta() and !casaDistanciaDois->estahOcupada() and casaDistanciaTres->estahOcupadaPorPecaPreta();
+						numeroArmadilhasJogador = (forma_sequenciaUM_ZERO_UM_UM or forma_sequenciaUM_UM_ZERO_UM? numeroArmadilhasJogador+1: numeroArmadilhasJogador);
+					}
+					
+					casaDistanciaUm = tabuleiro[nomeCasa].getCasaDistanciaDesta(-1, LINHA_HORIZONTAL);
+					casaDistanciaDois = tabuleiro[nomeCasa].getCasaDistanciaDesta(-2, LINHA_HORIZONTAL);
+					casaDistanciaTres = tabuleiro[nomeCasa].getCasaDistanciaDesta(-3, LINHA_HORIZONTAL);
+					if(casaDistanciaUm != VIZINHO_INEXISTENTE and casaDistanciaDois != VIZINHO_INEXISTENTE and casaDistanciaTres != VIZINHO_INEXISTENTE){
+						forma_sequenciaUM_ZERO_UM_UM = !casaDistanciaUm->estahOcupada() and casaDistanciaDois->estahOcupadaPorPecaPreta() and casaDistanciaTres->estahOcupadaPorPecaPreta();
+						forma_sequenciaUM_UM_ZERO_UM = casaDistanciaUm->estahOcupadaPorPecaPreta() and !casaDistanciaDois->estahOcupada() and casaDistanciaTres->estahOcupadaPorPecaPreta();
+						numeroArmadilhasJogador = (forma_sequenciaUM_ZERO_UM_UM or forma_sequenciaUM_UM_ZERO_UM? numeroArmadilhasJogador+1: numeroArmadilhasJogador);
+					}
+					
+					casaDistanciaUm = tabuleiro[nomeCasa].getCasaDistanciaDesta(1, LINHA_DIAGONAL_DECRESCENTE);
+					casaDistanciaDois = tabuleiro[nomeCasa].getCasaDistanciaDesta(2, LINHA_DIAGONAL_DECRESCENTE);
+					casaDistanciaTres = tabuleiro[nomeCasa].getCasaDistanciaDesta(3, LINHA_DIAGONAL_DECRESCENTE);
+					if(casaDistanciaUm != VIZINHO_INEXISTENTE and casaDistanciaDois != VIZINHO_INEXISTENTE and casaDistanciaTres != VIZINHO_INEXISTENTE){
+						forma_sequenciaUM_ZERO_UM_UM = !casaDistanciaUm->estahOcupada() and casaDistanciaDois->estahOcupadaPorPecaPreta() and casaDistanciaTres->estahOcupadaPorPecaPreta();
+						forma_sequenciaUM_UM_ZERO_UM = casaDistanciaUm->estahOcupadaPorPecaPreta() and !casaDistanciaDois->estahOcupada() and casaDistanciaTres->estahOcupadaPorPecaPreta();
+						numeroArmadilhasJogador = (forma_sequenciaUM_ZERO_UM_UM or forma_sequenciaUM_UM_ZERO_UM? numeroArmadilhasJogador+1: numeroArmadilhasJogador);
+					}
+					
+					casaDistanciaUm = tabuleiro[nomeCasa].getCasaDistanciaDesta(-1, LINHA_DIAGONAL_DECRESCENTE);
+					casaDistanciaDois = tabuleiro[nomeCasa].getCasaDistanciaDesta(-2, LINHA_DIAGONAL_DECRESCENTE);
+					casaDistanciaTres = tabuleiro[nomeCasa].getCasaDistanciaDesta(-3, LINHA_DIAGONAL_DECRESCENTE);
+					if(casaDistanciaUm != VIZINHO_INEXISTENTE and casaDistanciaDois != VIZINHO_INEXISTENTE and casaDistanciaTres != VIZINHO_INEXISTENTE){
+						forma_sequenciaUM_ZERO_UM_UM = !casaDistanciaUm->estahOcupada() and casaDistanciaDois->estahOcupadaPorPecaPreta() and casaDistanciaTres->estahOcupadaPorPecaPreta();
+						forma_sequenciaUM_UM_ZERO_UM = casaDistanciaUm->estahOcupadaPorPecaPreta() and !casaDistanciaDois->estahOcupada() and casaDistanciaTres->estahOcupadaPorPecaPreta();
+						numeroArmadilhasJogador = (forma_sequenciaUM_ZERO_UM_UM or forma_sequenciaUM_UM_ZERO_UM? numeroArmadilhasJogador+1: numeroArmadilhasJogador);
+					}
+					
+					casaDistanciaUm = tabuleiro[nomeCasa].getCasaDistanciaDesta(1, LINHA_DIAGONAL_CRESCENTE);
+					casaDistanciaDois = tabuleiro[nomeCasa].getCasaDistanciaDesta(2, LINHA_DIAGONAL_CRESCENTE);
+					casaDistanciaTres = tabuleiro[nomeCasa].getCasaDistanciaDesta(3, LINHA_DIAGONAL_CRESCENTE);
+					if(casaDistanciaUm != VIZINHO_INEXISTENTE and casaDistanciaDois != VIZINHO_INEXISTENTE and casaDistanciaTres != VIZINHO_INEXISTENTE){
+						forma_sequenciaUM_ZERO_UM_UM = !casaDistanciaUm->estahOcupada() and casaDistanciaDois->estahOcupadaPorPecaPreta() and casaDistanciaTres->estahOcupadaPorPecaPreta();
+						forma_sequenciaUM_UM_ZERO_UM = casaDistanciaUm->estahOcupadaPorPecaPreta() and !casaDistanciaDois->estahOcupada() and casaDistanciaTres->estahOcupadaPorPecaPreta();
+						numeroArmadilhasJogador = (forma_sequenciaUM_ZERO_UM_UM or forma_sequenciaUM_UM_ZERO_UM? numeroArmadilhasJogador+1: numeroArmadilhasJogador);
+					}
+					
+					casaDistanciaUm = tabuleiro[nomeCasa].getCasaDistanciaDesta(-1, LINHA_DIAGONAL_CRESCENTE);
+					casaDistanciaDois = tabuleiro[nomeCasa].getCasaDistanciaDesta(-2, LINHA_DIAGONAL_CRESCENTE);
+					casaDistanciaTres = tabuleiro[nomeCasa].getCasaDistanciaDesta(-3, LINHA_DIAGONAL_CRESCENTE);
+					if(casaDistanciaUm != VIZINHO_INEXISTENTE and casaDistanciaDois != VIZINHO_INEXISTENTE and casaDistanciaTres != VIZINHO_INEXISTENTE){
+						forma_sequenciaUM_ZERO_UM_UM = !casaDistanciaUm->estahOcupada() and casaDistanciaDois->estahOcupadaPorPecaPreta() and casaDistanciaTres->estahOcupadaPorPecaPreta();
+						forma_sequenciaUM_UM_ZERO_UM = casaDistanciaUm->estahOcupadaPorPecaPreta() and !casaDistanciaDois->estahOcupada() and casaDistanciaTres->estahOcupadaPorPecaPreta();
+						numeroArmadilhasJogador = (forma_sequenciaUM_ZERO_UM_UM or forma_sequenciaUM_UM_ZERO_UM? numeroArmadilhasJogador+1: numeroArmadilhasJogador);
+					}
+				}
+			}
 		} else {
-		
+			for(nomeCasa=0;nomeCasa<INDICE_ULTIMA_CASA;nomeCasa++){
+				if(casaOcupadaPorPecaBranca(nomeCasa)){
+					casaDistanciaUm = tabuleiro[nomeCasa].getCasaDistanciaDesta(1, LINHA_HORIZONTAL);
+					casaDistanciaDois = tabuleiro[nomeCasa].getCasaDistanciaDesta(2, LINHA_HORIZONTAL);
+					casaDistanciaTres = tabuleiro[nomeCasa].getCasaDistanciaDesta(3, LINHA_HORIZONTAL);
+					if(casaDistanciaUm != VIZINHO_INEXISTENTE and casaDistanciaDois != VIZINHO_INEXISTENTE and casaDistanciaTres != VIZINHO_INEXISTENTE){
+						forma_sequenciaUM_ZERO_UM_UM = !casaDistanciaUm->estahOcupada() and casaDistanciaDois->estahOcupadaPorPecaBranca() and casaDistanciaTres->estahOcupadaPorPecaBranca();
+						forma_sequenciaUM_UM_ZERO_UM = casaDistanciaUm->estahOcupadaPorPecaBranca() and !casaDistanciaDois->estahOcupada() and casaDistanciaTres->estahOcupadaPorPecaBranca();
+						numeroArmadilhasJogador = (forma_sequenciaUM_ZERO_UM_UM or forma_sequenciaUM_UM_ZERO_UM? numeroArmadilhasJogador+1: numeroArmadilhasJogador);
+					}
+					
+					casaDistanciaUm = tabuleiro[nomeCasa].getCasaDistanciaDesta(-1, LINHA_HORIZONTAL);
+					casaDistanciaDois = tabuleiro[nomeCasa].getCasaDistanciaDesta(-2, LINHA_HORIZONTAL);
+					casaDistanciaTres = tabuleiro[nomeCasa].getCasaDistanciaDesta(-3, LINHA_HORIZONTAL);
+					if(casaDistanciaUm != VIZINHO_INEXISTENTE and casaDistanciaDois != VIZINHO_INEXISTENTE and casaDistanciaTres != VIZINHO_INEXISTENTE){
+						forma_sequenciaUM_ZERO_UM_UM = !casaDistanciaUm->estahOcupada() and casaDistanciaDois->estahOcupadaPorPecaBranca() and casaDistanciaTres->estahOcupadaPorPecaBranca();
+						forma_sequenciaUM_UM_ZERO_UM = casaDistanciaUm->estahOcupadaPorPecaBranca() and !casaDistanciaDois->estahOcupada() and casaDistanciaTres->estahOcupadaPorPecaBranca();
+						numeroArmadilhasJogador = (forma_sequenciaUM_ZERO_UM_UM or forma_sequenciaUM_UM_ZERO_UM? numeroArmadilhasJogador+1: numeroArmadilhasJogador);
+					}
+					
+					casaDistanciaUm = tabuleiro[nomeCasa].getCasaDistanciaDesta(1, LINHA_DIAGONAL_DECRESCENTE);
+					casaDistanciaDois = tabuleiro[nomeCasa].getCasaDistanciaDesta(2, LINHA_DIAGONAL_DECRESCENTE);
+					casaDistanciaTres = tabuleiro[nomeCasa].getCasaDistanciaDesta(3, LINHA_DIAGONAL_DECRESCENTE);
+					if(casaDistanciaUm != VIZINHO_INEXISTENTE and casaDistanciaDois != VIZINHO_INEXISTENTE and casaDistanciaTres != VIZINHO_INEXISTENTE){
+						forma_sequenciaUM_ZERO_UM_UM = !casaDistanciaUm->estahOcupada() and casaDistanciaDois->estahOcupadaPorPecaBranca() and casaDistanciaTres->estahOcupadaPorPecaBranca();
+						forma_sequenciaUM_UM_ZERO_UM = casaDistanciaUm->estahOcupadaPorPecaBranca() and !casaDistanciaDois->estahOcupada() and casaDistanciaTres->estahOcupadaPorPecaBranca();
+						numeroArmadilhasJogador = (forma_sequenciaUM_ZERO_UM_UM or forma_sequenciaUM_UM_ZERO_UM? numeroArmadilhasJogador+1: numeroArmadilhasJogador);
+					}
+					
+					casaDistanciaUm = tabuleiro[nomeCasa].getCasaDistanciaDesta(-1, LINHA_DIAGONAL_DECRESCENTE);
+					casaDistanciaDois = tabuleiro[nomeCasa].getCasaDistanciaDesta(-2, LINHA_DIAGONAL_DECRESCENTE);
+					casaDistanciaTres = tabuleiro[nomeCasa].getCasaDistanciaDesta(-3, LINHA_DIAGONAL_DECRESCENTE);
+					if(casaDistanciaUm != VIZINHO_INEXISTENTE and casaDistanciaDois != VIZINHO_INEXISTENTE and casaDistanciaTres != VIZINHO_INEXISTENTE){
+						forma_sequenciaUM_ZERO_UM_UM = !casaDistanciaUm->estahOcupada() and casaDistanciaDois->estahOcupadaPorPecaBranca() and casaDistanciaTres->estahOcupadaPorPecaBranca();
+						forma_sequenciaUM_UM_ZERO_UM = casaDistanciaUm->estahOcupadaPorPecaBranca() and !casaDistanciaDois->estahOcupada() and casaDistanciaTres->estahOcupadaPorPecaBranca();
+						numeroArmadilhasJogador = (forma_sequenciaUM_ZERO_UM_UM or forma_sequenciaUM_UM_ZERO_UM? numeroArmadilhasJogador+1: numeroArmadilhasJogador);
+					}
+					
+					casaDistanciaUm = tabuleiro[nomeCasa].getCasaDistanciaDesta(1, LINHA_DIAGONAL_CRESCENTE);
+					casaDistanciaDois = tabuleiro[nomeCasa].getCasaDistanciaDesta(2, LINHA_DIAGONAL_CRESCENTE);
+					casaDistanciaTres = tabuleiro[nomeCasa].getCasaDistanciaDesta(3, LINHA_DIAGONAL_CRESCENTE);
+					if(casaDistanciaUm != VIZINHO_INEXISTENTE and casaDistanciaDois != VIZINHO_INEXISTENTE and casaDistanciaTres != VIZINHO_INEXISTENTE){
+						forma_sequenciaUM_ZERO_UM_UM = !casaDistanciaUm->estahOcupada() and casaDistanciaDois->estahOcupadaPorPecaBranca() and casaDistanciaTres->estahOcupadaPorPecaBranca();
+						forma_sequenciaUM_UM_ZERO_UM = casaDistanciaUm->estahOcupadaPorPecaBranca() and !casaDistanciaDois->estahOcupada() and casaDistanciaTres->estahOcupadaPorPecaBranca();
+						numeroArmadilhasJogador = (forma_sequenciaUM_ZERO_UM_UM or forma_sequenciaUM_UM_ZERO_UM? numeroArmadilhasJogador+1: numeroArmadilhasJogador);
+					}
+					
+					casaDistanciaUm = tabuleiro[nomeCasa].getCasaDistanciaDesta(-1, LINHA_DIAGONAL_CRESCENTE);
+					casaDistanciaDois = tabuleiro[nomeCasa].getCasaDistanciaDesta(-2, LINHA_DIAGONAL_CRESCENTE);
+					casaDistanciaTres = tabuleiro[nomeCasa].getCasaDistanciaDesta(-3, LINHA_DIAGONAL_CRESCENTE);
+					if(casaDistanciaUm != VIZINHO_INEXISTENTE and casaDistanciaDois != VIZINHO_INEXISTENTE and casaDistanciaTres != VIZINHO_INEXISTENTE){
+						forma_sequenciaUM_ZERO_UM_UM = !casaDistanciaUm->estahOcupada() and casaDistanciaDois->estahOcupadaPorPecaBranca() and casaDistanciaTres->estahOcupadaPorPecaBranca();
+						forma_sequenciaUM_UM_ZERO_UM = casaDistanciaUm->estahOcupadaPorPecaBranca() and !casaDistanciaDois->estahOcupada() and casaDistanciaTres->estahOcupadaPorPecaBranca();
+						numeroArmadilhasJogador = (forma_sequenciaUM_ZERO_UM_UM or forma_sequenciaUM_UM_ZERO_UM? numeroArmadilhasJogador+1: numeroArmadilhasJogador);
+					}
+				} else if(casaOcupada(nomeCasa)){
+					casaDistanciaUm = tabuleiro[nomeCasa].getCasaDistanciaDesta(1, LINHA_HORIZONTAL);
+					casaDistanciaDois = tabuleiro[nomeCasa].getCasaDistanciaDesta(2, LINHA_HORIZONTAL);
+					casaDistanciaTres = tabuleiro[nomeCasa].getCasaDistanciaDesta(3, LINHA_HORIZONTAL);
+					if(casaDistanciaUm != VIZINHO_INEXISTENTE and casaDistanciaDois != VIZINHO_INEXISTENTE and casaDistanciaTres != VIZINHO_INEXISTENTE){
+						forma_sequenciaUM_ZERO_UM_UM = !casaDistanciaUm->estahOcupada() and casaDistanciaDois->estahOcupadaPorPecaPreta() and casaDistanciaTres->estahOcupadaPorPecaPreta();
+						forma_sequenciaUM_UM_ZERO_UM = casaDistanciaUm->estahOcupadaPorPecaPreta() and !casaDistanciaDois->estahOcupada() and casaDistanciaTres->estahOcupadaPorPecaPreta();
+						numeroArmadilhasInimigo = (forma_sequenciaUM_ZERO_UM_UM or forma_sequenciaUM_UM_ZERO_UM? numeroArmadilhasInimigo+1: numeroArmadilhasInimigo);
+					}
+					
+					casaDistanciaUm = tabuleiro[nomeCasa].getCasaDistanciaDesta(-1, LINHA_HORIZONTAL);
+					casaDistanciaDois = tabuleiro[nomeCasa].getCasaDistanciaDesta(-2, LINHA_HORIZONTAL);
+					casaDistanciaTres = tabuleiro[nomeCasa].getCasaDistanciaDesta(-3, LINHA_HORIZONTAL);
+					if(casaDistanciaUm != VIZINHO_INEXISTENTE and casaDistanciaDois != VIZINHO_INEXISTENTE and casaDistanciaTres != VIZINHO_INEXISTENTE){
+						forma_sequenciaUM_ZERO_UM_UM = !casaDistanciaUm->estahOcupada() and casaDistanciaDois->estahOcupadaPorPecaPreta() and casaDistanciaTres->estahOcupadaPorPecaPreta();
+						forma_sequenciaUM_UM_ZERO_UM = casaDistanciaUm->estahOcupadaPorPecaPreta() and !casaDistanciaDois->estahOcupada() and casaDistanciaTres->estahOcupadaPorPecaPreta();
+						numeroArmadilhasInimigo = (forma_sequenciaUM_ZERO_UM_UM or forma_sequenciaUM_UM_ZERO_UM? numeroArmadilhasInimigo+1: numeroArmadilhasInimigo);
+					}
+					
+					casaDistanciaUm = tabuleiro[nomeCasa].getCasaDistanciaDesta(1, LINHA_DIAGONAL_DECRESCENTE);
+					casaDistanciaDois = tabuleiro[nomeCasa].getCasaDistanciaDesta(2, LINHA_DIAGONAL_DECRESCENTE);
+					casaDistanciaTres = tabuleiro[nomeCasa].getCasaDistanciaDesta(3, LINHA_DIAGONAL_DECRESCENTE);
+					if(casaDistanciaUm != VIZINHO_INEXISTENTE and casaDistanciaDois != VIZINHO_INEXISTENTE and casaDistanciaTres != VIZINHO_INEXISTENTE){
+						forma_sequenciaUM_ZERO_UM_UM = !casaDistanciaUm->estahOcupada() and casaDistanciaDois->estahOcupadaPorPecaPreta() and casaDistanciaTres->estahOcupadaPorPecaPreta();
+						forma_sequenciaUM_UM_ZERO_UM = casaDistanciaUm->estahOcupadaPorPecaPreta() and !casaDistanciaDois->estahOcupada() and casaDistanciaTres->estahOcupadaPorPecaPreta();
+						numeroArmadilhasInimigo = (forma_sequenciaUM_ZERO_UM_UM or forma_sequenciaUM_UM_ZERO_UM? numeroArmadilhasInimigo+1: numeroArmadilhasInimigo);
+					}
+					
+					casaDistanciaUm = tabuleiro[nomeCasa].getCasaDistanciaDesta(-1, LINHA_DIAGONAL_DECRESCENTE);
+					casaDistanciaDois = tabuleiro[nomeCasa].getCasaDistanciaDesta(-2, LINHA_DIAGONAL_DECRESCENTE);
+					casaDistanciaTres = tabuleiro[nomeCasa].getCasaDistanciaDesta(-3, LINHA_DIAGONAL_DECRESCENTE);
+					if(casaDistanciaUm != VIZINHO_INEXISTENTE and casaDistanciaDois != VIZINHO_INEXISTENTE and casaDistanciaTres != VIZINHO_INEXISTENTE){
+						forma_sequenciaUM_ZERO_UM_UM = !casaDistanciaUm->estahOcupada() and casaDistanciaDois->estahOcupadaPorPecaPreta() and casaDistanciaTres->estahOcupadaPorPecaPreta();
+						forma_sequenciaUM_UM_ZERO_UM = casaDistanciaUm->estahOcupadaPorPecaPreta() and !casaDistanciaDois->estahOcupada() and casaDistanciaTres->estahOcupadaPorPecaPreta();
+						numeroArmadilhasInimigo = (forma_sequenciaUM_ZERO_UM_UM or forma_sequenciaUM_UM_ZERO_UM? numeroArmadilhasInimigo+1: numeroArmadilhasInimigo);
+					}
+					
+					casaDistanciaUm = tabuleiro[nomeCasa].getCasaDistanciaDesta(1, LINHA_DIAGONAL_CRESCENTE);
+					casaDistanciaDois = tabuleiro[nomeCasa].getCasaDistanciaDesta(2, LINHA_DIAGONAL_CRESCENTE);
+					casaDistanciaTres = tabuleiro[nomeCasa].getCasaDistanciaDesta(3, LINHA_DIAGONAL_CRESCENTE);
+					if(casaDistanciaUm != VIZINHO_INEXISTENTE and casaDistanciaDois != VIZINHO_INEXISTENTE and casaDistanciaTres != VIZINHO_INEXISTENTE){
+						forma_sequenciaUM_ZERO_UM_UM = !casaDistanciaUm->estahOcupada() and casaDistanciaDois->estahOcupadaPorPecaPreta() and casaDistanciaTres->estahOcupadaPorPecaPreta();
+						forma_sequenciaUM_UM_ZERO_UM = casaDistanciaUm->estahOcupadaPorPecaPreta() and !casaDistanciaDois->estahOcupada() and casaDistanciaTres->estahOcupadaPorPecaPreta();
+						numeroArmadilhasInimigo = (forma_sequenciaUM_ZERO_UM_UM or forma_sequenciaUM_UM_ZERO_UM? numeroArmadilhasInimigo+1: numeroArmadilhasInimigo);
+					}
+					
+					casaDistanciaUm = tabuleiro[nomeCasa].getCasaDistanciaDesta(-1, LINHA_DIAGONAL_CRESCENTE);
+					casaDistanciaDois = tabuleiro[nomeCasa].getCasaDistanciaDesta(-2, LINHA_DIAGONAL_CRESCENTE);
+					casaDistanciaTres = tabuleiro[nomeCasa].getCasaDistanciaDesta(-3, LINHA_DIAGONAL_CRESCENTE);
+					if(casaDistanciaUm != VIZINHO_INEXISTENTE and casaDistanciaDois != VIZINHO_INEXISTENTE and casaDistanciaTres != VIZINHO_INEXISTENTE){
+						forma_sequenciaUM_ZERO_UM_UM = !casaDistanciaUm->estahOcupada() and casaDistanciaDois->estahOcupadaPorPecaPreta() and casaDistanciaTres->estahOcupadaPorPecaPreta();
+						forma_sequenciaUM_UM_ZERO_UM = casaDistanciaUm->estahOcupadaPorPecaPreta() and !casaDistanciaDois->estahOcupada() and casaDistanciaTres->estahOcupadaPorPecaPreta();
+						numeroArmadilhasInimigo = (forma_sequenciaUM_ZERO_UM_UM or forma_sequenciaUM_UM_ZERO_UM? numeroArmadilhasInimigo+1: numeroArmadilhasInimigo);
+					}
+				}
+			}
 		}
+		avaliacao = (numeroArmadilhasJogador-numeroArmadilhasInimigo)/(numeroArmadilhasJogador+numeroArmadilhasInimigo+1);
 	}
-	
+
 	return avaliacao;
 }
 

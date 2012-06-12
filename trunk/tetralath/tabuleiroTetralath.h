@@ -81,13 +81,6 @@ class tabuleiroTetralath{
 		*/
 		bool jogar(int nomeCasa_param);
 		/*
-		* Realiza uma jogada das peças passadas como parâmetro.
-		* A jogada é guardada na forma de bitstream.
-		* @param nomeCasa_param Casa a jogar.
-		* @return Booleano indicando se foi possível realizar a jogada.
-		*/
-		bool jogarBitstream(int nomeCasa_param);
-		/*
 		* Indica se as peças da cor da peça parâmetro ganharam, isto acontece em um caso:
 		*	(1) Se elas formaram uma linha de 4 peças consecutivas.
 		* @param nomeCasaReferencia_param Um nome de casa a ser tomada como central, para referência. Tipicamente, esta será a última jogada feita.
