@@ -6,6 +6,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <ctime>
+#include <math>
 
 /*
 * Classe que implementa um tabuleiro do jogo Tetralath.
@@ -86,6 +87,17 @@ bool tabuleiroTetralath::jogar(int nomeCasa_param){
 		numeroJogadasFeitas++;
 	}
 	return conseguiu;
+}
+
+/*
+* Realiza uma jogada das peças passadas como parâmetro.
+* A jogada é guardada na forma de bitstream.
+* @param nomeCasa_param Casa a jogar.
+* @return Booleano indicando se foi possível realizar a jogada.
+*/
+bool tabuleiroTetralath::jogarBitstream(int nomeCasa_param){
+	
+
 }
 
 /*
@@ -270,43 +282,44 @@ float tabuleiroTetralath::avaliarMinuciosamenteParaPecasDaCor(int pecas_avaliaca
 	float AVALIACAO_INDEFINIDA = -5;
 	float avaliacao = AVALIACAO_INDEFINIDA;
 	
-	int nomeCasa = INDICE_PRIMEIRA_CASA;
+	int nomeCasa = casaUltimaJogada;
 	
 	if(houveEmpate()){
 		avaliacao = EMPATE;
 	}
 
-	while(nomeCasa <= INDICE_ULTIMA_CASA and avaliacao == AVALIACAO_INDEFINIDA){
-		if(casaOcupadaPorPecaBranca(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_BRANCAS){
-			if(pecasDaMesmaCorGanharam(nomeCasa)){
-				avaliacao = VITORIA;
-			} else if(pecasDaMesmaCorPerderam(nomeCasa)){
-				avaliacao = PERDA;
-			}
-		} else if(casaOcupadaPorPecaBranca(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_PRETAS){
-			if(pecasDaMesmaCorGanharam(nomeCasa)){
-				avaliacao = PERDA;
-			} else if(pecasDaMesmaCorPerderam(nomeCasa)){
-				avaliacao = VITORIA;
-			}
-		} else if(casaOcupada(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_PRETAS){
-			if(pecasDaMesmaCorGanharam(nomeCasa)){
-				avaliacao = VITORIA;
-			} else if(pecasDaMesmaCorPerderam(nomeCasa)){
-				avaliacao = PERDA;
-			}
-		} else if(casaOcupada(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_BRANCAS){
-			if(pecasDaMesmaCorGanharam(nomeCasa)){
-				avaliacao = PERDA;
-			} else if(pecasDaMesmaCorPerderam(nomeCasa)){
-				avaliacao = VITORIA;
-			}
+	if(casaOcupadaPorPecaBranca(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_BRANCAS){
+		if(pecasDaMesmaCorGanharam(nomeCasa)){
+			avaliacao = VITORIA;
+		} else if(pecasDaMesmaCorPerderam(nomeCasa)){
+			avaliacao = PERDA;
 		}
-		nomeCasa++;
+	} else if(casaOcupadaPorPecaBranca(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_PRETAS){
+		if(pecasDaMesmaCorGanharam(nomeCasa)){
+			avaliacao = PERDA;
+		} else if(pecasDaMesmaCorPerderam(nomeCasa)){
+			avaliacao = VITORIA;
+		}
+	} else if(casaOcupada(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_PRETAS){
+		if(pecasDaMesmaCorGanharam(nomeCasa)){
+			avaliacao = VITORIA;
+		} else if(pecasDaMesmaCorPerderam(nomeCasa)){
+			avaliacao = PERDA;
+		}
+	} else if(casaOcupada(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_BRANCAS){
+		if(pecasDaMesmaCorGanharam(nomeCasa)){
+			avaliacao = PERDA;
+		} else if(pecasDaMesmaCorPerderam(nomeCasa)){
+			avaliacao = VITORIA;
+		}
 	}
-	
+
 	if(avaliacao == AVALIACAO_INDEFINIDA){
-		avaliacao = EMPATE;
+		if(pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_BRANCAS){
+			
+		} else {
+		
+		}
 	}
 	
 	return avaliacao;
@@ -1214,7 +1227,40 @@ int tabuleiroTetralath::inverterCorPecas(int pecas_param){
 	return pecas_invertidas;
 }
 
+/*
+* Procura, da forma mais otimizada possível e imaginável, pelo padrão dado no tabuleiro.
+* Este padrão refere-se a casas em seqüência, tanto horizontal como diagonal. 
+* Ele deve ser uma mistura de peças das duas cores com casas vazias.
+* Assim, se um deles tiver o padrão 0...1000, os outros devem, pelo menos, preencher os últimos três 0s com 1s.
+* O padrão deve ser legível em um dos sentidos (esquerda->direita ou direita->esquerda).
+* @param _padraoBrancas Um bitstream correspondente ao padrão de peças sequenciais brancas procuradas.
+* @param _padraoPretas Um bitstream correspondente ao padrão de peças sequenciais pretas procuradas.
+* @param _padraoVazias Um bitstream correspondente ao padrão de peças sequenciais vazias procuradas.
+* O and dos três padrões dirá a largura do padrão procurado. Assim:
+* 	_padraoBrancas = 0...0100 AND
+* 	_padraoPretas = 0...1000 AND  
+* 	_padraoVazias = 0...0011 = 0...1111
+*		Procurará pelo padrão de tamanho 4 PRETA BRANCA VAZIA VAZIA. As casas ao redor deste padrão podem ter qualquer conteúdo.
+* @return A quantidade de vezes que o padrão foi observado.
+*/ 
+int tabuleiroTetralath::contarOcorrenciasPadrao(unsigned short _padraoBrancas, unsigned short _padraoPretas, unsigned short _padraoVazias){
+	int BRANCAS = 0;
+	int PRETAS = 1;
+	int VAZIAS = 2;
+	int tamanhoSequencia = 4; //???????????
+	int nomeCasaInicioLinha;
+	int corCasaInicio;
 
+	if(_padraoPretas < _padraoBrancas && _padraoVazias < _padraoBrancas){
+		corCasaInicio = BRANCAS;
+	} else if(_padraoBrancas < _padraoPretas && _padraoVazias < _padraoPretas){
+		corCasaInicio = PRETAS;
+	} else {
+		corCasaInicio = VAZIAS;
+	}
+
+	unsigned long long HORIZONTAIS_;
+}
 
 
 

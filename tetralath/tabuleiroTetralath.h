@@ -81,6 +81,13 @@ class tabuleiroTetralath{
 		*/
 		bool jogar(int nomeCasa_param);
 		/*
+		* Realiza uma jogada das peças passadas como parâmetro.
+		* A jogada é guardada na forma de bitstream.
+		* @param nomeCasa_param Casa a jogar.
+		* @return Booleano indicando se foi possível realizar a jogada.
+		*/
+		bool jogarBitstream(int nomeCasa_param);
+		/*
 		* Indica se as peças da cor da peça parâmetro ganharam, isto acontece em um caso:
 		*	(1) Se elas formaram uma linha de 4 peças consecutivas.
 		* @param nomeCasaReferencia_param Um nome de casa a ser tomada como central, para referência. Tipicamente, esta será a última jogada feita.
@@ -274,6 +281,24 @@ class tabuleiroTetralath{
 		* @return Booleano indicando se há alguma seqüência (com o número especificado) de casas adjacentes com peças da mesma cor.
 		*/
 		bool haSequenciaCasasMesmaCor(int nomeCasa_param, int tamanhoSequencia_param);
+
+		/*
+		* Procura, da forma mais otimizada possível e imaginável, pelo padrão dado no tabuleiro.
+		* Este padrão refere-se a casas em seqüência, tanto horizontal como diagonal. 
+		* Ele deve ser uma mistura de peças das duas cores com casas vazias.
+		* Assim, se um deles tiver o padrão 0...1000, os outros devem, pelo menos, preencher os últimos três 0s com 1s.
+		* O padrão deve ser legível em um dos sentidos (esquerda->direita ou direita->esquerda).
+		* @param _padraoBrancas Um bitstream correspondente ao padrão de peças sequenciais brancas procuradas.
+		* @param _padraoPretas Um bitstream correspondente ao padrão de peças sequenciais pretas procuradas.
+		* @param _padraoVazias Um bitstream correspondente ao padrão de peças sequenciais vazias procuradas.
+		* O and dos três padrões dirá a largura do padrão procurado. Assim:
+		* 	_padraoBrancas = 0...0100 AND
+		* 	_padraoPretas = 0...1000 AND  
+		* 	_padraoVazias = 0...0011 = 0...1111
+		*		Procurará pelo padrão de tamanho 4 PRETA BRANCA VAZIA VAZIA. As casas ao redor deste padrão podem ter qualquer conteúdo.
+		* @return A quantidade de vezes que o padrão foi observado.
+		*/ 
+		int contarOcorrenciasPadrao(unsigned short _padraoBrancas, unsigned short _padraoPretas, unsigned short _padraoVazias);
 
 		/*
 		* Cria as vizinhanças e inicializa os dados.
