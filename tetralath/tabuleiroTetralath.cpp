@@ -268,7 +268,6 @@ float tabuleiroTetralath::avaliarParaPecasDaCor(int pecas_avaliacao_param){
 * 		  empate e 1 (VITORIA) para vitória. Número decimais SÃO permitidos.
 */
 float tabuleiroTetralath::avaliarMinuciosamenteParaPecasDaCor(int pecas_avaliacao_param){
-	float AVALIACAO_INDEFINIDA = -5;
 	float avaliacao = AVALIACAO_INDEFINIDA;
 
 	int nomeCasa;
@@ -276,10 +275,6 @@ float tabuleiroTetralath::avaliarMinuciosamenteParaPecasDaCor(int pecas_avaliaca
 	if(0 < numeroJogadasFeitas){
 		nomeCasa = casaUltimaJogada;
 
-		if(houveEmpate()){
-			avaliacao = EMPATE;
-		}
-	
 		if(casaOcupadaPorPecaBranca(nomeCasa) and pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_BRANCAS){
 			if(pecasDaMesmaCorGanharam(nomeCasa)){
 				avaliacao = VITORIA;
@@ -314,8 +309,8 @@ float tabuleiroTetralath::avaliarMinuciosamenteParaPecasDaCor(int pecas_avaliaca
 	bool forma_sequenciaUM_ZERO_UM_UM = false;
 	bool forma_sequenciaUM_UM_ZERO_UM = false;
 
-	int numeroArmadilhasInimigo=0; //Uma armadilha é uma seqüência do tipo 1011 ou 1101.
-	int numeroArmadilhasJogador=0; //Uma armadilha é uma seqüência do tipo 1011 ou 1101.
+	float numeroArmadilhasInimigo=0; //Uma armadilha é uma seqüência do tipo 1011 ou 1101.
+	float numeroArmadilhasJogador=0; //Uma armadilha é uma seqüência do tipo 1011 ou 1101.
 	if(avaliacao == AVALIACAO_INDEFINIDA){
 		if(pecas_avaliacao_param == casaTabuleiroTetralath::PECAS_BRANCAS){
 			for(nomeCasa=0;nomeCasa<INDICE_ULTIMA_CASA;nomeCasa++){
@@ -542,9 +537,21 @@ float tabuleiroTetralath::avaliarMinuciosamenteParaPecasDaCor(int pecas_avaliaca
 				}
 			}
 		}
+		numeroArmadilhasJogador = numeroArmadilhasJogador/2;
+		numeroArmadilhasInimigo = numeroArmadilhasInimigo/2;
+		int intermediario = numeroArmadilhasJogador;
+		numeroArmadilhasJogador = numeroArmadilhasInimigo;
+		numeroArmadilhasInimigo = intermediario;
 		avaliacao = (numeroArmadilhasJogador-numeroArmadilhasInimigo)/(numeroArmadilhasJogador+numeroArmadilhasInimigo+1);
 	}
-
+	
+	if(avaliacao == 0){
+		avaliacao = AVALIACAO_INDEFINIDA;
+	}
+	//if(houveEmpate()){
+		//avaliacao = EMPATE;
+	//}
+	
 	return avaliacao;
 }
 

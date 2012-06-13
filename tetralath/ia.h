@@ -126,11 +126,6 @@ class ia{
 	*/
 	int resultado_minimax;
 	
-	/*
-	* Menor (alfa) e maior (beta) valor encontrado em direção a um MAX ou MIN, respectivamente, na poda alfa-beta.
-	*/
-	float alfa;
-	float beta;
 
 	//métodos
 	/*
@@ -193,7 +188,8 @@ class ia{
 	*/
 	float minimax_poda_alfa_beta(bool *deve_parar_param, int tipo_jogada_param, int nivel_maximo_param, int nivel_atual_param, int cor_pecas_avaliacao_param);
 	//minimax com função de avaliação minuciosa
-	float minimax_poda_alfa_beta_minucioso(bool *deve_parar_param, int tipo_jogada_param, int nivel_maximo_param, int nivel_atual_param, int cor_pecas_avaliacao_param);
+	float minimax_poda_alfa_beta_minucioso(bool *deve_parar_param, int tipo_jogada_param, int nivel_maximo_param, 
+					int nivel_atual_param, int cor_pecas_avaliacao_param, float alfa, float beta);
 	//minimax com função de avaliação preguiçosa
 	float minimax_poda_alfa_beta_preguicoso(bool *deve_parar_param, int tipo_jogada_param, int nivel_maximo_param, int nivel_atual_param, int cor_pecas_avaliacao_param);
 
