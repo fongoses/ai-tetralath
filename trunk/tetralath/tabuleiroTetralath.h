@@ -34,6 +34,7 @@ class tabuleiroTetralath{
 		static const float PERDA = -1.0;
 		static const float EMPATE = 0.0;
 		static const float VITORIA = 1.0;
+		static const float AVALIACAO_INDEFINIDA = -5; //Uma avaliação que ainda não tem valor.
 		
 		/*
 		* Indica que não há estado atingível. É necessário no minimax.
